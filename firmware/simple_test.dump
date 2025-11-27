@@ -1,0 +1,21 @@
+
+firmware/simple_test.elf:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000080000000 <_start>:
+    80000000:	4529                	li	a0,10
+    80000002:	45d1                	li	a1,20
+    80000004:	00b50633          	add	a2,a0,a1
+    80000008:	6685                	lui	a3,0x1
+    8000000a:	c290                	sw	a2,0(a3)
+    8000000c:	4298                	lw	a4,0(a3)
+    8000000e:	4295                	li	t0,5
+
+0000000080000010 <loop>:
+    80000010:	12fd                	addi	t0,t0,-1
+    80000012:	fe029fe3          	bnez	t0,80000010 <loop>
+    80000016:	05d00893          	li	a7,93
+    8000001a:	4501                	li	a0,0
+    8000001c:	00000073          	ecall

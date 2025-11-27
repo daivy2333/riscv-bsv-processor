@@ -1,0 +1,13 @@
+# DESCRIPTION: Verilator output: Timestamp data for --skip-identical.  Delete at will.
+C "--cc --exe --build -o VmkTestBench build/mkTestBench.v tests/c/test_bench.cpp -Wno-STMTDLY"
+S   7892640  1105950  1764234727   546922336  1598506306           0 "/usr/bin/verilator_bin"
+S     20358  1106309  1764238559   187387811  1764238559   187387811 "build/mkTestBench.v"
+T      6190  1106318  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench.cpp"
+T      3392  1106316  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench.h"
+T      1815  1106320  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench.mk"
+T      3322  1106317  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench__Slow.cpp"
+T       569  1106314  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench__Syms.cpp"
+T       829  1106315  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench__Syms.h"
+T       293  1106330  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench__ver.d"
+T         0        0  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench__verFiles.dat"
+T      1570  1106319  1764238559   627387594  1764238559   627387594 "obj_dir/VmkTestBench_classes.mk"
