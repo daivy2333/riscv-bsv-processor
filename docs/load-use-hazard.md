@@ -41,34 +41,34 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-    Start[ID 阶段开始] --> GetPkt[获取 if2id.first]
-    GetPkt --> Decode[解码得到 DecodedInstr]
-    Decode --> CheckEX{检查 id2ex<br/>是否有 Load?}
+    Start["ID 阶段开始"] --> GetPkt["获取 if2id.first"]
+    GetPkt --> Decode["解码得到 DecodedInstr"]
+    Decode --> CheckEX{"检查 id2ex<br/>是否有 Load?"}
 
     CheckEX -->|"mem_op == MEM_READ<br/>& rd != 0"| CheckEXRs1
     CheckEX -->|否| CheckMEM
 
-    CheckEXRs1{use_rs1 &&<br/>rs1 == ex_rd?}
-    CheckEXRs1 -->|是| SetHazard1[load_use_hazard = True]
-    CheckEXRs1 -->|否| CheckEXRs2{use_rs2 &&<br/>rs2 == ex_rd?}
+    CheckEXRs1{"use_rs1 &&<br/>rs1 == ex_rd?"}
+    CheckEXRs1 -->|是| SetHazard1["load_use_hazard = True"]
+    CheckEXRs1 -->|否| CheckEXRs2{"use_rs2 &&<br/>rs2 == ex_rd?"}
     CheckEXRs2 -->|是| SetHazard1
     CheckEXRs2 -->|否| CheckMEM
 
-    CheckMEM{检查 ex2mem<br/>是否有 Load?}
+    CheckMEM{"检查 ex2mem<br/>是否有 Load?"}
     CheckMEM -->|"is_load && rd != 0"| CheckMEMRs1
-    CheckMEM -->|否| NoHazard[无冒险]
+    CheckMEM -->|否| NoHazard["无冒险"]
 
-    CheckMEMRs1{use_rs1 &&<br/>rs1 == mem_rd?}
-    CheckMEMRs1 -->|是| SetHazard2[load_use_hazard = True]
-    CheckMEMRs1 -->|否| CheckMEMRs2{use_rs2 &&<br/>rs2 == mem_rd?}
+    CheckMEMRs1{"use_rs1 &&<br/>rs1 == mem_rd?"}
+    CheckMEMRs1 -->|是| SetHazard2["load_use_hazard = True"]
+    CheckMEMRs1 -->|否| CheckMEMRs2{"use_rs2 &&<br/>rs2 == mem_rd?"}
     CheckMEMRs2 -->|是| SetHazard2
     CheckMEMRs2 -->|否| NoHazard
 
     SetHazard1 --> Stall
     SetHazard2 --> Stall
 
-    Stall[设置 stall_load_use = True<br/>设置 bubble_pending = True<br/>不 deq if2id]
-    NoHazard --> Normal[正常执行<br/>deq if2id<br/>enq id2ex]
+    Stall["设置 stall_load_use = True<br/>设置 bubble_pending = True<br/>不 deq if2id"]
+    NoHazard --> Normal["正常执行<br/>deq if2id<br/>enq id2ex"]
 ```
 
 ## 3. 停顿与气泡插入时序

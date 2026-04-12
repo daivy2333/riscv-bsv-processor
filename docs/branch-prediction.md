@@ -11,8 +11,8 @@ flowchart TB
         BHT_Query[BHT 查询<br/>是否预测跳转]
         BTB_Query[BTB 查询<br/>跳转目标地址]
 
-        PC -->|"PC[11:2]"| BHT_Query
-        PC -->|"PC[11:2]"| BTB_Query
+        PC -->|"PC bits 11-2"| BHT_Query
+        PC -->|"PC bits 11-2"| BTB_Query
 
         BHT_Query -->|"taken/not taken"| Decision
         BTB_Query -->|"Valid/Invalid"| Decision
@@ -241,8 +241,8 @@ sequenceDiagram
 flowchart LR
     subgraph PC_Address["PC 地址结构"]
         PC_Bits["PC (32位)"]
-        PC_Index["PC[11:2]<br/>10位索引"]
-        PC_Tag["PC[31:12]<br/>20位标签<br/>(未使用)"]
+        PC_Index["PC bits 11-2<br/>10位索引"]
+        PC_Tag["PC bits 31-12<br/>20位标签<br/>(未使用)"]
     end
 
     PC_Bits --> PC_Index

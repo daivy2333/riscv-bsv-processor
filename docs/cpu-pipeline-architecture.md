@@ -116,26 +116,26 @@ classDiagram
 ```mermaid
 flowchart LR
     subgraph Input["指令输入"]
-        Instr[32位指令]
+        Instr["32位指令"]
     end
 
     subgraph Decoder["解码器处理"]
-        Opcode[Opcode 提取<br/>instr[6:0]]
-        Funct3[Funct3 提取<br/>instr[14:12]]
-        Funct7[Funct7 提取<br/>instr[31:25]]
-        Rs1[Rs1 提取<br/>instr[19:15]]
-        Rs2[Rs2 提取<br/>instr[24:20]]
-        Rd[Rd 提取<br/>instr[11:7]]
-        Imm[立即数提取<br/>I/S/B/U/J型]
+        Opcode["Opcode 提取<br/>bits 6-0"]
+        Funct3["Funct3 提取<br/>bits 14-12"]
+        Funct7["Funct7 提取<br/>bits 31-25"]
+        Rs1["Rs1 提取<br/>bits 19-15"]
+        Rs2["Rs2 提取<br/>bits 24-20"]
+        Rd["Rd 提取<br/>bits 11-7"]
+        Imm["立即数提取<br/>I/S/B/U/J型"]
     end
 
     subgraph Output["DecodedInstr 输出"]
-        ALUOp[ALUOp<br/>ADD/SUB/SLL...]
-        BranchCond[BranchCond<br/>EQ/NE/LT/GE...]
-        MemOp[MemOp<br/>NONE/READ/WRITE]
-        UseRs1[use_rs1<br/>是否使用rs1]
-        UseRs2[use_rs2<br/>是否使用rs2]
-        WriteReg[write_reg<br/>是否写寄存器]
+        ALUOp["ALUOp<br/>ADD/SUB/SLL..."]
+        BranchCond["BranchCond<br/>EQ/NE/LT/GE..."]
+        MemOp["MemOp<br/>NONE/READ/WRITE"]
+        UseRs1["use_rs1<br/>是否使用rs1"]
+        UseRs2["use_rs2<br/>是否使用rs2"]
+        WriteReg["write_reg<br/>是否写寄存器"]
     end
 
     Instr --> Opcode

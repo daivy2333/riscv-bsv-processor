@@ -61,8 +61,8 @@ flowchart TB
         Base["基地址<br/>0x80000000"]
 
         subgraph IMemRange["指令内存区域"]
-            IMemStart["0x80000000<br/>IMem[0]"]
-            IMemEnd["0x80000FFF<br/>IMem[1023]"]
+            IMemStart["0x80000000<br/>IMem entry 0"]
+            IMemEnd["0x80000FFF<br/>IMem entry 1023"]
             IMemSize["4KB<br/>1024条指令"]
         end
 
@@ -70,7 +70,7 @@ flowchart TB
         IMemStart -->|"PC"| IMemSize
 
         subgraph DMemRange["数据内存区域"]
-            DMemStart["实际映射<br/>addr[10:2]索引"]
+            DMemStart["实际映射<br/>addr bits 10-2 索引"]
             DMemEnd["最大地址<br/>< 2048"]
             DMemSize["2KB<br/>512字"]
         end
@@ -93,8 +93,8 @@ flowchart TB
 flowchart LR
     subgraph IMemAccess["指令内存访问"]
         InstrAddr["指令地址<br/>32位 Addr"]
-        Index1["索引计算<br/>addr[11:2]"]
-        InstrWord["IMem[Index]<br/>32位指令"]
+        Index1["索引计算<br/>addr bits 11-2"]
+        InstrWord["IMem<br/>32位指令"]
     end
 
     InstrAddr --> Index1 --> InstrWord
@@ -107,8 +107,8 @@ flowchart LR
 
     subgraph DMemAccess["数据内存访问"]
         DataAddr["数据地址<br/>32位 Addr"]
-        Index2["索引计算<br/>addr[10:2]"]
-        DataWord["DMem[Index]<br/>32位数据"]
+        Index2["索引计算<br/>addr bits 10-2"]
+        DataWord["DMem<br/>32位数据"]
     end
 
     DataAddr --> Index2 --> DataWord
@@ -269,7 +269,7 @@ sequenceDiagram
     participant RegFile as RegFile
 
     TB->>Core: loadProgram(prog)
-    Core->>IMem: 加载指令到 imem[0..1023]
+    Core->>IMem: 加载指令到 imem (0..1023)
 
     Note over TB: 启动仿真
 
@@ -299,17 +299,17 @@ flowchart TB
 
     subgraph Vector["BSV 向量"]
         ProgVec["Vector#1024 Word<br/>prog = replicate(0)"]
-        Init["prog[0] = li x1, 10<br/>prog[1] = li x2, 20<br/>..."]
+        Init["prog(0) = li x1, 10<br/>prog(1) = li x2, 20<br/>..."]
     end
 
     subgraph Loading["加载过程"]
         Method["loadProgram(prog)"]
-        Loop["for i = 0..1023<br/>imem[i] <= prog[i]"]
+        Loop["for i = 0..1023<br/>imem(i) <= prog(i)"]
         Flag["programLoaded <= True"]
     end
 
     subgraph Execution["执行"]
-        Fetch["IF 阶段取指<br/>imem[PC[11:2]]"]
+        Fetch["IF 阶段取指<br/>imem indexed by<br/>PC bits 11-2"]
         Run["流水线执行<br/>直至仿真结束"]
     end
 
