@@ -59,19 +59,35 @@ IF → ID → EX → MEM → WB
 - [x] 动态分支预测 (BHT + BTB)
 - [x] 基本RISC-V指令 (ADD, ADDI, LUI, LW, SW, BEQ, BNE, JAL, JALR)
 - [x] 哈佛架构 (分离IMem/DMem)
+- [x] DecodedInstr use_rs1/use_rs2 字段（用于冒险检测）
+- [x] Load-Use 冒险检测框架（ID阶段检测，气泡插入机制）
+
+### 待验证功能
+
+1. **Load-Use冒险修复验证**: 代码已实现，需要运行测试验证 x3=10, x4=20
+2. **多指令依赖测试**: 验证 Load 后多条指令依赖的情况
+3. **分支与Load-Use组合测试**: 验证 lw 后分支指令判断 Load 结果的场景
+
+### Core 重构待完成项（详见 docs/superpowers/specs/2026-04-12-load-use-hazard-fix-design.md）
+
+1. **HazardUnit 未被调用** - 已实例化但检测逻辑是内联的，未使用接口方法
+2. **检测时机偏差** - 当前检查 id2ex（EX阶段），设计要求检查 ex2mem（MEM阶段）
+3. **ID_EX_Packet 缺少 is_load** - 用 mem_op 判断，建议添加字段保持一致
+4. **多指令依赖测试用例** - Task 4 的 sub 指令测试未添加
 
 ### 已知问题
 
-1. **Load-Use冒险**: lw紧跟sw/其他指令时可能有结构冒险，MEM阶段同时进行load/store和lw读取可能冲突
-2. **ELF加载工具**: `tools/elf_to_bsv.py` 还在开发中，有解析问题需要修复
-3. **内存边界**: dmem是512字(2KB)，lw使用addr[10:2]索引，需要确保地址 < 2048
+1. **ELF加载工具**: `tools/elf_to_bsv.py` 还在开发中，有解析问题需要修复
+2. **内存边界**: dmem是512字(2KB)，lw使用addr[10:2]索引，需要确保地址 < 2048
 
 ### 待完成功能
 
-1. **完善Load-Use停顿机制**: 需要在MEM阶段正确检测并处理Load-Use冒险
+1. **Load-Use冒险最终验证**: 运行仿真确认实现正确
 2. **ELF程序加载**: 修复`tools/elf_to_bsv.py`实现从ELF文件加载程序
 3. **更多RISC-V指令**: SUB, SLL, SRL, SRA, SLT, SLTU, AND, OR, XOR等
 4. **ecall处理**: 实现系统调用支持
+5. **异常和中断处理**: 实现基本的异常处理机制
+6. **性能计数器**: 添加 CPI、分支预测准确率等性能统计
 
 ### 测试程序格式
 
@@ -108,8 +124,25 @@ endfunction
 
 ## 后续方向
 
-1. 完善Load-Use停顿机制
-2. 修复并测试ELF加载功能
-3. 添加更多RISC-V指令支持
-4. 实现异常和中断处理
-5. 添加性能计数器
+### 目标：支持嵌入式操作系统（FreeRTOS/uClinux）
+
+详细路线图见：`docs/roadmap-embedded-os.md`
+
+### 短期任务（阶段 1，1-2 周）
+1. **验证 Load-Use 冒险修复** - 运行仿真确认实现正确
+2. **添加 LB/LH/LBU/LHU 指令** - 字节/半字加载
+3. **添加 SB/SH 指令** - 字节/半字存储
+4. **扩展内存到 64KB**
+5. **运行 RISC-V 官方测试**
+
+### 中期任务（阶段 2-4，2-3 月）
+- 特权级架构 (M/S/U mode)
+- CSR 寄存器组
+- 异常/中断陷入机制
+
+### 长期目标（阶段 5-8，3-4 月）
+- CLINT 定时器
+- PLIC 中断控制器
+- UART 控制台
+- 内存扩展 (16MB)
+- 首次启动 FreeRTOS/uClinux

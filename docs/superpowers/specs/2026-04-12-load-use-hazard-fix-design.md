@@ -227,14 +227,45 @@ end:
 
 ## 实现要点
 
-1. **修改 Types.bsv**：在 DecodedInstr 结构中添加 `use_rs1` 和 `use_rs2` 字段
-2. **修改 Decoder.bsv**：解码时设置 `use_rs1` 和 `use_rs2`
+1. **修改 Types.bsv**：在 DecodedInstr 结构中添加 `use_rs1` 和 `use_rs2` 字段 ✓ 已完成
+2. **修改 Decoder.bsv**：解码时设置 `use_rs1` 和 `use_rs2` ✓ 已完成
 3. **修改 Core.bsv**：
-   - 实例化 HazardUnit
-   - ID 阶段检测 Load-Use 冒险
-   - 实现停顿和气泡插入逻辑
-   - 确保 WB→EX 前递正确传递 Load 数据
-4. **修改 TestBench.bsv**：添加 Load-Use 测试用例
+   - 实例化 HazardUnit ✓ 已完成（但未调用）
+   - ID 阶段检测 Load-Use 冒险 ⚠️ 部分完成（检测对象有偏差）
+   - 实现停顿和气泡插入逻辑 ✓ 已完成
+   - 确保 WB→EX 前递正确传递 Load 数据 ✓ 已完成
+4. **修改 TestBench.bsv**：添加 Load-Use 测试用例 ✓ 已完成
+
+## 当前实现状态（2026-04-12 更新）
+
+### 已完成
+- Decoder.bsv: use_rs1/use_rs2 字段已添加
+- Core.bsv: 基本框架已实现（stall_load_use, bubble_pending, nopPacket）
+- Core.bsv: IF/ID 阶段停顿逻辑
+- Core.bsv: 气泡插入规则
+- Core.bsv: 前递逻辑修改（MEM→EX 不前递 Load，WB→EX 前递 Load 数据）
+- TestBench.bsv: 测试程序已更新
+
+### 待完成
+1. **HazardUnit 未被调用**
+   - 当前状态：已实例化 `HazardUnit hazardUnit <- mkHazardUnit;`
+   - 问题：`decodeStage` 规则中直接内联了检测逻辑，未使用 hazardUnit 接口
+   - 建议：重构为调用 `hazardUnit.detectLoadUseHazard()` 方法
+
+2. **检测时机偏差**
+   - 当前实现：检查 `id2ex.first`（EX 阀门的 Load 指令）
+   - 设计要求：检查 `ex2mem.first`（MEM 阀门的 Load 指令）
+   - 影响：时序可能不完全正确，需要验证
+
+3. **ID_EX_Packet 缺少 is_load 字段**
+   - 当前使用 `id2ex.first.mem_op == MEM_READ` 判断 Load
+   - 建议：在 ID_EX_Packet 添加 `is_load` 字段，与 EX_MEM_Packet 保持一致
+
+4. **仿真验证未完成**
+   - 需要运行 `./obj_dir/VmkTestBench` 验证 x3=10, x4=20
+
+5. **多指令依赖测试未添加**
+   - 计划文档 Task 4 中的 sub 指令测试用例未实现
 
 ## 影响范围
 

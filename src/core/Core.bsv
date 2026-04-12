@@ -7,7 +7,9 @@ import RegFile::*;
 import Decoder::*;
 import BHT::*;
 import BTB::*;
+import HazardUnit::*;
 import FIFO::*;
+import FIFOF::*;
 import Vector::*;
 
 interface Core;
@@ -24,16 +26,17 @@ module mkCore#(String firmwareFile)(Core);
     RegFile regFile <- mkRegFile;
     BHT bht <- mkBHT;
     BTB btb <- mkBTB;
+    HazardUnit hazardUnit <- mkHazardUnit;
 
     // 流水线寄存器
-    FIFO#(IF_ID_Packet) if2id <- mkFIFO;
-    FIFO#(ID_EX_Packet) id2ex <- mkFIFO;
-    FIFO#(EX_MEM_Packet) ex2mem <- mkFIFO;
-    FIFO#(MEM_WB_Packet) mem2wb <- mkFIFO;
+    FIFOF#(IF_ID_Packet) if2id <- mkFIFOF;
+    FIFOF#(ID_EX_Packet) id2ex <- mkFIFOF;
+    FIFOF#(EX_MEM_Packet) ex2mem <- mkFIFOF;
+    FIFOF#(MEM_WB_Packet) mem2wb <- mkFIFOF;
 
     // Load-Use停顿控制
-    Reg#(Bool) stall <- mkReg(False);
-    Reg#(Bool) needBubble <- mkReg(False);
+    Reg#(Bool) stall_load_use <- mkReg(False);    // Load-Use 停顿标志
+    Reg#(Bool) bubble_pending <- mkReg(False);    // 待插入气泡标志
 
     // PC和状态
     Reg#(Addr) pcReg <- mkReg(32'h80000000);
@@ -62,7 +65,7 @@ module mkCore#(String firmwareFile)(Core);
     // IF阶段
     // ============================================================
 
-    rule fetchStage (programLoaded && state == RUNNING && !stall);
+    rule fetchStage (programLoaded && state == RUNNING && !stall_load_use);
         Addr fetchPC = pcReg;
         Bool take_prediction = False;
         Addr prediction_target = 0;
@@ -94,57 +97,77 @@ module mkCore#(String firmwareFile)(Core);
     // ID阶段
     // ============================================================
 
-    rule decodeStage (!stall && !needBubble);
+    rule decodeStage (!stall_load_use && !bubble_pending);
         IF_ID_Packet pkt = if2id.first;
-        if2id.deq;
-
         DecodedInstr dec = decoder.decode(pkt.instruction);
 
-        Word rs1 = regFile.read1(dec.rs1);
-        Word rs2 = regFile.read2(dec.rs2);
+        // 检测 Load-Use 冒险
+        // 条件1：EX 阶段有 Load 指令，且 ID 阶段指令使用 Load 的目标寄存器
+        // 条件2：MEM 阶段有 Load 指令，且 ID 阶段指令使用 Load 的目标寄存器
+        Bool load_use_hazard = False;
 
-        id2ex.enq(ID_EX_Packet {
-            pc: pkt.pc,
-            instruction: pkt.instruction,
-            rs1_val: rs1, rs2_val: rs2,
-            imm: dec.imm,
-            rs1: dec.rs1, rs2: dec.rs2, rd: dec.rd,
-            alu_op: dec.alu_op,
-            branch_cond: dec.branch_cond,
-            mem_op: dec.mem_op,
-            is_branch: dec.is_branch,
-            is_jump: dec.is_jump,
-            write_reg: dec.write_reg,
-            use_imm: dec.use_imm
-        });
+        // 检查 EX 阶段 (id2ex)
+        if (id2ex.notEmpty && id2ex.first.mem_op == MEM_READ && id2ex.first.rd != 0) begin
+            if (dec.use_rs1 && dec.rs1 == id2ex.first.rd)
+                load_use_hazard = True;
+            if (dec.use_rs2 && dec.rs2 == id2ex.first.rd)
+                load_use_hazard = True;
+        end
+
+        // 检查 MEM 阶段 (ex2mem)
+        if (ex2mem.notEmpty && ex2mem.first.is_load && ex2mem.first.rd != 0 && !load_use_hazard) begin
+            if (dec.use_rs1 && dec.rs1 == ex2mem.first.rd)
+                load_use_hazard = True;
+            if (dec.use_rs2 && dec.rs2 == ex2mem.first.rd)
+                load_use_hazard = True;
+        end
+
+        if (load_use_hazard) begin
+            // 停顿 ID 阶段，不发送包到 EX
+            stall_load_use <= True;
+            bubble_pending <= True;
+            // 注意：不 deq if2id，保留指令供下个周期使用
+        end else begin
+            // 正常解码并发送到 EX
+            if2id.deq;
+
+            Word rs1_val = regFile.read1(dec.rs1);
+            Word rs2_val = regFile.read2(dec.rs2);
+
+            id2ex.enq(ID_EX_Packet {
+                pc: pkt.pc,
+                instruction: pkt.instruction,
+                rs1_val: rs1_val, rs2_val: rs2_val,
+                imm: dec.imm,
+                rs1: dec.rs1, rs2: dec.rs2, rd: dec.rd,
+                alu_op: dec.alu_op,
+                branch_cond: dec.branch_cond,
+                mem_op: dec.mem_op,
+                is_branch: dec.is_branch,
+                is_jump: dec.is_jump,
+                write_reg: dec.write_reg,
+                use_imm: dec.use_imm
+            });
+        end
     endrule
 
-    // 插入bubble到id2ex
-    rule insertBubble (needBubble && !stall);
-        id2ex.deq;  // 清空当前包
-        // 插入NOP
-        id2ex.enq(ID_EX_Packet {
-            pc: 0,
-            instruction: 0,
-            rs1_val: 0, rs2_val: 0,
-            imm: 0,
-            rs1: 0, rs2: 0, rd: 0,
-            alu_op: ALU_ADD,
-            branch_cond: BR_NONE,
-            mem_op: MEM_NONE,
-            is_branch: False,
-            is_jump: False,
-            write_reg: False,
-            use_imm: False
-        });
-        needBubble <= False;
+    // 气泡插入规则
+    rule insertBubble (bubble_pending && !stall_load_use);
+        // 插入 NOP 到 EX 阶段
+        id2ex.enq(nopPacket());
+        bubble_pending <= False;
+    endrule
+
+    // 清除 Load-Use 停顿
+    rule clearLoadUseStall (stall_load_use);
+        stall_load_use <= False;
     endrule
 
     // ============================================================
-    // EX阶段 + Load-Use检测
+    // EX阶段
     // ============================================================
 
-    rule executeStage (!stall);
+    rule executeStage (!stall_load_use);
         ID_EX_Packet pkt = id2ex.first;
         id2ex.deq;
 
@@ -158,13 +181,14 @@ module mkCore#(String firmwareFile)(Core);
         if (ex_forward_valid && ex_forward_rd == pkt.rs2 && pkt.rs2 != 0)
             op2 = ex_forward;
 
-        // MEM→EX前递
-        if (mem_forward_valid && mem_forward_rd == pkt.rs1 && pkt.rs1 != 0)
+        // MEM→EX 前递（注意：MEM 阶段的 Load 数据还未可用，不前递 Load 的 mem_data）
+        if (mem_forward_valid && mem_forward_rd == pkt.rs1 && pkt.rs1 != 0 && !ex2mem.first.is_load)
             op1 = mem_forward;
-        if (mem_forward_valid && mem_forward_rd == pkt.rs2 && pkt.rs2 != 0)
+        if (mem_forward_valid && mem_forward_rd == pkt.rs2 && pkt.rs2 != 0 && !ex2mem.first.is_load)
             op2 = mem_forward;
 
         // WB→EX前递
+        // 注意：wb_forward 在 WB 阶段结束时更新，下一周期可用
         if (wb_forward_valid && wb_forward_rd == pkt.rs1 && pkt.rs1 != 0)
             op1 = wb_forward;
         if (wb_forward_valid && wb_forward_rd == pkt.rs2 && pkt.rs2 != 0)
@@ -239,7 +263,7 @@ module mkCore#(String firmwareFile)(Core);
     endrule
 
     // ============================================================
-    // MEM阶段 + Load-Use检测
+    // MEM阶段
     // ============================================================
 
     rule memoryStage;
@@ -254,14 +278,6 @@ module mkCore#(String firmwareFile)(Core);
             dmem[pkt.alu_result[10:2]] <= pkt.rs2_val;
         end
 
-        // Load-Use冒险检测：Load结果在MEM阶段可用
-        // 如果下一条指令在ID阶段且需要这个Load的结果，需要停顿
-        if (pkt.is_load && pkt.rd != 0) begin
-            if (id2ex.first.rs1 == pkt.rd || id2ex.first.rs2 == pkt.rd) begin
-                stall <= True;
-            end
-        end
-
         mem2wb.enq(MEM_WB_Packet {
             pc: pkt.pc,
             mem_data: mem_data,
@@ -271,14 +287,10 @@ module mkCore#(String firmwareFile)(Core);
             is_load: pkt.is_load
         });
 
+        // MEM 前递设置（Load 不在 MEM 前递，数据需要等 WB 阶段）
         mem_forward <= pkt.alu_result;
         mem_forward_rd <= pkt.rd;
-        mem_forward_valid <= pkt.write_reg;
-    endrule
-
-    // 清除stall
-    rule clearStall (stall);
-        stall <= False;
+        mem_forward_valid <= pkt.write_reg && !pkt.is_load;
     endrule
 
     // ============================================================
@@ -295,6 +307,7 @@ module mkCore#(String firmwareFile)(Core);
             regFile.write(pkt.rd, wb_data);
         end
 
+        // WB 前递设置（Load 数据在此阶段可用）
         wb_forward <= wb_data;
         wb_forward_rd <= pkt.rd;
         wb_forward_valid <= pkt.write_reg;
@@ -329,6 +342,24 @@ function Bool signedGE(Word a, Word b);
     Int#(32) sa = unpack(a);
     Int#(32) sb = unpack(b);
     return (sa >= sb);
+endfunction
+
+// NOP 包辅助函数
+function ID_EX_Packet nopPacket();
+    return ID_EX_Packet {
+        pc: 0,
+        instruction: 0,
+        rs1_val: 0, rs2_val: 0,
+        imm: 0,
+        rs1: 0, rs2: 0, rd: 0,
+        alu_op: ALU_ADD,
+        branch_cond: BR_NONE,
+        mem_op: MEM_NONE,
+        is_branch: False,
+        is_jump: False,
+        write_reg: False,
+        use_imm: False
+    };
 endfunction
 
 endpackage

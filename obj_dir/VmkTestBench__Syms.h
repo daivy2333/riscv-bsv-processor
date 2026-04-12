@@ -23,6 +23,16 @@ class VmkTestBench__Syms : public VerilatedSyms {
     // SUBCELL STATE
     VmkTestBench*                  TOPp;
     
+    // SCOPE NAMES
+    VerilatedScope __Vscope_mkTestBench__core_ex2mem;
+    VerilatedScope __Vscope_mkTestBench__core_ex2mem__error_checks;
+    VerilatedScope __Vscope_mkTestBench__core_id2ex;
+    VerilatedScope __Vscope_mkTestBench__core_id2ex__error_checks;
+    VerilatedScope __Vscope_mkTestBench__core_if2id;
+    VerilatedScope __Vscope_mkTestBench__core_if2id__error_checks;
+    VerilatedScope __Vscope_mkTestBench__core_mem2wb;
+    VerilatedScope __Vscope_mkTestBench__core_mem2wb__error_checks;
+    
     // CREATORS
     VmkTestBench__Syms(VmkTestBench* topp, const char* namep);
     ~VmkTestBench__Syms() {}
