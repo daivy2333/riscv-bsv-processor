@@ -1,0 +1,19 @@
+# BSV编译产物
+build/*.bo
+build/*.ba
+build/*.cxx
+build/*.h
+build/*.o
+build/*.v
+
+# Verilator编译产物
+obj_dir/
+
+# ELF和测试产物
+firmware/*.elf
+firmware/*.mem
+firmware/*.dump
+
+# 其他
+a.out
+a.out.so

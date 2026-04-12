@@ -1,0 +1,84 @@
+=== Generated schedule for mkTestBench ===
+
+Method schedule
+---------------
+Method: done
+Ready signal: True
+Conflict-free: done
+ 
+Rule schedule
+-------------
+Rule: core_fetchStage
+Predicate: core_if2id.i_notFull &&
+	   core_programLoaded && (core_state == 2'd0) && (! core_stall)
+Blocking rules: (none)
+ 
+Rule: core_decodeStage
+Predicate: core_if2id.i_notEmpty && core_id2ex.i_notFull &&
+	   (! core_stall) && (! core_needBubble)
+Blocking rules: (none)
+ 
+Rule: core_insertBubble
+Predicate: core_id2ex.i_notFull && core_id2ex.i_notEmpty &&
+	   core_needBubble && (! core_stall)
+Blocking rules: (none)
+ 
+Rule: core_executeStage
+Predicate: core_id2ex.i_notEmpty && core_ex2mem.i_notFull && (! core_stall)
+Blocking rules: core_insertBubble
+ 
+Rule: core_memoryStage
+Predicate: core_ex2mem.i_notEmpty &&
+	   core_mem2wb.i_notFull &&
+	   ((! core_ex2mem.first[0]) || (core_ex2mem.first[11:7] == 5'd0) ||
+	    core_id2ex.i_notEmpty)
+Blocking rules: core_executeStage, core_insertBubble
+ 
+Rule: core_clearStall
+Predicate: core_stall
+Blocking rules: (none)
+ 
+Rule: core_writebackStage
+Predicate: core_mem2wb.i_notEmpty
+Blocking rules: (none)
+ 
+Rule: load
+Predicate: ! programLoaded
+Blocking rules: (none)
+ 
+Rule: countCycles
+Predicate: programLoaded && (! dumpDone)
+Blocking rules: (none)
+ 
+Rule: checkDone
+Predicate: programLoaded && (! programDone) && (! (core_pcReg < 32'h80000014))
+Blocking rules: (none)
+ 
+Rule: waitForWB
+Predicate: programDone && (! dumpDone)
+Blocking rules: (none)
+ 
+Rule: report
+Predicate: dumpDone
+Blocking rules: (none)
+ 
+Rule: finish
+Predicate: dumpDone
+Blocking rules: (none)
+ 
+Logical execution order: done,
+			 countCycles,
+			 checkDone,
+			 waitForWB,
+			 report,
+			 finish,
+			 core_fetchStage,
+			 load,
+			 core_decodeStage,
+			 core_insertBubble,
+			 core_executeStage,
+			 core_clearStall,
+			 core_memoryStage,
+			 core_writebackStage
+
+===========================================

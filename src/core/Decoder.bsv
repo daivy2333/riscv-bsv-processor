@@ -1,0 +1,167 @@
+// src/core/Decoder.bsv
+package Decoder;
+
+import Types::*;
+
+// 解码结果
+typedef struct {
+    ALUOp       alu_op;
+    BranchCond  branch_cond;
+    MemOp       mem_op;
+    Word        imm;
+    Bit#(5)     rs1;
+    Bit#(5)     rs2;
+    Bit#(5)     rd;
+    Bool        is_branch;
+    Bool        is_jump;
+    Bool        write_reg;
+    Bool        is_load;
+    Bool        use_imm;    // 是否使用立即数作为ALU第二个操作数
+} DecodedInstr deriving (Bits, Eq, FShow);
+
+interface Decoder;
+    method DecodedInstr decode(Word instruction);
+endinterface
+
+module mkDecoder(Decoder);
+    method DecodedInstr decode(Word instruction);
+        Bit#(7) opcode = getOpcode(instruction);
+        Bit#(3) funct3 = getFunct3(instruction);
+        Bit#(7) funct7 = getFunct7(instruction);
+        Bit#(5) rs1_addr = getRs1(instruction);
+        Bit#(5) rs2_addr = getRs2(instruction);
+        Bit#(5) rd_addr = getRd(instruction);
+
+        ALUOp alu_op = ALU_ADD;
+        BranchCond branch_cond = BR_NONE;
+        MemOp mem_op = MEM_NONE;
+        Word imm = 0;
+        Bool is_branch = False;
+        Bool is_jump = False;
+        Bool write_reg = False;
+        Bool is_load = False;
+        Bool use_imm = False;
+
+        case (opcode)
+            // R-Type
+            7'b0110011: begin
+                write_reg = True;
+                use_imm = False;
+                case (funct3)
+                    3'b000: alu_op = (funct7 == 7'b0100000) ? ALU_SUB : ALU_ADD;
+                    3'b001: alu_op = ALU_SLL;
+                    3'b010: alu_op = ALU_SLT;
+                    3'b011: alu_op = ALU_SLTU;
+                    3'b100: alu_op = ALU_XOR;
+                    3'b101: alu_op = (funct7 == 7'b0100000) ? ALU_SRA : ALU_SRL;
+                    3'b110: alu_op = ALU_OR;
+                    3'b111: alu_op = ALU_AND;
+                endcase
+            end
+
+            // I-Type (立即数操作)
+            7'b0010011: begin
+                write_reg = True;
+                use_imm = True;
+                imm = signExtendI(instruction);
+                case (funct3)
+                    3'b000: alu_op = ALU_ADD;   // ADDI
+                    3'b001: alu_op = ALU_SLL;
+                    3'b010: alu_op = ALU_SLT;
+                    3'b011: alu_op = ALU_SLTU;
+                    3'b100: alu_op = ALU_XOR;
+                    3'b101: alu_op = (funct7 == 7'b0100000) ? ALU_SRA : ALU_SRL;
+                    3'b110: alu_op = ALU_OR;
+                    3'b111: alu_op = ALU_AND;
+                endcase
+            end
+
+            // Load
+            7'b0000011: begin
+                write_reg = True;
+                is_load = True;
+                mem_op = MEM_READ;
+                use_imm = True;
+                imm = signExtendI(instruction);
+                alu_op = ALU_ADD;
+            end
+
+            // Store
+            7'b0100011: begin
+                mem_op = MEM_WRITE;
+                use_imm = True;
+                imm = signExtendS(instruction);
+                alu_op = ALU_ADD;
+            end
+
+            // Branch
+            7'b1100011: begin
+                is_branch = True;
+                use_imm = True;
+                imm = signExtendB(instruction);
+                case (funct3)
+                    3'b000: branch_cond = BR_EQ;
+                    3'b001: branch_cond = BR_NE;
+                    3'b100: branch_cond = BR_LT;
+                    3'b101: branch_cond = BR_GE;
+                    3'b110: branch_cond = BR_LTU;
+                    3'b111: branch_cond = BR_GEU;
+                endcase
+            end
+
+            // LUI
+            7'b0110111: begin
+                write_reg = True;
+                use_imm = True;
+                imm = getUImm(instruction);
+                alu_op = ALU_PASS;
+            end
+
+            // AUIPC
+            7'b0010111: begin
+                write_reg = True;
+                use_imm = True;
+                imm = getUImm(instruction);
+                alu_op = ALU_PC;
+            end
+
+            // JAL
+            7'b1101111: begin
+                write_reg = True;
+                is_jump = True;
+                use_imm = True;
+                imm = signExtendJ(instruction);
+            end
+
+            // JALR
+            7'b1100111: begin
+                write_reg = True;
+                is_jump = True;
+                use_imm = True;
+                imm = signExtendI(instruction);
+                alu_op = ALU_ADD;
+            end
+
+            default: begin
+                // 未实现指令
+            end
+        endcase
+
+        return DecodedInstr {
+            alu_op: alu_op,
+            branch_cond: branch_cond,
+            mem_op: mem_op,
+            imm: imm,
+            rs1: rs1_addr,
+            rs2: rs2_addr,
+            rd: rd_addr,
+            is_branch: is_branch,
+            is_jump: is_jump,
+            write_reg: write_reg,
+            is_load: is_load,
+            use_imm: use_imm
+        };
+    endmethod
+endmodule
+
+endpackage

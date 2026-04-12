@@ -6,6 +6,7 @@ interface RegFile;
     method Action write(Bit#(5) addr, Word data);
     method Word read1(Bit#(5) addr);
     method Word read2(Bit#(5) addr);
+    method Word readReg(Bit#(5) addr);  // Debug: read any register
 endinterface
 
 module mkRegFile(RegFile);
@@ -23,6 +24,10 @@ module mkRegFile(RegFile);
     endmethod
     
     method Word read2(Bit#(5) addr);
+        return (addr == 0) ? 0 : registers[addr];
+    endmethod
+
+    method Word readReg(Bit#(5) addr);
         return (addr == 0) ? 0 : registers[addr];
     endmethod
 endmodule

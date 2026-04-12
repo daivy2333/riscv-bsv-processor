@@ -1,59 +1,68 @@
 // tests/c/test_bench.cpp
+// Verilator仿真测试驱动
+
 #include "VmkTestBench.h"
 #include "verilated.h"
 #include <iostream>
-#include <iomanip>
+#include <cstdint>
 
 int main(int argc, char** argv) {
     Verilated::commandArgs(argc, argv);
+
+    // 创建仿真实例
     VmkTestBench* top = new VmkTestBench;
-    
-    std::cout << "=== Starting RISC-V Processor Simulation ===" << std::endl;
-    
-    // 初始状态
+
+    std::cout << "\n========================================" << std::endl;
+    std::cout << "  RISC-V 五级流水线处理器仿真" << std::endl;
+    std::cout << "========================================\n" << std::endl;
+
+    // 初始化时钟和复位
     top->CLK = 0;
-    top->RST_N = 0;  // 激活复位
-    
-    std::cout << "Applying reset..." << std::endl;
-    // 应用复位
-    for (int i = 0; i < 5; i++) {
+    top->RST_N = 0;
+
+    std::cout << "Phase 1: Reset..." << std::endl;
+
+    // 复位周期
+    for (int i = 0; i < 10; i++) {
         top->CLK = !top->CLK;
         top->eval();
     }
-    
+
     // 释放复位
     top->RST_N = 1;
-    std::cout << "Reset released. Starting simulation..." << std::endl;
-    
-    // 运行仿真
-    for (int cycle = 0; cycle < 200; cycle++) {
+    std::cout << "Phase 2: Running simulation...\n" << std::endl;
+
+    // 仿真主循环
+    uint64_t max_cycles = 500;
+    uint64_t cycle = 0;
+    bool done = false;
+
+    while (cycle < max_cycles && !done) {
         // 时钟上升沿
         top->CLK = 1;
         top->eval();
-        
+
         // 时钟下降沿
         top->CLK = 0;
         top->eval();
-        
-        // 每10个周期输出一次状态
-        if (cycle % 10 == 0) {
-            std::cout << "Cycle " << cycle << ": CLK=" << (int)top->CLK 
-                      << ", RST_N=" << (int)top->RST_N 
-                      << ", done=" << (int)top->done << std::endl;
-        }
-        
-        // 检查仿真是否完成
+
+        cycle++;
+
+        // 检查结束条件
         if (top->done) {
-            std::cout << "TestBench reported simulation done at cycle " << cycle << std::endl;
-            break;
-        }
-        
-        if (cycle == 199) {
-            std::cout << "Reached maximum cycle count (200)" << std::endl;
+            std::cout << "\nTestBench signaled done at cycle " << cycle << std::endl;
+            done = true;
         }
     }
-    
+
+    std::cout << "\n========================================" << std::endl;
+    std::cout << "  Simulation Completed" << std::endl;
+    std::cout << "========================================\n" << std::endl;
+
+    std::cout << "Final state:" << std::endl;
+    std::cout << "  Total cycles: " << cycle << std::endl;
+    std::cout << "  Done signal: " << (done ? "asserted" : "not asserted") << std::endl;
+
     delete top;
-    std::cout << "=== Simulation Completed ===" << std::endl;
     return 0;
 }
