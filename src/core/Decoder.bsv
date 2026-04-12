@@ -17,6 +17,8 @@ typedef struct {
     Bool        write_reg;
     Bool        is_load;
     Bool        use_imm;    // 是否使用立即数作为ALU第二个操作数
+    Bool        use_rs1;    // 新增：是否使用 rs1
+    Bool        use_rs2;    // 新增：是否使用 rs2
 } DecodedInstr deriving (Bits, Eq, FShow);
 
 interface Decoder;
@@ -41,12 +43,16 @@ module mkDecoder(Decoder);
         Bool write_reg = False;
         Bool is_load = False;
         Bool use_imm = False;
+        Bool use_rs1 = False;
+        Bool use_rs2 = False;
 
         case (opcode)
             // R-Type
             7'b0110011: begin
                 write_reg = True;
                 use_imm = False;
+                use_rs1 = True;
+                use_rs2 = True;
                 case (funct3)
                     3'b000: alu_op = (funct7 == 7'b0100000) ? ALU_SUB : ALU_ADD;
                     3'b001: alu_op = ALU_SLL;
@@ -63,6 +69,8 @@ module mkDecoder(Decoder);
             7'b0010011: begin
                 write_reg = True;
                 use_imm = True;
+                use_rs1 = True;
+                use_rs2 = False;
                 imm = signExtendI(instruction);
                 case (funct3)
                     3'b000: alu_op = ALU_ADD;   // ADDI
@@ -82,6 +90,8 @@ module mkDecoder(Decoder);
                 is_load = True;
                 mem_op = MEM_READ;
                 use_imm = True;
+                use_rs1 = True;
+                use_rs2 = False;
                 imm = signExtendI(instruction);
                 alu_op = ALU_ADD;
             end
@@ -90,6 +100,8 @@ module mkDecoder(Decoder);
             7'b0100011: begin
                 mem_op = MEM_WRITE;
                 use_imm = True;
+                use_rs1 = True;
+                use_rs2 = True;
                 imm = signExtendS(instruction);
                 alu_op = ALU_ADD;
             end
@@ -98,6 +110,8 @@ module mkDecoder(Decoder);
             7'b1100011: begin
                 is_branch = True;
                 use_imm = True;
+                use_rs1 = True;
+                use_rs2 = True;
                 imm = signExtendB(instruction);
                 case (funct3)
                     3'b000: branch_cond = BR_EQ;
@@ -113,6 +127,8 @@ module mkDecoder(Decoder);
             7'b0110111: begin
                 write_reg = True;
                 use_imm = True;
+                use_rs1 = False;
+                use_rs2 = False;
                 imm = getUImm(instruction);
                 alu_op = ALU_PASS;
             end
@@ -121,6 +137,8 @@ module mkDecoder(Decoder);
             7'b0010111: begin
                 write_reg = True;
                 use_imm = True;
+                use_rs1 = False;
+                use_rs2 = False;
                 imm = getUImm(instruction);
                 alu_op = ALU_PC;
             end
@@ -130,6 +148,8 @@ module mkDecoder(Decoder);
                 write_reg = True;
                 is_jump = True;
                 use_imm = True;
+                use_rs1 = False;
+                use_rs2 = False;
                 imm = signExtendJ(instruction);
             end
 
@@ -138,6 +158,8 @@ module mkDecoder(Decoder);
                 write_reg = True;
                 is_jump = True;
                 use_imm = True;
+                use_rs1 = True;
+                use_rs2 = False;
                 imm = signExtendI(instruction);
                 alu_op = ALU_ADD;
             end
@@ -159,7 +181,9 @@ module mkDecoder(Decoder);
             is_jump: is_jump,
             write_reg: write_reg,
             is_load: is_load,
-            use_imm: use_imm
+            use_imm: use_imm,
+            use_rs1: use_rs1,
+            use_rs2: use_rs2
         };
     endmethod
 endmodule
