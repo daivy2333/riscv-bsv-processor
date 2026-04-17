@@ -19,6 +19,8 @@ typedef struct {
     Bool        use_imm;    // 是否使用立即数作为ALU第二个操作数
     Bool        use_rs1;    // 新增：是否使用 rs1
     Bool        use_rs2;    // 新增：是否使用 rs2
+    MemWidth    mem_width;      // 内存访问宽度
+    Bool        mem_unsigned;   // 是否无符号扩展
 } DecodedInstr deriving (Bits, Eq, FShow);
 
 interface Decoder;
@@ -45,6 +47,8 @@ module mkDecoder(Decoder);
         Bool use_imm = False;
         Bool use_rs1 = False;
         Bool use_rs2 = False;
+        MemWidth mem_width = MEM_WORD;     // 新增：默认值
+        Bool mem_unsigned = False;         // 新增：默认值
 
         case (opcode)
             // R-Type
@@ -94,6 +98,34 @@ module mkDecoder(Decoder);
                 use_rs2 = False;
                 imm = signExtendI(instruction);
                 alu_op = ALU_ADD;
+
+                // 根据 funct3 区分不同宽度的 Load
+                case (funct3)
+                    3'b000: begin  // LB - 有符号字节
+                        mem_width = MEM_BYTE;
+                        mem_unsigned = False;
+                    end
+                    3'b001: begin  // LH - 有符号半字
+                        mem_width = MEM_HALF;
+                        mem_unsigned = False;
+                    end
+                    3'b010: begin  // LW - 字
+                        mem_width = MEM_WORD;
+                        mem_unsigned = False;
+                    end
+                    3'b100: begin  // LBU - 无符号字节
+                        mem_width = MEM_BYTE;
+                        mem_unsigned = True;
+                    end
+                    3'b101: begin  // LHU - 无符号半字
+                        mem_width = MEM_HALF;
+                        mem_unsigned = True;
+                    end
+                    default: begin  // 未定义 funct3
+                        mem_width = MEM_WORD;
+                        mem_unsigned = False;
+                    end
+                endcase
             end
 
             // Store
@@ -104,6 +136,15 @@ module mkDecoder(Decoder);
                 use_rs2 = True;
                 imm = signExtendS(instruction);
                 alu_op = ALU_ADD;
+
+                // 根据 funct3 区分不同宽度的 Store
+                case (funct3)
+                    3'b000: mem_width = MEM_BYTE;   // SB
+                    3'b001: mem_width = MEM_HALF;   // SH
+                    3'b010: mem_width = MEM_WORD;   // SW
+                    default: mem_width = MEM_WORD;  // 未定义 funct3
+                endcase
+                // mem_unsigned 对 Store 无意义，保持默认 False
             end
 
             // Branch
@@ -183,7 +224,9 @@ module mkDecoder(Decoder);
             is_load: is_load,
             use_imm: use_imm,
             use_rs1: use_rs1,
-            use_rs2: use_rs2
+            use_rs2: use_rs2,
+            mem_width: mem_width,       // 新增
+            mem_unsigned: mem_unsigned  // 新增
         };
     endmethod
 endmodule
