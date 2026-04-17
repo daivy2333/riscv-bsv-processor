@@ -131,6 +131,8 @@ typedef struct {
     Bool        is_jump;        // 是否是跳转指令(JAL/JALR)
     Bool        write_reg;      // 是否写寄存器
     Bool        use_imm;        // 是否使用立即数作为ALU第二个操作数
+    MemWidth    mem_width;      // 内存访问宽度
+    Bool        mem_unsigned;   // 是否无符号扩展(LBU/LHU)
 } ID_EX_Packet deriving (Bits, Eq, FShow);
 
 // EX → MEM 阶段数据包
