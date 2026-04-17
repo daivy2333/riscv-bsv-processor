@@ -57,9 +57,9 @@ module mkCore#(String firmwareFile)(Core);
     Reg#(Bit#(5)) wb_forward_rd <- mkReg(0);
     Reg#(Bool) wb_forward_valid <- mkReg(False);
 
-    // 内存
-    Vector#(1024, Reg#(Word)) imem <- replicateM(mkReg(0));
-    Vector#(512, Reg#(Word)) dmem <- replicateM(mkReg(0));
+    // 内存（保持原配置避免编译问题）
+    Vector#(1024, Reg#(Word)) imem <- replicateM(mkReg(0));   // 4KB, 2^10 entries
+    Vector#(512, Reg#(Word)) dmem <- replicateM(mkReg(0));    // 2KB, 2^9 entries
 
     // ============================================================
     // IF阶段
@@ -79,7 +79,7 @@ module mkCore#(String firmwareFile)(Core);
             fetchPC = target;
         end
 
-        Bit#(10) idx = fetchPC[11:2];
+        Bit#(10) idx = fetchPC[11:2];  // 10 位索引
         Word instr = imem[idx];
 
         if2id.enq(IF_ID_Packet {
@@ -146,7 +146,9 @@ module mkCore#(String firmwareFile)(Core);
                 is_branch: dec.is_branch,
                 is_jump: dec.is_jump,
                 write_reg: dec.write_reg,
-                use_imm: dec.use_imm
+                use_imm: dec.use_imm,
+                mem_width: dec.mem_width,
+                mem_unsigned: dec.mem_unsigned
             });
         end
     endrule
@@ -253,7 +255,9 @@ module mkCore#(String firmwareFile)(Core);
             branch_taken: branch_taken,
             predicted_taken: False,
             write_reg: pkt.write_reg,
-            is_load: is_load
+            is_load: is_load,
+            mem_width: pkt.mem_width,
+            mem_unsigned: pkt.mem_unsigned
         });
 
         // 前递设置
@@ -272,10 +276,75 @@ module mkCore#(String firmwareFile)(Core);
 
         Word mem_data = 0;
 
+        // 对齐检查（阶段1仅打印警告）
+        if (pkt.mem_op != MEM_NONE && !checkAlignment(pkt.alu_result, pkt.mem_width)) begin
+            $display("WARNING: Misaligned access at PC=%h, addr=%h, width=%s",
+                     pkt.pc, pkt.alu_result, pkt.mem_width);
+        end
+
+        // 内存读取
         if (pkt.mem_op == MEM_READ) begin
-            mem_data = dmem[pkt.alu_result[10:2]];
-        end else if (pkt.mem_op == MEM_WRITE) begin
-            dmem[pkt.alu_result[10:2]] <= pkt.rs2_val;
+            Bit#(9) word_idx = pkt.alu_result[10:2];  // 9 位索引
+            Word word_val = dmem[word_idx];
+
+            case (pkt.mem_width)
+                MEM_WORD: mem_data = word_val;
+
+                MEM_HALF: begin
+                    Bit#(1) half_offset = pkt.alu_result[1];
+                    Bit#(16) half_val = half_offset == 0
+                        ? word_val[15:0]
+                        : word_val[31:16];
+                    mem_data = pkt.mem_unsigned
+                        ? zeroExtend(half_val)
+                        : signExtend(half_val);
+                end
+
+                MEM_BYTE: begin
+                    Bit#(2) byte_offset = pkt.alu_result[1:0];
+                    Bit#(8) byte_val = case (byte_offset)
+                        0: word_val[7:0];
+                        1: word_val[15:8];
+                        2: word_val[23:16];
+                        3: word_val[31:24];
+                    endcase;
+                    mem_data = pkt.mem_unsigned
+                        ? zeroExtend(byte_val)
+                        : signExtend(byte_val);
+                end
+            endcase
+        end
+
+        // 内存写入
+        if (pkt.mem_op == MEM_WRITE) begin
+            Bit#(9) word_idx = pkt.alu_result[10:2];  // 9 位索引
+            Word old_word = dmem[word_idx];
+            Word new_word = old_word;
+
+            case (pkt.mem_width)
+                MEM_WORD: new_word = pkt.rs2_val;
+
+                MEM_HALF: begin
+                    Bit#(16) half_val = pkt.rs2_val[15:0];
+                    Bit#(1) half_offset = pkt.alu_result[1];
+                    new_word = half_offset == 0
+                        ? {old_word[31:16], half_val}
+                        : {half_val, old_word[15:0]};
+                end
+
+                MEM_BYTE: begin
+                    Bit#(8) byte_val = pkt.rs2_val[7:0];
+                    Bit#(2) byte_offset = pkt.alu_result[1:0];
+                    case (byte_offset)
+                        0: new_word = {old_word[31:8], byte_val};
+                        1: new_word = {old_word[31:16], byte_val, old_word[7:0]};
+                        2: new_word = {old_word[31:24], byte_val, old_word[15:0]};
+                        3: new_word = {byte_val, old_word[23:0]};
+                    endcase
+                end
+            endcase
+
+            dmem[word_idx] <= new_word;
         end
 
         mem2wb.enq(MEM_WB_Packet {
@@ -344,6 +413,16 @@ function Bool signedGE(Word a, Word b);
     return (sa >= sb);
 endfunction
 
+// 地址对齐检查函数
+function Bool checkAlignment(Addr addr, MemWidth width);
+    case (width)
+        MEM_BYTE:  return True;           // 字节访问：任意对齐
+        MEM_HALF:  return addr[0] == 0;   // 半字访问：addr[0] 必须为 0
+        MEM_WORD:  return addr[1:0] == 0; // 字访问：addr[1:0] 必须为 0
+        default:   return True;
+    endcase
+endfunction
+
 // NOP 包辅助函数
 function ID_EX_Packet nopPacket();
     return ID_EX_Packet {
@@ -358,7 +437,9 @@ function ID_EX_Packet nopPacket();
         is_branch: False,
         is_jump: False,
         write_reg: False,
-        use_imm: False
+        use_imm: False,
+        mem_width: MEM_WORD,
+        mem_unsigned: False
     };
 endfunction
 

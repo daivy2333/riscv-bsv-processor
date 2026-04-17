@@ -22,7 +22,7 @@ all: compile
 
 compile: $(BSV_SOURCES)
 	mkdir -p build
-	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) -bdir build -vdir build -u -g mkTestBench src/soc/TestBench.bsv
+	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) -bdir build -vdir build -u -g mkTestBench src/soc/TestBench.bsv +RTS -K128M -RTS
 
 # 编译汇编测试为二进制
 firmware/%.elf: tests/assembly/%.s scripts/link.ld
