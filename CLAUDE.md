@@ -70,7 +70,7 @@ make test
 | 测试文件 | 验证内容 | 结果 |
 |----------|----------|------|
 | `tests/assembly/pipeline_test.s` | 数据前递 + Load-Use + 分支 + 循环 | ✓ 通过 |
-| Load-Use 专项测试 | lw 后立即使用 | ✓ 通过 |
+| `tests/assembly/rtype_test.s` | SUB/SLL/SRL/SRA/SLT/AND/OR/XOR | ✓ 通过 |
 
 ## 架构要点
 
@@ -123,6 +123,7 @@ IF → ID → EX → MEM → WB
 - [x] Load-Use 冒险检测 + stall + 气泡插入
 - [x] 动态分支预测 (BHT + BTB)
 - [x] 基本指令: ADD, ADDI, LUI, AUIPC, LW, SW, BEQ, BNE, BLT, JAL, JALR
+- [x] R-Type: SUB, SLL, SRL, SRA, SLT, SLTU, AND, OR, XOR
 - [x] 字节/半字: LB, LH, LBU, LHU, SB, SH
 - [x] 地址对齐检查
 - [x] tohost 写入检测 (0x80001000)

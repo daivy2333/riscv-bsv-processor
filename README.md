@@ -133,6 +133,7 @@ make test
 | 测试 | 内容 | 结果 |
 |------|------|------|
 | pipeline_test | 前递+Load-Use+分支+循环 | ✓ |
+| rtype_test | SUB/SLL/SRL/SRA/SLT/AND/OR/XOR | ✓ |
 
 ## 开发路线
 
