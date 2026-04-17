@@ -147,6 +147,8 @@ typedef struct {
     Bool        predicted_taken;// 分支预测结果
     Bool        write_reg;
     Bool        is_load;        // 是否是Load指令
+    MemWidth    mem_width;      // 内存访问宽度
+    Bool        mem_unsigned;   // 是否无符号扩展
 } EX_MEM_Packet deriving (Bits, Eq, FShow);
 
 // MEM → WB 阶段数据包
