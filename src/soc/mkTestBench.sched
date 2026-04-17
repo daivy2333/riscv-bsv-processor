@@ -15,327 +15,257 @@ Predicate: core_if2id.i_notFull &&
 Blocking rules: (none)
  
 Rule: core_decodeStage
-Predicate: ((! core_ex2mem.notEmpty) || core_ex2mem.i_notEmpty) &&
-	   ((! core_ex2mem.i_notEmpty) ||
-	    (! core_ex2mem.notEmpty) || (! core_ex2mem.first[0]) ||
-	    (core_ex2mem.first[11:7] == 5'd0) ||
-	    (((! core_id2ex.notEmpty) || core_id2ex.i_notEmpty) &&
-	     ((! core_id2ex.i_notEmpty) ||
-	      (! core_id2ex.notEmpty) ||
-	      (! (core_id2ex.first[5:4] == 2'd1)) ||
-	      (core_id2ex.first[17:13] == 5'd0) ||
-	      core_if2id.i_notEmpty))) &&
-	   ((core_ex2mem.i_notEmpty &&
-	     ((! core_id2ex.notEmpty) || core_id2ex.i_notEmpty) &&
-	     ((! core_id2ex.i_notEmpty) ||
-	      (! core_id2ex.notEmpty) ||
-	      (! (core_id2ex.first[5:4] == 2'd1)) ||
-	      (core_id2ex.first[17:13] == 5'd0) ||
-	      core_if2id.i_notEmpty) &&
-	     core_ex2mem.notEmpty && core_ex2mem.first[0] &&
-	     (! (core_ex2mem.first[11:7] == 5'd0)) &&
-	     ((! core_id2ex.notEmpty) ||
-	      (! (core_id2ex.first[5:4] == 2'd1)) ||
-	      (core_id2ex.first[17:13] == 5'd0) ||
-	      ((((! (core_if2id.first[39:33] == 7'b110011)) &&
-		 ((core_if2id.first[39:33] == 7'b10011) ||
-		  (core_if2id.first[39:33] == 7'b11) ||
-		  ((! (core_if2id.first[39:33] == 7'b100011)) &&
-		   (! (core_if2id.first[39:33] == 7'b1100011))))) ||
-		(! (core_if2id.first[57:53] == core_id2ex.first[17:13]))) &&
-	       (((! (core_if2id.first[39:33] == 7'b110011)) &&
-		 (! (core_if2id.first[39:33] == 7'b10011)) &&
-		 (! (core_if2id.first[39:33] == 7'b11)) &&
-		 (! (core_if2id.first[39:33] == 7'b100011)) &&
-		 (! (core_if2id.first[39:33] == 7'b1100011)) &&
-		 (! (core_if2id.first[39:33] == 7'b1100111))) ||
-		(! (core_if2id.first[52:48] == core_id2ex.first[17:13]))))))
-	    ? core_if2id.i_notEmpty
-	    : (((! core_id2ex.notEmpty) || core_id2ex.i_notEmpty) &&
-	       ((! core_id2ex.i_notEmpty) ||
-		(! core_id2ex.notEmpty) ||
-		(! (core_id2ex.first[5:4] == 2'd1)) ||
-		(core_id2ex.first[17:13] == 5'd0) ||
-		core_if2id.i_notEmpty))) &&
-	   (((core_ex2mem.notEmpty && core_ex2mem.first[0] &&
-	      (! (core_ex2mem.first[11:7] == 5'd0)) &&
-	      ((! core_id2ex.notEmpty) ||
-	       (! (core_id2ex.first[5:4] == 2'd1)) ||
-	       (core_id2ex.first[17:13] == 5'd0) ||
-	       ((((! (core_if2id.first[39:33] == 7'b110011)) &&
-		  ((core_if2id.first[39:33] == 7'b10011) ||
-		   (core_if2id.first[39:33] == 7'b11) ||
-		   ((! (core_if2id.first[39:33] == 7'b100011)) &&
-		    (! (core_if2id.first[39:33] == 7'b1100011))))) ||
-		 (! (core_if2id.first[57:53] == core_id2ex.first[17:13]))) &&
-		(((! (core_if2id.first[39:33] == 7'b110011)) &&
-		  (! (core_if2id.first[39:33] == 7'b10011)) &&
-		  (! (core_if2id.first[39:33] == 7'b11)) &&
-		  (! (core_if2id.first[39:33] == 7'b100011)) &&
-		  (! (core_if2id.first[39:33] == 7'b1100011)) &&
-		  (! (core_if2id.first[39:33] == 7'b1100111))) ||
-		 (! (core_if2id.first[52:48] == core_id2ex.first[17:13]))))))
-	     ? (((core_if2id.first[39:33] == 7'b110011) ||
-		 ((! (core_if2id.first[39:33] == 7'b10011)) &&
-		  (! (core_if2id.first[39:33] == 7'b11)) &&
-		  ((core_if2id.first[39:33] == 7'b100011) ||
-		   (core_if2id.first[39:33] == 7'b1100011)))) &&
-		(core_if2id.first[57:53] == core_ex2mem.first[11:7])) ||
-	       (((core_if2id.first[39:33] == 7'b110011) ||
-		 (core_if2id.first[39:33] == 7'b10011) ||
-		 (core_if2id.first[39:33] == 7'b11) ||
-		 (core_if2id.first[39:33] == 7'b100011) ||
-		 (core_if2id.first[39:33] == 7'b1100011) ||
-		 (core_if2id.first[39:33] == 7'b1100111)) &&
-		(core_if2id.first[52:48] == core_ex2mem.first[11:7])) ||
-	       False
-	     : (core_id2ex.notEmpty && (core_id2ex.first[5:4] == 2'd1) &&
-		(! (core_id2ex.first[17:13] == 5'd0)) &&
-		((((core_if2id.first[39:33] == 7'b110011) ||
-		   ((! (core_if2id.first[39:33] == 7'b10011)) &&
-		    (! (core_if2id.first[39:33] == 7'b11)) &&
-		    ((core_if2id.first[39:33] == 7'b100011) ||
-		     (core_if2id.first[39:33] == 7'b1100011)))) &&
-		  (core_if2id.first[57:53] == core_id2ex.first[17:13])) ||
-		 (((core_if2id.first[39:33] == 7'b110011) ||
-		   (core_if2id.first[39:33] == 7'b10011) ||
-		   (core_if2id.first[39:33] == 7'b11) ||
-		   (core_if2id.first[39:33] == 7'b100011) ||
-		   (core_if2id.first[39:33] == 7'b1100011) ||
-		   (core_if2id.first[39:33] == 7'b1100111)) &&
-		  (core_if2id.first[52:48] == core_id2ex.first[17:13]))))) ||
-	    (core_if2id.i_notEmpty && core_id2ex.i_notFull)) &&
-	   (! core_stall_load_use) && (! core_bubble_pending)
-Blocking rules: (none)
- 
-Rule: core_insertBubble
 Predicate: core_id2ex.i_notFull &&
-	   core_bubble_pending && (! core_stall_load_use)
+	   ((! core_id2ex.notEmpty) || core_id2ex.i_notEmpty) &&
+	   ((! core_id2ex.i_notEmpty) ||
+	    (! core_id2ex.notEmpty) || (! (core_id2ex.first[8:7] == 2'd1)) ||
+	    (core_id2ex.first[20:16] == 5'd0) ||
+	    core_if2id.i_notEmpty) &&
+	   ((core_id2ex.notEmpty && (core_id2ex.first[8:7] == 2'd1) &&
+	     (! (core_id2ex.first[20:16] == 5'd0)) &&
+	     ((((core_if2id.first[39:33] == 7'b110011) ||
+		((! (core_if2id.first[39:33] == 7'b10011)) &&
+		 (! (core_if2id.first[39:33] == 7'b11)) &&
+		 ((core_if2id.first[39:33] == 7'b100011) ||
+		  (core_if2id.first[39:33] == 7'b1100011)))) &&
+	       (core_if2id.first[57:53] == core_id2ex.first[20:16])) ||
+	      (((core_if2id.first[39:33] == 7'b110011) ||
+		(core_if2id.first[39:33] == 7'b10011) ||
+		(core_if2id.first[39:33] == 7'b11) ||
+		(core_if2id.first[39:33] == 7'b100011) ||
+		(core_if2id.first[39:33] == 7'b1100011) ||
+		(core_if2id.first[39:33] == 7'b1100111)) &&
+	       (core_if2id.first[52:48] == core_id2ex.first[20:16])))) ||
+	    core_if2id.i_notEmpty) &&
+	   (! core_stall_load_use)
 Blocking rules: (none)
  
-Rule: core_clearLoadUseStall
-Predicate: core_stall_load_use
+Rule: core_decrementStall
+Predicate: core_id2ex.i_notFull &&
+	   core_stall_load_use && (! (core_stall_count == 2'd0))
 Blocking rules: (none)
  
 Rule: core_executeStage
 Predicate: core_id2ex.i_notEmpty &&
 	   core_ex2mem.i_notFull &&
-	   ((! core_id2ex.first[3]) ||
-	    core_id2ex.first[2] ||
-	    (((core_id2ex.first[8:6] == 3'd0) ||
-	      (core_id2ex.first[8:6] == 3'd1) ||
-	      (core_id2ex.first[8:6] == 3'd2) ||
-	      (core_id2ex.first[8:6] == 3'd3) ||
-	      (core_id2ex.first[8:6] == 3'd4))
+	   ((! core_id2ex.first[6]) ||
+	    core_id2ex.first[5] ||
+	    (((core_id2ex.first[11:9] == 3'd0) ||
+	      (core_id2ex.first[11:9] == 3'd1) ||
+	      (core_id2ex.first[11:9] == 3'd2) ||
+	      (core_id2ex.first[11:9] == 3'd3) ||
+	      (core_id2ex.first[11:9] == 3'd4))
 	     ? ((core_wb_forward_valid &&
-		 (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		 (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		False ||
 		(! core_mem_forward_valid) ||
-		(! (core_mem_forward_rd == core_id2ex.first[27:23])) ||
-		(core_id2ex.first[27:23] == 5'd0) ||
+		(! (core_mem_forward_rd == core_id2ex.first[30:26])) ||
+		(core_id2ex.first[30:26] == 5'd0) ||
 		core_ex2mem.i_notEmpty) &&
 	       ((core_wb_forward_valid &&
-		 (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		 (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		False ||
 		(! core_mem_forward_valid) ||
-		(! (core_mem_forward_rd == core_id2ex.first[22:18])) ||
-		(core_id2ex.first[22:18] == 5'd0) ||
+		(! (core_mem_forward_rd == core_id2ex.first[25:21])) ||
+		(core_id2ex.first[25:21] == 5'd0) ||
 		core_ex2mem.i_notEmpty)
-	     : ((! (core_id2ex.first[8:6] == 3'd5)) ||
+	     : ((! (core_id2ex.first[11:9] == 3'd5)) ||
 		(((core_wb_forward_valid &&
-		   (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		   (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		  False ||
 		  (! core_mem_forward_valid) ||
-		  (! (core_mem_forward_rd == core_id2ex.first[27:23])) ||
-		  (core_id2ex.first[27:23] == 5'd0) ||
+		  (! (core_mem_forward_rd == core_id2ex.first[30:26])) ||
+		  (core_id2ex.first[30:26] == 5'd0) ||
 		  core_ex2mem.i_notEmpty) &&
 		 ((core_wb_forward_valid &&
-		   (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		   (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		  False ||
 		  (! core_mem_forward_valid) ||
-		  (! (core_mem_forward_rd == core_id2ex.first[22:18])) ||
-		  (core_id2ex.first[22:18] == 5'd0) ||
+		  (! (core_mem_forward_rd == core_id2ex.first[25:21])) ||
+		  (core_id2ex.first[25:21] == 5'd0) ||
 		  core_ex2mem.i_notEmpty))))) &&
-	   (core_id2ex.first[2] ||
-	    (((! core_id2ex.first[3]) ||
-	      (((core_id2ex.first[8:6] == 3'd0) ||
-		(core_id2ex.first[8:6] == 3'd1) ||
-		(core_id2ex.first[8:6] == 3'd2) ||
-		(core_id2ex.first[8:6] == 3'd3) ||
-		(core_id2ex.first[8:6] == 3'd4))
+	   (core_id2ex.first[5] ||
+	    (((! core_id2ex.first[6]) ||
+	      (((core_id2ex.first[11:9] == 3'd0) ||
+		(core_id2ex.first[11:9] == 3'd1) ||
+		(core_id2ex.first[11:9] == 3'd2) ||
+		(core_id2ex.first[11:9] == 3'd3) ||
+		(core_id2ex.first[11:9] == 3'd4))
 	       ? ((core_wb_forward_valid &&
-		   (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		   (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		  False ||
 		  (! core_mem_forward_valid) ||
-		  (! (core_mem_forward_rd == core_id2ex.first[27:23])) ||
-		  (core_id2ex.first[27:23] == 5'd0) ||
+		  (! (core_mem_forward_rd == core_id2ex.first[30:26])) ||
+		  (core_id2ex.first[30:26] == 5'd0) ||
 		  core_ex2mem.i_notEmpty) &&
 		 ((core_wb_forward_valid &&
-		   (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		   (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		  False ||
 		  (! core_mem_forward_valid) ||
-		  (! (core_mem_forward_rd == core_id2ex.first[22:18])) ||
-		  (core_id2ex.first[22:18] == 5'd0) ||
+		  (! (core_mem_forward_rd == core_id2ex.first[25:21])) ||
+		  (core_id2ex.first[25:21] == 5'd0) ||
 		  core_ex2mem.i_notEmpty)
-	       : ((! (core_id2ex.first[8:6] == 3'd5)) ||
+	       : ((! (core_id2ex.first[11:9] == 3'd5)) ||
 		  (((core_wb_forward_valid &&
-		     (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		     (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		    False ||
 		    (! core_mem_forward_valid) ||
-		    (! (core_mem_forward_rd == core_id2ex.first[27:23])) ||
-		    (core_id2ex.first[27:23] == 5'd0) ||
+		    (! (core_mem_forward_rd == core_id2ex.first[30:26])) ||
+		    (core_id2ex.first[30:26] == 5'd0) ||
 		    core_ex2mem.i_notEmpty) &&
 		   ((core_wb_forward_valid &&
-		     (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		     (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		    False ||
 		    (! core_mem_forward_valid) ||
-		    (! (core_mem_forward_rd == core_id2ex.first[22:18])) ||
-		    (core_id2ex.first[22:18] == 5'd0) ||
+		    (! (core_mem_forward_rd == core_id2ex.first[25:21])) ||
+		    (core_id2ex.first[25:21] == 5'd0) ||
 		    core_ex2mem.i_notEmpty))))) &&
 	     ((core_id2ex.i_notEmpty &&
-	       ((core_id2ex.first[12:9] == 4'd0) ||
-		(core_id2ex.first[12:9] == 4'd1) ||
-		(core_id2ex.first[12:9] == 4'd2) ||
-		(core_id2ex.first[12:9] == 4'd3) ||
-		(core_id2ex.first[12:9] == 4'd4) ||
-		(core_id2ex.first[12:9] == 4'd5) ||
-		(core_id2ex.first[12:9] == 4'd6) ||
-		(core_id2ex.first[12:9] == 4'd7) ||
-		(core_id2ex.first[12:9] == 4'd8)))
+	       ((core_id2ex.first[15:12] == 4'd0) ||
+		(core_id2ex.first[15:12] == 4'd1) ||
+		(core_id2ex.first[15:12] == 4'd2) ||
+		(core_id2ex.first[15:12] == 4'd3) ||
+		(core_id2ex.first[15:12] == 4'd4) ||
+		(core_id2ex.first[15:12] == 4'd5) ||
+		(core_id2ex.first[15:12] == 4'd6) ||
+		(core_id2ex.first[15:12] == 4'd7) ||
+		(core_id2ex.first[15:12] == 4'd8)))
 	      ? (False ||
 		 False ||
 		 (core_wb_forward_valid &&
-		  (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		  (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		 False ||
 		 (! core_mem_forward_valid) ||
-		 (! (core_mem_forward_rd == core_id2ex.first[27:23])) ||
-		 (core_id2ex.first[27:23] == 5'd0) ||
+		 (! (core_mem_forward_rd == core_id2ex.first[30:26])) ||
+		 (core_id2ex.first[30:26] == 5'd0) ||
 		 core_ex2mem.i_notEmpty) &&
 		(False ||
 		 False ||
-		 ((core_id2ex.i_notEmpty && (core_id2ex.first[12:9] == 4'd0))
-		  ? core_id2ex.first[0] ||
+		 ((core_id2ex.i_notEmpty && (core_id2ex.first[15:12] == 4'd0))
+		  ? core_id2ex.first[3] ||
 		    (core_wb_forward_valid &&
-		     (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		     (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		    False ||
 		    (! core_mem_forward_valid) ||
-		    (! (x__h142243(...) == y__h142227(...))) ||
-		    (core_id2ex.first[22:18] == 5'd0) ||
+		    (! (core_mem_forward_rd ==
+			core_id2ex_first____d1384(...)[25:21])) ||
+		    (core_id2ex.first[25:21] == 5'd0) ||
 		    core_ex2mem.i_notEmpty
 		  : ((core_wb_forward_valid &&
-		      (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		      (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		     (! core_id2ex.i_notEmpty) ||
 		     (! core_mem_forward_valid) ||
-		     (! (core_mem_forward_rd ==
-			 core_id2ex_first____d1396(...)[22:18])) ||
-		     (core_id2ex.first[22:18] == 5'd0) ||
+		     (! (core_mem_forward_rd == core_id2ex.first[25:21])) ||
+		     (core_id2ex.first[25:21] == 5'd0) ||
 		     core_ex2mem.i_notEmpty)))
 	      : ((! core_id2ex.i_notEmpty) ||
-		 (! (core_id2ex.first[12:9] == 4'd9)) ||
+		 (! (core_id2ex.first[15:12] == 4'd9)) ||
 		 ((False ||
 		   False ||
 		   (core_wb_forward_valid &&
-		    (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		    (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		   False ||
 		   (! core_mem_forward_valid) ||
-		   (! (core_mem_forward_rd ==
-		       core_id2ex_first____d1396(...)[27:23])) ||
-		   (core_id2ex.first[27:23] == 5'd0) ||
+		   (! (core_mem_forward_rd == core_id2ex.first[30:26])) ||
+		   (core_id2ex.first[30:26] == 5'd0) ||
 		   core_ex2mem.i_notEmpty) &&
 		  (False ||
 		   False ||
 		   ((core_id2ex.i_notEmpty &&
-		     (core_id2ex.first[12:9] == 4'd0))
-		    ? core_id2ex.first[0] ||
+		     (core_id2ex.first[15:12] == 4'd0))
+		    ? core_id2ex.first[3] ||
 		      (core_wb_forward_valid &&
-		       (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		       (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		      False ||
-		      (! core_mem_forward_valid__h142177(...)) ||
-		      (! core_mem_forward_rd_649_EQ_core_id2ex_first__3_ETC___d1661(...)) ||
-		      (core_id2ex_first____d1396(...)[22:18] == 5'd0) ||
+		      (! core_mem_forward_valid) ||
+		      (! (x__h142533(...) == y__h142517(...))) ||
+		      (core_id2ex.first[25:21] == 5'd0) ||
 		      core_ex2mem.i_notEmpty
 		    : ((core_wb_forward_valid &&
-			(core_wb_forward_rd == core_id2ex.first[22:18])) ||
+			(core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		       (! core_id2ex.i_notEmpty) ||
 		       (! core_mem_forward_valid) ||
-		       (! (x__h142243(...) == y__h142227(...))) ||
-		       (core_id2ex.first[22:18] == 5'd0) ||
+		       (! (core_mem_forward_rd ==
+			   core_id2ex_first____d1384(...)[25:21])) ||
+		       (core_id2ex.first[25:21] == 5'd0) ||
 		       core_ex2mem.i_notEmpty)))))))) &&
 	   ((core_wb_forward_valid &&
-	     (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+	     (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 	    (! core_mem_forward_valid) ||
-	    (! (core_mem_forward_rd == core_id2ex.first[22:18])) ||
-	    (core_id2ex.first[22:18] == 5'd0) ||
+	    (! (core_mem_forward_rd == core_id2ex.first[25:21])) ||
+	    (core_id2ex.first[25:21] == 5'd0) ||
 	    core_ex2mem.i_notEmpty) &&
-	   ((! core_id2ex.first[2]) ||
-	    (core_id2ex.first[130:124] == 7'b1101111) ||
+	   ((! core_id2ex.first[5]) ||
+	    (core_id2ex.first[133:127] == 7'b1101111) ||
 	    ((core_id2ex.i_notEmpty &&
-	      ((core_id2ex.first[12:9] == 4'd0) ||
-	       (core_id2ex.first[12:9] == 4'd1) ||
-	       (core_id2ex.first[12:9] == 4'd2) ||
-	       (core_id2ex.first[12:9] == 4'd3) ||
-	       (core_id2ex.first[12:9] == 4'd4) ||
-	       (core_id2ex.first[12:9] == 4'd5) ||
-	       (core_id2ex_first____d1396(...)[12:9] == 4'd6) ||
-	       (core_id2ex_first__396_BITS_12_TO_9___d1677(...) == 4'd7) ||
-	       (core_id2ex_first__396_BITS_12_TO_9___d1677(...) == 4'd8)))
+	      ((core_id2ex.first[15:12] == 4'd0) ||
+	       (core_id2ex.first[15:12] == 4'd1) ||
+	       (core_id2ex.first[15:12] == 4'd2) ||
+	       (core_id2ex.first[15:12] == 4'd3) ||
+	       (core_id2ex.first[15:12] == 4'd4) ||
+	       (core_id2ex.first[15:12] == 4'd5) ||
+	       (core_id2ex.first[15:12] == 4'd6) ||
+	       (core_id2ex_first____d1384(...)[15:12] == 4'd7) ||
+	       (core_id2ex_first____d1384(...)[15:12] == 4'd8)))
 	     ? (False ||
 		False ||
 		(core_wb_forward_valid &&
-		 (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		 (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		False ||
 		(! core_mem_forward_valid) ||
-		(! (x__h142243(...) == y__h142160(...))) ||
-		(core_id2ex.first[27:23] == 5'd0) ||
+		(! (core_mem_forward_rd ==
+		    core_id2ex_first____d1384(...)[30:26])) ||
+		(core_id2ex.first[30:26] == 5'd0) ||
 		core_ex2mem.i_notEmpty) &&
 	       (False ||
 		False ||
-		((core_id2ex.i_notEmpty && (core_id2ex.first[12:9] == 4'd0))
-		 ? core_id2ex.first[0] ||
+		((core_id2ex.i_notEmpty && (core_id2ex.first[15:12] == 4'd0))
+		 ? core_id2ex.first[3] ||
 		   (core_wb_forward_valid &&
-		    (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		    (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		   False ||
-		   NOT_core_mem_forward_valid_647___d1648(...) ||
-		   NOT_core_mem_forward_rd_649_EQ_core_id2ex_firs_ETC___d1662(...) ||
-		   (y__h142227(...) == 5'd0) ||
+		   (! core_mem_forward_valid__h142418(...)) ||
+		   (! core_mem_forward_rd_640_EQ_core_id2ex_first__3_ETC___d1653(...)) ||
+		   (core_id2ex_first____d1384(...)[25:21] == 5'd0) ||
 		   core_ex2mem.i_notEmpty
 		 : ((core_wb_forward_valid &&
-		     (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		     (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		    (! core_id2ex.i_notEmpty) ||
-		    (! core_mem_forward_valid__h142177(...)) ||
-		    (! core_mem_forward_rd_649_EQ_core_id2ex_first__3_ETC___d1661(...)) ||
-		    (core_id2ex_first____d1396(...)[22:18] == 5'd0) ||
+		    (! core_mem_forward_valid) ||
+		    (! (x__h142533(...) == y__h142517(...))) ||
+		    (core_id2ex.first[25:21] == 5'd0) ||
 		    core_ex2mem.i_notEmpty)))
 	     : ((! core_id2ex.i_notEmpty) ||
-		(! (core_id2ex.first[12:9] == 4'd9)) ||
+		(! (core_id2ex.first[15:12] == 4'd9)) ||
 		((False ||
 		  False ||
 		  (core_wb_forward_valid &&
-		   (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		   (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		  False ||
-		  (! core_mem_forward_valid__h142177(...)) ||
-		  (! core_mem_forward_rd_649_EQ_core_id2ex_first__3_ETC___d1650(...)) ||
-		  (core_id2ex_first____d1396(...)[27:23] == 5'd0) ||
+		  (! core_mem_forward_valid) ||
+		  (! (x__h142533(...) == y__h142401(...))) ||
+		  (core_id2ex.first[30:26] == 5'd0) ||
 		  core_ex2mem.i_notEmpty) &&
 		 (False ||
 		  False ||
-		  ((core_id2ex.i_notEmpty && (core_id2ex.first[12:9] == 4'd0))
-		   ? core_id2ex.first[0] ||
+		  ((core_id2ex.i_notEmpty &&
+		    (core_id2ex.first[15:12] == 4'd0))
+		   ? core_id2ex.first[3] ||
 		     (core_wb_forward_valid &&
-		      (core_wb_forward_rd ==
-		       core_id2ex_first____d1396(...)[22:18])) ||
+		      (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		     False ||
-		     NOT_core_mem_forward_valid_647_648_OR_NOT_core_ETC___d1663(...) ||
-		     core_id2ex_first__396_BITS_22_TO_18_658_EQ_0___d1664(...) ||
+		     NOT_core_mem_forward_valid_638___d1639(...) ||
+		     NOT_core_mem_forward_rd_640_EQ_core_id2ex_firs_ETC___d1654(...) ||
+		     (y__h142517(...) == 5'd0) ||
 		     core_ex2mem.i_notEmpty
 		   : ((core_wb_forward_valid &&
-		       (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		       (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		      (! core_id2ex.i_notEmpty) ||
-		      NOT_core_mem_forward_valid_647___d1648(...) ||
-		      NOT_core_mem_forward_rd_649_EQ_core_id2ex_firs_ETC___d1662(...) ||
-		      (y__h142227(...) == 5'd0) ||
+		      (! core_mem_forward_valid__h142418(...)) ||
+		      (! core_mem_forward_rd_640_EQ_core_id2ex_first__3_ETC___d1653(...)) ||
+		      (core_id2ex_first____d1384(...)[25:21] == 5'd0) ||
 		      core_ex2mem.i_notEmpty))))))) &&
-	   ((! core_id2ex.first[3]) ||
+	   ((! core_id2ex.first[6]) ||
 	    ((((PrimArrayDynSelect (PrimBuildArray core_bht_bhtTable_0
 						   core_bht_bhtTable_1
 						   core_bht_bhtTable_2
@@ -400,7 +330,7 @@ Predicate: core_id2ex.i_notEmpty &&
 						   core_bht_bhtTable_61
 						   core_bht_bhtTable_62
 						   core_bht_bhtTable_63)
-				   core_id2ex.first[163:158]) ==
+				   core_id2ex.first[166:161]) ==
 	       2'b0) ||
 	      ((PrimArrayDynSelect (PrimBuildArray core_bht_bhtTable_0
 						   core_bht_bhtTable_1
@@ -466,7 +396,7 @@ Predicate: core_id2ex.i_notEmpty &&
 						   core_bht_bhtTable_61
 						   core_bht_bhtTable_62
 						   core_bht_bhtTable_63)
-				   core_id2ex.first[163:158]) ==
+				   core_id2ex.first[166:161]) ==
 	       2'b1) ||
 	      ((PrimArrayDynSelect (PrimBuildArray core_bht_bhtTable_0
 						   core_bht_bhtTable_1
@@ -532,43 +462,45 @@ Predicate: core_id2ex.i_notEmpty &&
 						   core_bht_bhtTable_61
 						   core_bht_bhtTable_62
 						   core_bht_bhtTable_63)
-				   core_id2ex.first[163:158]) ==
+				   core_id2ex.first[166:161]) ==
 	       2'b10))
-	     ? core_id2ex.first[2] ||
+	     ? core_id2ex.first[5] ||
 	       False ||
-	       (((core_id2ex.first[8:6] == 3'd0) ||
-		 (core_id2ex.first[8:6] == 3'd1) ||
-		 (core_id2ex.first[8:6] == 3'd2) ||
-		 (core_id2ex.first[8:6] == 3'd3) ||
-		 (core_id2ex.first[8:6] == 3'd4))
+	       (((core_id2ex.first[11:9] == 3'd0) ||
+		 (core_id2ex.first[11:9] == 3'd1) ||
+		 (core_id2ex.first[11:9] == 3'd2) ||
+		 (core_id2ex.first[11:9] == 3'd3) ||
+		 (core_id2ex.first[11:9] == 3'd4))
 		? ((core_wb_forward_valid &&
-		    (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		    (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		   False ||
 		   (! core_mem_forward_valid) ||
-		   (! (x__h142243(...) == y__h142160(...))) ||
-		   (core_id2ex.first[27:23] == 5'd0) ||
+		   (! (core_mem_forward_rd ==
+		       core_id2ex_first____d1384(...)[30:26])) ||
+		   (core_id2ex.first[30:26] == 5'd0) ||
 		   core_ex2mem.i_notEmpty) &&
 		  ((core_wb_forward_valid &&
-		    (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		    (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		   False ||
 		   (! core_mem_forward_valid) ||
-		   (! (x__h142243(...) == y__h142227(...))) ||
-		   (core_id2ex.first[22:18] == 5'd0) ||
+		   (! (core_mem_forward_rd ==
+		       core_id2ex_first____d1384(...)[25:21])) ||
+		   (core_id2ex.first[25:21] == 5'd0) ||
 		   core_ex2mem.i_notEmpty)
-		: ((! (core_id2ex.first[8:6] == 3'd5)) ||
+		: ((! (core_id2ex.first[11:9] == 3'd5)) ||
 		   (((core_wb_forward_valid &&
-		      (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		      (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		     False ||
-		     (! core_mem_forward_valid__h142177(...)) ||
-		     (! core_mem_forward_rd_649_EQ_core_id2ex_first__3_ETC___d1650(...)) ||
-		     (core_id2ex_first____d1396(...)[27:23] == 5'd0) ||
+		     (! core_mem_forward_valid) ||
+		     (! (x__h142533(...) == y__h142401(...))) ||
+		     (core_id2ex.first[30:26] == 5'd0) ||
 		     core_ex2mem.i_notEmpty) &&
 		    ((core_wb_forward_valid &&
-		      (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		      (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		     False ||
-		     (! core_mem_forward_valid__h142177(...)) ||
-		     (! core_mem_forward_rd_649_EQ_core_id2ex_first__3_ETC___d1661(...)) ||
-		     (core_id2ex_first____d1396(...)[22:18] == 5'd0) ||
+		     (! core_mem_forward_valid) ||
+		     (! (x__h142533(...) == y__h142517(...))) ||
+		     (core_id2ex.first[25:21] == 5'd0) ||
 		     core_ex2mem.i_notEmpty))))
 	     : ((! ((PrimArrayDynSelect (PrimBuildArray core_bht_bhtTable_0
 							core_bht_bhtTable_1
@@ -634,46 +566,45 @@ Predicate: core_id2ex.i_notEmpty &&
 							core_bht_bhtTable_61
 							core_bht_bhtTable_62
 							core_bht_bhtTable_63)
-					core_id2ex.first[163:158]) ==
+					core_id2ex.first[166:161]) ==
 		    2'b11)) ||
-		core_id2ex.first[2] ||
+		core_id2ex.first[5] ||
 		False ||
-		(((core_id2ex.first[8:6] == 3'd0) ||
-		  (core_id2ex.first[8:6] == 3'd1) ||
-		  (core_id2ex.first[8:6] == 3'd2) ||
-		  (core_id2ex.first[8:6] == 3'd3) ||
-		  (core_id2ex.first[8:6] == 3'd4))
+		(((core_id2ex.first[11:9] == 3'd0) ||
+		  (core_id2ex.first[11:9] == 3'd1) ||
+		  (core_id2ex.first[11:9] == 3'd2) ||
+		  (core_id2ex.first[11:9] == 3'd3) ||
+		  (core_id2ex.first[11:9] == 3'd4))
 		 ? ((core_wb_forward_valid &&
-		     (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		     (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		    False ||
-		    (! core_mem_forward_valid__h142177(...)) ||
-		    (! core_mem_forward_rd_649_EQ_core_id2ex_first__3_ETC___d1650(...)) ||
-		    (core_id2ex_first____d1396(...)[27:23] == 5'd0) ||
+		    (! core_mem_forward_valid) ||
+		    (! (x__h142533(...) == y__h142401(...))) ||
+		    (core_id2ex.first[30:26] == 5'd0) ||
 		    core_ex2mem.i_notEmpty) &&
 		   ((core_wb_forward_valid &&
-		     (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		     (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		    False ||
-		    (! core_mem_forward_valid__h142177(...)) ||
-		    (! core_mem_forward_rd_649_EQ_core_id2ex_first__3_ETC___d1661(...)) ||
-		    (core_id2ex_first____d1396(...)[22:18] == 5'd0) ||
+		    (! core_mem_forward_valid) ||
+		    (! (x__h142533(...) == y__h142517(...))) ||
+		    (core_id2ex.first[25:21] == 5'd0) ||
 		    core_ex2mem.i_notEmpty)
-		 : ((! (core_id2ex.first[8:6] == 3'd5)) ||
+		 : ((! (core_id2ex.first[11:9] == 3'd5)) ||
 		    (((core_wb_forward_valid &&
-		       (core_wb_forward_rd == core_id2ex.first[27:23])) ||
+		       (core_wb_forward_rd == core_id2ex.first[30:26])) ||
 		      False ||
-		      NOT_core_mem_forward_valid_647___d1648(...) ||
-		      NOT_core_mem_forward_rd_649_EQ_core_id2ex_firs_ETC___d1651(...) ||
-		      (y__h142160(...) == 5'd0) ||
+		      (! core_mem_forward_valid__h142418(...)) ||
+		      (! core_mem_forward_rd_640_EQ_core_id2ex_first__3_ETC___d1641(...)) ||
+		      (core_id2ex_first____d1384(...)[30:26] == 5'd0) ||
 		      core_ex2mem.i_notEmpty) &&
 		     ((core_wb_forward_valid &&
-		       (core_wb_forward_rd == core_id2ex.first[22:18])) ||
+		       (core_wb_forward_rd == core_id2ex.first[25:21])) ||
 		      False ||
-		      NOT_core_mem_forward_valid_647___d1648(...) ||
-		      NOT_core_mem_forward_rd_649_EQ_core_id2ex_firs_ETC___d1662(...) ||
-		      (y__h142227(...) == 5'd0) ||
-		      core_ex2mem.i_notEmpty))))))) &&
-	   (! core_stall_load_use)
-Blocking rules: core_decodeStage
+		      (! core_mem_forward_valid__h142418(...)) ||
+		      (! core_mem_forward_rd_640_EQ_core_id2ex_first__3_ETC___d1653(...)) ||
+		      (core_id2ex_first____d1384(...)[25:21] == 5'd0) ||
+		      core_ex2mem.i_notEmpty)))))))
+Blocking rules: (none)
  
 Rule: core_memoryStage
 Predicate: core_ex2mem.i_notEmpty && core_mem2wb.i_notFull
@@ -692,7 +623,7 @@ Predicate: programLoaded && (! dumpDone)
 Blocking rules: (none)
  
 Rule: checkDone
-Predicate: programLoaded && (! programDone) && (! (core_pcReg < 32'h80000014))
+Predicate: programLoaded && (! programDone) && (! (core_pcReg < 32'h80000058))
 Blocking rules: (none)
  
 Rule: waitForWB
@@ -716,8 +647,7 @@ Logical execution order: done,
 			 core_fetchStage,
 			 load,
 			 core_decodeStage,
-			 core_insertBubble,
-			 core_clearLoadUseStall,
+			 core_decrementStall,
 			 core_executeStage,
 			 core_memoryStage,
 			 core_writebackStage
