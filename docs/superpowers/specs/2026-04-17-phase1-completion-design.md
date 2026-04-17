@@ -57,18 +57,33 @@ DMem: 0x80000000 - 0x80FFFFFF (16MB, 262144×32bit)
 // 推荐方案：使用 ifdef 控制内存大小
 `ifdef USE_LARGE_MEM
     // 16MB 配置（用于 riscv-tests）
+    // DMem: 262144 entries = 2^18
     Vector#(262144, Reg#(Word)) dmem <- replicateM(mkRegU);
+    // 索引: addr[21:2] (18 位，log2(262144) = 18)
+    Bit#(18) dmem_idx = addr[21:2];
+
+    // IMem: 16384 entries = 2^14
+    Vector#(16384, Reg#(Word)) imem <- replicateM(mkRegU);
+    // 索引: addr[15:2] (14 位，log2(16384) = 14)
+    Bit#(14) imem_idx = addr[15:2];
 `else
     // 256KB 配置（用于开发调试）
+    // DMem: 65536 entries = 2^16
     Vector#(65536, Reg#(Word)) dmem <- replicateM(mkRegU);
-`endif
+    // 索引: addr[17:2] (16 位，log2(65536) = 16)
+    Bit#(16) dmem_idx = addr[17:2];
 
-// IMem 同理
-`ifdef USE_LARGE_MEM
-    Vector#(16384, Reg#(Word)) imem <- replicateM(mkRegU);
-`else
-    Vector#(4096, Reg#(Word)) imem <- replicateM(mkRegU);  // 16KB
+    // IMem: 4096 entries = 2^12 (16KB)
+    Vector#(4096, Reg#(Word)) imem <- replicateM(mkRegU);
+    // 索引: addr[13:2] (12 位，log2(4096) = 12)
+    Bit#(12) imem_idx = addr[13:2];
 `endif
+```
+
+**索引位宽计算公式**：
+```
+索引位宽 = log2(Vector 大小)
+例如：262144 = 2^18，索引需 18 位
 ```
 
 **编译命令**：
@@ -246,6 +261,8 @@ Bool mem_unsigned = False;
             mem_unsigned = True;
         end
         default: begin
+            // 未定义的 funct3：视为 NOP（安全处理）
+            // 阶段2将实现异常：raiseException(ILLEGAL_INSTRUCTION)
             mem_width = MEM_WORD;
             mem_unsigned = False;
         end
@@ -270,6 +287,21 @@ end
     // mem_unsigned 对 Store 无意义，保持默认 False
 end
 ```
+
+### 未定义指令处理策略
+
+**阶段1策略**：未定义的 funct3 视为安全默认值（NOP 行为）
+
+| 指令类型 | 未定义 funct3 | 阶段1 处理 | 阶段2 处理 |
+|----------|---------------|------------|------------|
+| Load | 3'b011, 3'b110, 3'b111 | 默认 LW | 触发 ILLEGAL_INSTRUCTION 异常 |
+| Store | 3'b011, 3'b100, 3'b101, 3'b110, 3'b111 | 默认 SW | 触发 ILLEGAL_INSTRUCTION 异常 |
+| 其他 opcode | - | NOP（不写寄存器） | 触发 ILLEGAL_INSTRUCTION 异常 |
+
+**理由**：
+- 阶段1 无异常机制，采用安全默认值避免处理器崩溃
+- riscv-tests 只使用合法指令，不会触发此路径
+- 阶段2 实现特权级后，将正确触发异常
 
 ### 地址对齐检查
 
@@ -488,6 +520,17 @@ Bool load_use_hazard = hazardUnit.detectLoadUseHazard(
 ### 测试套件
 
 使用 `riscv-tests` 项目的 `rv32ui-p-*` 测试：
+
+**测试分级**：
+
+| 级别 | 测试数量 | 测试名称 | 通过条件 |
+|------|----------|----------|----------|
+| 最小集 | 5 个 | simple, add, lw, sw, beq | 基础流水线验证 |
+| 推荐集 | 12 个 | +lb, sb, lh, sh, jal, jalr, branch, blt, addi, lui, auipc | 字节指令 + 分支验证 |
+| 完整集 | 约40个 | 全部 rv32ui-p-* | RV32I 全指令验证 |
+
+**详细测试列表**：
+
 - 基础指令：simple, add, sub, and, or, xor, sll, srl, sra
 - Load 指令：lw, lh, lb, lhu, lbu（含 Load-Use 验证）
 - Store 指令：sw, sh, sb
@@ -495,6 +538,9 @@ Bool load_use_hazard = hazardUnit.detectLoadUseHazard(
 - 跳转：jal, jalr
 - 立即数：addi, andi, ori, xori, slti, sltiu
 - 比较：slt, sltu
+- 大立即数：lui, auipc
+
+**建议验证顺序**：先运行最小集确认基础框架，再逐步扩展到完整集。
 
 ### 集成步骤
 
@@ -526,70 +572,136 @@ Bool load_use_hazard = hazardUnit.detectLoadUseHazard(
    # 查看是否有写入 0x80001000 的指令
    ```
 
-### hex 文件加载函数完整实现
+### hex 文件加载方案（推荐 Python 预处理）
 
-```bsv
-// TestBench.bsv 添加
-function Action loadHexFile(String filename, Vector#(16384, Reg#(Word)) imem);
-    action
-        // 使用 BSV 的文件读取功能
-        // hex 格式：@地址 数据(每行多个32位值)
-        // 示例：@80000000 12345678 9ABCDEF0 ...
+由于 BSV 中解析 hex 文件较复杂，**推荐使用 Python 预处理脚本**将 hex 转换为 BSV 数组格式。
 
-        // 简化实现：使用 $readmemh（Verilog 标准）
-        // 在生成的 Verilog 中会自动处理
+#### Python 预处理脚本
 
-        // BSV 中需要手动解析
-        let fh = $fopen(filename, "r");
-        if (fh == 0) begin
-            $display("ERROR: Cannot open hex file %s", filename);
-            $finish;
-        end
+```python
+#!/usr/bin/env python3
+# scripts/gen_prog.py - 将 Verilog hex 文件转换为 BSV 数组格式
+import sys
+import os
 
-        Bit#(32) base_addr = 32'h80000000;
-        Bit#(32) current_addr = base_addr;
-        Bool first_line = True;
+def parse_hex_file(filename):
+    """解析 Verilog hex 格式文件"""
+    program = []
+    current_addr = 0
 
-        while (!$feof(fh)) begin
-            String line = $fgets(fh);
+    with open(filename, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
 
-            // 解析 @地址 格式
-            if (line[0] == '@') begin
-                // 提取地址
-                current_addr = parseHexAddr(line);
-            end else begin
-                // 解析数据
-                Integer idx = (current_addr - base_addr) / 4;
-                if (idx >= 0 && idx < 16384) begin
-                    Word data = parseHexData(line);
-                    imem[idx] <= data;
-                    current_addr = current_addr + 4;
-                end
-            end
-        end
+            if line.startswith('@'):
+                # 地址行：@80000000
+                current_addr = int(line[1:], 16)
+            else:
+                # 数据行：12345678 9ABCDEF0 ...
+                # 每个数据是 8 字符的十六进制数
+                for i in range(0, len(line), 9):  # 8 字符 + 1 空格
+                    data_str = line[i:i+8].strip()
+                    if data_str:
+                        data = int(data_str, 16)
+                        # 计算索引（基于地址 0x80000000）
+                        idx = (current_addr - 0x80000000) // 4
+                        if idx >= 0:
+                            while len(program) <= idx:
+                                program.append(0)
+                            program[idx] = data
+                            current_addr += 4
 
-        $fclose(fh);
-    endaction
-endfunction
+    return program
 
-// 辅助函数：解析 @ 后的地址
-function Bit#(32) parseHexAddr(String line);
-    // "@80000000" → 0x80000000
-    // 简化实现
-    return 32'h80000000;  // 实际需要完整解析
-endfunction
+def output_bsv(program, output_file=None):
+    """输出 BSV 格式的程序数组"""
+    # 扩展到 16384 条目（64KB）
+    while len(program) < 16384:
+        program.append(0)
 
-// 辅助函数：解析十六进制数据
-function Word parseHexData(String line);
-    // "12345678" → 32'h12345678
-    // 简化实现
-    return 0;  // 实际需要完整解析
-endfunction
+    lines = []
+    lines.append(f"// 自动生成的程序数组（{len(program)} 条目）")
+    lines.append(f"Vector#(16384, Word) testProgram = newVector;")
+    for i, data in enumerate(program):
+        lines.append(f"    testProgram[{i}] = 32'h{data:08x};")
+
+    content = '\n'.join(lines)
+
+    if output_file:
+        with open(output_file, 'w') as f:
+            f.write(content)
+    else:
+        print(content)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <hex_file> [output_file]")
+        sys.exit(1)
+
+    hex_file = sys.argv[1]
+    output_file = sys.argv[2] if len(sys.argv) > 2 else None
+
+    program = parse_hex_file(hex_file)
+    output_bsv(program, output_file)
+
+    print(f"# 加载 {len([x for x in program if x != 0])} 条有效指令")
+    print(f"# 从 {hex_file} 转换完成")
 ```
 
-**注意**：完整 hex 解析较复杂，建议：
-- 先用 Verilog 的 `$readmemh` 测试
-- 或使用 Python 脚本预处理 hex 文件为 BSV 数组
+#### 使用方法
+
+```bash
+# 创建脚本目录
+mkdir -p scripts
+
+# 保存脚本
+# scripts/gen_prog.py
+
+# 转换 hex 文件为 BSV 数组
+python3 scripts/gen_prog.py rv32ui-p-simple.hex > tests/programs/simple_prog.bsvi
+
+# 或直接输出到文件
+python3 scripts/gen_prog.py rv32ui-p-lw.hex tests/programs/lw_prog.bsvi
+```
+
+#### 生成的 BSV 数组格式示例
+
+```bsv
+// 自动生成的程序数组（16384 条目）
+Vector#(16384, Word) testProgram = newVector;
+    testProgram[0] = 32'h12345678;
+    testProgram[1] = 32'h9abcdef0;
+    testProgram[2] = 32'h00000013;  // nop
+    ...
+    testProgram[16383] = 32'h00000000;
+```
+
+#### TestBench 加载生成的程序
+
+```bsv
+// TestBench.bsv 中使用
+// 直接 include 生成的数组文件或手动复制
+
+// 方式1：include 文件（如果 BSV 支持）
+// include "tests/programs/simple_prog.bsvi"
+
+// 方式2：手动加载（推荐）
+Vector#(16384, Word) prog = newVector;
+// 从生成的文件复制数组赋值语句到此处
+prog[0] = 32'h12345678;
+...
+
+core.loadProgramLarge(prog);
+```
+
+#### 错误处理
+
+Python 脚本包含以下错误处理：
+- 文件不存在检查
+- 地址越界警告（自动填充 0）
+- 无效十六进制数据跳过
 
 ### TestBench 检测逻辑
 
