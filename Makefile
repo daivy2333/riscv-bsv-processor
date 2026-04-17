@@ -24,10 +24,10 @@ compile: $(BSV_SOURCES)
 	mkdir -p build
 	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) -bdir build -vdir build -u -g mkTestBench src/soc/TestBench.bsv +RTS -K128M -RTS
 
-# 编译汇编测试为二进制
+# 编译汇编测试为二进制（禁用压缩指令）
 firmware/%.elf: tests/assembly/%.s scripts/link.ld
 	mkdir -p firmware
-	$(CC) -nostdlib -T scripts/link.ld $< -o $@
+	$(CC) -march=rv32i -mabi=ilp32 -nostdlib -T scripts/link.ld $< -o $@
 
 firmware/%.hex: firmware/%.elf
 	$(OBJCOPY) -O verilog $< $@
@@ -45,9 +45,23 @@ verilate: compile
 		tests/c/test_bench.cpp \
 		-Wno-STMTDLY -Wno-WIDTH
 
-# 运行仿真（需要先编译测试）
-simulate: firmware/pipeline_test.mem verilate
-	./obj_dir/VmkTestBench
+# 运行测试（默认 pipeline_test）
+test: firmware/pipeline_test.hex verilate
+	./obj_dir/VmkTestBench firmware/pipeline_test.hex
+
+# 运行指定测试
+run-test: verilate
+	@if [ -z "$(TEST)" ]; then \
+		echo "Usage: make run-test TEST=test_name"; \
+		exit 1; \
+	fi
+	./obj_dir/VmkTestBench firmware/$(TEST).hex
+
+# 编译所有汇编测试
+asm-tests: $(ASM_TESTS:.s=.elf)
+	@for f in $(ASM_TESTS:.s=.hex); do \
+		$(MAKE) $$f; \
+	done
 
 # 快速测试（只编译BSV，不运行仿真）
 test-compile: compile

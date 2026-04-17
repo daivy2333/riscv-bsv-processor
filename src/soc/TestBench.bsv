@@ -4,6 +4,7 @@ package TestBench;
 import Types::*;
 import Core::*;
 import Vector::*;
+import TestProgram::*;  // 导入自动生成的测试程序
 
 interface TestBench;
     method Bool done();
@@ -18,28 +19,6 @@ module mkTestBench(TestBench);
     Reg#(Bool) programLoaded <- mkReg(False);
     Reg#(Bit#(32)) waitCount <- mkReg(0);
 
-    // 测试 Load-Use 冒险
-    function Vector#(1024, Word) testProgram();
-        Vector#(1024, Word) prog = replicate(0);
-
-        // 测试1: 基本 Load-Use 冒险
-        // 正确的指令编码:
-        // li x1, 10 = addi x1, x0, 10 = 0x00a00093 ✓
-        // li x2, 4 = addi x2, x0, 4 = 0x00400113 ✓
-        // sw x1, 0(x2) = 0x00112023 ✓
-        // lw x3, 0(x2): imm=0, rs1=2, funct3=010, rd=3, opcode=0000011
-        //   = 000000000000_00010_010_00011_0000011 = 0x00012183
-        // add x4, x3, x1: funct7=0, rs2=1, rs1=3, funct3=0, rd=4, opcode=0110011
-        //   = 0000000_00001_00011_000_00100_0110011 = 0x00118233
-        prog[0] = 32'h00a00093;    // li x1, 10
-        prog[1] = 32'h00400113;    // li x2, 4
-        prog[2] = 32'h00112023;    // sw x1, 0(x2) - store x1=10 to address x2=4
-        prog[3] = 32'h00012183;    // lw x3, 0(x2) - Load x3 = dmem[1] = 10
-        prog[4] = 32'h00118233;    // add x4, x3, x1 - x4 = x3 + x1 = 10 + 10 = 20
-
-        return prog;
-    endfunction
-
     rule load (!programLoaded);
         core.loadProgram(testProgram());
         programLoaded <= True;
@@ -49,7 +28,7 @@ module mkTestBench(TestBench);
         cycleCount <= cycleCount + 1;
     endrule
 
-    rule checkDone (programLoaded && !programDone && core.pc >= 32'h80000014);
+    rule checkDone (programLoaded && !programDone && core.pc >= 32'h80000058);
         programDone <= True;
     endrule
 
@@ -62,14 +41,16 @@ module mkTestBench(TestBench);
 
     rule report (dumpDone);
         $display("\n====================================");
-        $display("  Load-Use Hazard Test Results");
+        $display("  Pipeline Test Results");
         $display("====================================");
         $display("Cycles: %0d", cycleCount);
         $display("Register dump:");
-        $display("  x1 = %0d (expected 10)", core.readReg(1));
-        $display("  x2 = %0d (expected 4)", core.readReg(2));
-        $display("  x3 = %0d (expected 10)", core.readReg(3));
-        $display("  x4 = %0d (expected 20)", core.readReg(4));
+        $display("  x1  (ra)  = %0d (expected 10)", core.readReg(1));
+        $display("  x2  (sp)  = %0d (expected 20)", core.readReg(2));
+        $display("  x3  (gp)  = %0d (expected 30)", core.readReg(3));
+        $display("  x4  (tp)  = %0d (expected 40)", core.readReg(4));
+        $display("  x5  (t0)  = %0d (expected 70)", core.readReg(5));
+        $display("  x31 (t6)  = %0d (expected 0xDEAD)", core.readReg(31));
     endrule
 
     rule finish (dumpDone);
