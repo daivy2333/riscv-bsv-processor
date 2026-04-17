@@ -97,7 +97,11 @@ module mkCore#(String firmwareFile)(Core);
         });
 
         currentInstr <= instr;
-        pcReg <= pcReg + 4;
+        // 如果预测跳转，PC 更新为预测目标；否则顺序执行
+        if (take_prediction)
+            pcReg <= prediction_target;
+        else
+            pcReg <= pcReg + 4;
     endrule
 
     // ============================================================
@@ -169,7 +173,6 @@ module mkCore#(String firmwareFile)(Core);
 
     rule executeStage;
         ID_EX_Packet pkt = id2ex.first;
-        id2ex.deq;
 
         // 前递逻辑
         Word op1 = pkt.rs1_val;
@@ -241,6 +244,17 @@ module mkCore#(String firmwareFile)(Core);
         btb.update(pkt.pc, actual_target, btb_update_valid);
         if (pkt.is_branch)
             bht.update(pkt.pc, branch_taken);
+
+        // 跳转/分支实际执行：更新 PC 并冲刷流水线
+        if (branch_taken) begin
+            pcReg <= actual_target;
+            // 冲刷 IF 和 ID 阶段（清空 FIFO）
+            if2id.clear;
+            id2ex.clear;
+        end else begin
+            // 正常执行：取出指令
+            id2ex.deq;
+        end
 
         Bool is_load = (pkt.mem_op == MEM_READ);
         ex2mem.enq(EX_MEM_Packet {

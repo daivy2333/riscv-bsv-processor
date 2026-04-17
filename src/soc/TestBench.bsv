@@ -28,7 +28,7 @@ module mkTestBench(TestBench);
         cycleCount <= cycleCount + 1;
     endrule
 
-    rule checkDone (programLoaded && !programDone && core.pc >= 32'h8000005c);
+    rule checkDone (programLoaded && !programDone && (core.testDone || core.pc >= 32'h8000005c));
         programDone <= True;
     endrule
 
