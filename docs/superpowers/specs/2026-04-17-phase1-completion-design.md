@@ -703,6 +703,135 @@ Python 脚本包含以下错误处理：
 - 地址越界警告（自动填充 0）
 - 无效十六进制数据跳过
 
+---
+
+### FPGA 上板备选方案（无 Python 环境）
+
+对于 FPGA 上板场景，无法使用 Python 预处理，推荐以下备选方案：
+
+#### 方案 A：Verilog $readmemh（推荐）
+
+**适用场景**：FPGA 上板、Verilator 仿真
+
+BSV 编译生成 Verilog 后，在顶层模块使用 `$readmemh`：
+
+```verilog
+// 生成的 Verilog 文件（mkCore.v）中添加：
+// 注意：BSV 生成的内存是 reg 数组，可直接使用 $readmemh
+
+initial begin
+    $readmemh("rv32ui-p-simple.hex", mkCore_imem);
+end
+```
+
+**优点**：
+- Verilog 标准函数，所有工具链支持
+- 无需 Python，直接加载 hex 文件
+- FPGA 综合时，工具会自动将 hex 内容转换为初始化值
+
+**实现步骤**：
+1. BSV 编译生成 Verilog：`bsc -verilog Core.bsv`
+2. 修改生成的 `mkCore.v`，添加 `initial $readmemh`
+3. 或在顶层 TestBench 中调用
+
+**C++ TestBench（Verilator）版本**：
+
+```cpp
+// tests/c/test_bench.cpp 中添加：
+#include <fstream>
+#include <sstream>
+
+void loadHexFile(const char* filename, uint32_t* mem, int size) {
+    std::ifstream f(filename);
+    std::string line;
+    uint32_t addr = 0;
+
+    while (std::getline(f, line)) {
+        if (line[0] == '@') {
+            addr = std::stoul(line.substr(1), nullptr, 16);
+        } else {
+            std::istringstream iss(line);
+            uint32_t data;
+            while (iss >> std::hex >> data) {
+                int idx = (addr - 0x80000000) / 4;
+                if (idx >= 0 && idx < size) {
+                    mem[idx] = data;
+                }
+                addr += 4;
+            }
+        }
+    }
+}
+
+// 使用：
+loadHexFile("rv32ui-p-simple.hex", top->mkCore__imem, 16384);
+```
+
+#### 方案 B：预生成 BSV 数组文件
+
+**适用场景**：开发机上编译，FPGA 上运行
+
+在开发机上用 Python 生成 `.bsv` 文件，编译到 Verilog 中：
+
+```bash
+# 开发机上执行一次
+python3 scripts/gen_prog.py rv32ui-p-simple.hex > src/programs/simple_program.bsvi
+```
+
+**生成的 `.bsvi` 文件格式**：
+
+```bsv
+// src/programs/simple_program.bsvi
+// 预生成的程序数组（可直接 include）
+Vector#(16384, Word) simple_program = newVector;
+simple_program[0] = 32'h12345678;
+simple_program[1] = 32'h9abcdef0;
+...
+```
+
+**TestBench 中使用**：
+
+```bsv
+// tests/TestBench.bsv
+// 直接复制预生成文件的内容，或使用 BSV 的 include 机制
+
+Vector#(16384, Word) prog = newVector;
+prog[0] = 32'h12345678;  // 从 .bsvi 文件复制
+...
+core.loadProgramLarge(prog);
+```
+
+**优点**：
+- 编译时程序已固化在 Verilog 中
+- FPGA 上无需任何文件加载
+- 综合后程序存储在 Block RAM 初始化值中
+
+#### 方案选择矩阵
+
+| 场景 | 推荐方案 | 理由 |
+|------|----------|------|
+| Verilator 开发调试 | Python 预处理 + C++ 加载 | 快速迭代，灵活 |
+| FPGA 上板测试 | 方案 A：$readmemh | Verilog 标准，工具链支持 |
+| FPGA 最终部署 | 方案 B：预生成数组 | 程序固化，无需外部文件 |
+| 无开发机环境 | 方案 A：$readmemh | 仅需 hex 文件 |
+
+#### Makefile 集成示例
+
+```makefile
+# Makefile 添加 hex 加载支持
+
+# 开发调试（Python 预处理）
+tests/programs/%_prog.bsvi: tests/hex/%.hex
+	python3 scripts/gen_prog.py $< > $@
+
+# Verilator 仿真（C++ 加载）
+VERILATOR_FLAGS += -CFLAGS "-DHEX_FILE=\"tests/hex/rv32ui-p-simple.hex\""
+
+# FPGA 上板（$readmemh）
+# 需手动修改生成的 Verilog 或使用脚本注入
+sed -i '/initial begin/a \    \$readmemh("rv32ui-p-simple.hex", imem);' build/mkCore.v
+```
+
 ### TestBench 检测逻辑
 
 ```bsv
