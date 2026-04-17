@@ -95,6 +95,7 @@ IF → ID → EX → MEM → WB
 | `src/core/Core.bsv` | 流水线核心，规则调度 |
 | `src/common/Types.bsv` | 数据包定义 |
 | `src/core/Decoder.bsv` | 指令解码 + use_rs1/rs2 |
+| `src/core/ALU.bsv` | ALU 操作实现 |
 | `src/branch/BHT.bsv` | 2位饱和计数器预测 |
 | `src/soc/TestProgram.bsv` | 自动生成的测试程序 |
 
@@ -116,15 +117,39 @@ IF → ID → EX → MEM → WB
 周期 N+3: Load 在 WB → WB→EX 前递可用
 ```
 
+## 已实现指令
+
+### RV32I 指令集覆盖
+
+| 类型 | 指令 | 状态 |
+|------|------|------|
+| **R-Type** | ADD, SUB, SLL, SRL, SRA, SLT, SLTU, AND, OR, XOR | ✓ 已实现 |
+| **I-Type ALU** | ADDI, SLTI, SLTIU, ANDI, ORI, XORI, SLLI, SRLI, SRAI | 部分 ✓ |
+| **I-Type Load** | LB, LH, LW, LBU, LHU | ✓ 已实现 |
+| **S-Type** | SB, SH, SW | ✓ 已实现 |
+| **B-Type** | BEQ, BNE, BLT, BGE, BLTU, BGEU | ✓ 已实现 |
+| **U-Type** | LUI, AUIPC | ✓ 已实现 |
+| **J-Type** | JAL, JALR | ✓ 已实现 |
+
+### 待实现 I-Type ALU 指令
+
+- SLTI, SLTIU (有符号/无符号比较立即数)
+- ANDI, ORI, XORI (逻辑立即数操作)
+- SLLI, SRLI, SRAI (移位立即数)
+
+**注**: Decoder 已有解析逻辑，ALU 已有操作支持，仅需确认 I-Type 解码正确。
+
 ## 已验证功能
 
 - [x] 五级流水线 (IF, ID, EX, MEM, WB)
 - [x] 数据前递 (EX→EX, MEM→EX, WB→EX)
 - [x] Load-Use 冒险检测 + stall + 气泡插入
 - [x] 动态分支预测 (BHT + BTB)
-- [x] 基本指令: ADD, ADDI, LUI, AUIPC, LW, SW, BEQ, BNE, BLT, JAL, JALR
-- [x] R-Type: SUB, SLL, SRL, SRA, SLT, SLTU, AND, OR, XOR
-- [x] 字节/半字: LB, LH, LBU, LHU, SB, SH
+- [x] 所有 R-Type 指令 (10条)
+- [x] Load/Store 字节/半字/字 (8条)
+- [x] 所有分支指令 (6条)
+- [x] LUI, AUIPC, JAL, JALR
+- [x] ADDI
 - [x] 地址对齐检查
 - [x] tohost 写入检测 (0x80001000)
 - [x] 汇编测试框架 (hex → BSV)
@@ -160,14 +185,16 @@ typedef struct {
 - Load 不在 MEM→EX 前递（数据尚未可用）
 - 编译汇编时必须禁用压缩指令: `-march=rv32i`
 - Verilator 4.038 不支持 VerilatedVar API
+- DMem 地址必须 < 2048 (512 words)
 
 ## 后续任务
 
 ### 阶段 2（当前）
 
-1. 添加更多指令: SUB, SLL, SRL, SRA, SLT, AND, OR, XOR
-2. 运行 riscv-tests 官方测试
-3. 添加性能计数器 (CPI, 分支预测率)
+1. ✓ R-Type 指令 (已完成)
+2. 验证 I-Type ALU 指令 (SLTI/ANDI/SLLI 等)
+3. 运行 riscv-tests 官方测试
+4. 添加性能计数器 (CPI, 分支预测率)
 
 ### 阶段 3-4
 
@@ -188,4 +215,5 @@ typedef struct {
 - `docs/data-forwarding.md` - 前递机制详解
 - `docs/load-use-hazard.md` - 冒险检测流程
 - `docs/branch-prediction.md` - 分支预测原理
+- `docs/testing-guide.md` - 测试方法指南
 - `docs/roadmap-embedded-os.md` - OS 支持路线图
