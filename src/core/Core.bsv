@@ -16,6 +16,8 @@ interface Core;
     method Addr pc;
     method Word instruction;
     method Bool running;
+    method Bool testDone;         // tohost 写入检测
+    method Word tohostValue;      // tohost 写入值
     method Action loadProgram(Vector#(1024, Word) prog);
     method Word readReg(Bit#(5) addr);
 endinterface
@@ -61,6 +63,11 @@ module mkCore#(String firmwareFile)(Core);
     Vector#(1024, Reg#(Word)) imem <- replicateM(mkReg(0));   // 4KB, 2^10 entries
     Vector#(512, Reg#(Word)) dmem <- replicateM(mkReg(0));    // 2KB, 2^9 entries
 
+    // tohost 检测（riscv-tests 完成信号）
+    Reg#(Bool) test_done <- mkReg(False);
+    Reg#(Word) tohost_value <- mkReg(0);
+    Addr tohost_addr = 32'h80001000;  // riscv-tests 标准地址
+
     // ============================================================
     // IF阶段
     // ============================================================
@@ -101,25 +108,21 @@ module mkCore#(String firmwareFile)(Core);
         IF_ID_Packet pkt = if2id.first;
         DecodedInstr dec = decoder.decode(pkt.instruction);
 
-        // 检测 Load-Use 冒险
-        // 条件1：EX 阶段有 Load 指令，且 ID 阶段指令使用 Load 的目标寄存器
-        // 条件2：MEM 阶段有 Load 指令，且 ID 阶段指令使用 Load 的目标寄存器
+        // 检测 Load-Use 冒险（使用 HazardUnit）
         Bool load_use_hazard = False;
 
-        // 检查 EX 阶段 (id2ex)
-        if (id2ex.notEmpty && id2ex.first.mem_op == MEM_READ && id2ex.first.rd != 0) begin
-            if (dec.use_rs1 && dec.rs1 == id2ex.first.rd)
-                load_use_hazard = True;
-            if (dec.use_rs2 && dec.rs2 == id2ex.first.rd)
-                load_use_hazard = True;
-        end
+        if (id2ex.notEmpty) begin
+            Bool ex_is_load = (id2ex.first.mem_op == MEM_READ);
+            Bit#(5) ex_rd = id2ex.first.rd;
+            Bool mem_is_load = ex2mem.notEmpty ? ex2mem.first.is_load : False;
+            Bit#(5) mem_rd = ex2mem.notEmpty ? ex2mem.first.rd : 0;
 
-        // 检查 MEM 阶段 (ex2mem)
-        if (ex2mem.notEmpty && ex2mem.first.is_load && ex2mem.first.rd != 0 && !load_use_hazard) begin
-            if (dec.use_rs1 && dec.rs1 == ex2mem.first.rd)
-                load_use_hazard = True;
-            if (dec.use_rs2 && dec.rs2 == ex2mem.first.rd)
-                load_use_hazard = True;
+            load_use_hazard = hazardUnit.detectLoadUseHazard(
+                ex_is_load, ex_rd,
+                mem_is_load, mem_rd,
+                dec.use_rs1, dec.rs1,
+                dec.use_rs2, dec.rs2
+            );
         end
 
         if (load_use_hazard) begin
@@ -345,6 +348,12 @@ module mkCore#(String firmwareFile)(Core);
             endcase
 
             dmem[word_idx] <= new_word;
+
+            // tohost 写入检测
+            if (pkt.alu_result == tohost_addr) begin
+                test_done <= True;
+                tohost_value <= pkt.rs2_val;
+            end
         end
 
         mem2wb.enq(MEM_WB_Packet {
@@ -389,6 +398,8 @@ module mkCore#(String firmwareFile)(Core);
     method Addr pc = pcReg;
     method Word instruction = currentInstr;
     method Bool running = (state == RUNNING);
+    method Bool testDone = test_done;
+    method Word tohostValue = tohost_value;
 
     method Action loadProgram(Vector#(1024, Word) prog);
         for (Integer i = 0; i < 1024; i = i + 1)

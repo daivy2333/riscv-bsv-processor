@@ -58,22 +58,26 @@ IF → ID → EX → MEM → WB
 - [x] 数据前递 (EX→EX, MEM→EX, WB→EX)
 - [x] 动态分支预测 (BHT + BTB)
 - [x] 基本RISC-V指令 (ADD, ADDI, LUI, LW, SW, BEQ, BNE, JAL, JALR)
+- [x] LB/LH/LBU/LHU/SB/SH 字节/半字访问
 - [x] 哈佛架构 (分离IMem/DMem)
 - [x] DecodedInstr use_rs1/use_rs2 字段（用于冒险检测）
-- [x] Load-Use 冒险检测框架（ID阶段检测，气泡插入机制）
+- [x] Load-Use 冒险检测（HazardUnit，支持 EX 和 MEM 阶段）
+- [x] tohost 写入检测（riscv-tests 完成信号）
+- [x] hex 预处理脚本（tools/preprocess_hex.py）
 
-### 待验证功能
+### 验证状态
 
-1. **Load-Use冒险修复验证**: 代码已实现，需要运行测试验证 x3=10, x4=20
-2. **多指令依赖测试**: 验证 Load 后多条指令依赖的情况
-3. **分支与Load-Use组合测试**: 验证 lw 后分支指令判断 Load 结果的场景
+Load-Use 冒险实现已验证，HazardUnit 统一检测逻辑：
+- ID 阶段调用 `hazardUnit.detectLoadUseHazard()`
+- 检测 EX 和 MEM 阶段的 Load 指令
+- 测试程序验证 x3=10, x4=20 结果正确
 
-### Core 重构待完成项（详见 docs/superpowers/specs/2026-04-12-load-use-hazard-fix-design.md）
+### Core 重构已完成项
 
-1. **HazardUnit 未被调用** - 已实例化但检测逻辑是内联的，未使用接口方法
-2. **检测时机偏差** - 当前检查 id2ex（EX阶段），设计要求检查 ex2mem（MEM阶段）
-3. **ID_EX_Packet 缺少 is_load** - 用 mem_op 判断，建议添加字段保持一致
-4. **多指令依赖测试用例** - Task 4 的 sub 指令测试未添加
+1. **HazardUnit 已集成** - Core.bsv 使用 HazardUnit 接口方法检测冒险
+2. **MEM 阶段检测** - HazardUnit 支持 mem_is_load 和 mem_rd 参数
+3. **字节/半字访问** - Decoder 和 MEM 阶段支持 LB/LH/LBU/LHU/SB/SH
+4. **tohost 检测** - MEM 阶段检测写入 0x80001000，输出 testDone/tohostValue
 
 ### 已知问题
 
@@ -82,12 +86,11 @@ IF → ID → EX → MEM → WB
 
 ### 待完成功能
 
-1. **Load-Use冒险最终验证**: 运行仿真确认实现正确
-2. **ELF程序加载**: 修复`tools/elf_to_bsv.py`实现从ELF文件加载程序
-3. **更多RISC-V指令**: SUB, SLL, SRL, SRA, SLT, SLTU, AND, OR, XOR等
-4. **ecall处理**: 实现系统调用支持
-5. **异常和中断处理**: 实现基本的异常处理机制
-6. **性能计数器**: 添加 CPI、分支预测准确率等性能统计
+1. **运行 riscv-tests**: 使用 preprocess_hex.py 加载测试程序，验证 tohost 检测
+2. **更多RISC-V指令**: SLL, SRL, SRA, SLT, SLTU, AND, OR, XOR等
+3. **ecall处理**: 实现系统调用支持
+4. **异常和中断处理**: 实现基本的异常处理机制
+5. **性能计数器**: 添加 CPI、分支预测准确率等性能统计
 
 ### 测试程序格式
 
