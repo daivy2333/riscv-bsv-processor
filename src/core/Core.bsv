@@ -30,7 +30,7 @@ module mkCore#(String firmwareFile)(Core);
     BTB btb <- mkBTB;
     HazardUnit hazardUnit <- mkHazardUnit;
 
-    // 流水线寄存器
+    // 流水线寄存器（使用 FIFOF 深度2）
     FIFOF#(IF_ID_Packet) if2id <- mkFIFOF;
     FIFOF#(ID_EX_Packet) id2ex <- mkFIFOF;
     FIFOF#(EX_MEM_Packet) ex2mem <- mkFIFOF;
@@ -38,7 +38,7 @@ module mkCore#(String firmwareFile)(Core);
 
     // Load-Use停顿控制
     Reg#(Bool) stall_load_use <- mkReg(False);    // Load-Use 停顿标志
-    Reg#(Bool) bubble_pending <- mkReg(False);    // 待插入气泡标志
+    Reg#(Bit#(2)) stall_count <- mkReg(0);        // 停顿剩余周期数
 
     // PC和状态
     Reg#(Addr) pcReg <- mkReg(32'h80000000);
@@ -104,31 +104,27 @@ module mkCore#(String firmwareFile)(Core);
     // ID阶段
     // ============================================================
 
-    rule decodeStage (!stall_load_use && !bubble_pending);
+    rule decodeStage (!stall_load_use);
         IF_ID_Packet pkt = if2id.first;
         DecodedInstr dec = decoder.decode(pkt.instruction);
 
-        // 检测 Load-Use 冒险（使用 HazardUnit）
+        // 检测 Load-Use 冒险（只检查 EX 阶段的 Load）
         Bool load_use_hazard = False;
 
-        if (id2ex.notEmpty) begin
-            Bool ex_is_load = (id2ex.first.mem_op == MEM_READ);
+        if (id2ex.notEmpty && id2ex.first.mem_op == MEM_READ && id2ex.first.rd != 0) begin
             Bit#(5) ex_rd = id2ex.first.rd;
-            Bool mem_is_load = ex2mem.notEmpty ? ex2mem.first.is_load : False;
-            Bit#(5) mem_rd = ex2mem.notEmpty ? ex2mem.first.rd : 0;
-
-            load_use_hazard = hazardUnit.detectLoadUseHazard(
-                ex_is_load, ex_rd,
-                mem_is_load, mem_rd,
-                dec.use_rs1, dec.rs1,
-                dec.use_rs2, dec.rs2
-            );
+            if (dec.use_rs1 && dec.rs1 == ex_rd)
+                load_use_hazard = True;
+            if (dec.use_rs2 && dec.rs2 == ex_rd)
+                load_use_hazard = True;
         end
 
         if (load_use_hazard) begin
             // 停顿 ID 阶段，不发送包到 EX
             stall_load_use <= True;
-            bubble_pending <= True;
+            stall_count <= 2;  // Load 需要 2 周期从 EX→MEM→WB
+            // 立即插入气泡到 id2ex（当前周期）
+            id2ex.enq(nopPacket());
             // 注意：不 deq if2id，保留指令供下个周期使用
         end else begin
             // 正常解码并发送到 EX
@@ -156,23 +152,22 @@ module mkCore#(String firmwareFile)(Core);
         end
     endrule
 
-    // 气泡插入规则
-    rule insertBubble (bubble_pending && !stall_load_use);
-        // 插入 NOP 到 EX 阶段
+    // Stall 计数递减规则
+    rule decrementStall (stall_load_use && stall_count > 0);
+        Bit#(2) new_count = stall_count - 1;
+        stall_count <= new_count;
+        if (new_count == 0) begin
+            stall_load_use <= False;  // 计数结束，清除 stall
+        end
+        // 在 stall 周期插入气泡到 id2ex
         id2ex.enq(nopPacket());
-        bubble_pending <= False;
-    endrule
-
-    // 清除 Load-Use 停顿
-    rule clearLoadUseStall (stall_load_use);
-        stall_load_use <= False;
     endrule
 
     // ============================================================
     // EX阶段
     // ============================================================
 
-    rule executeStage (!stall_load_use);
+    rule executeStage;
         ID_EX_Packet pkt = id2ex.first;
         id2ex.deq;
 
