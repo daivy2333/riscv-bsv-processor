@@ -101,11 +101,13 @@ IF → ID → EX → MEM → WB
 
 ### 数据前递
 
-| 前递路径 | 数据来源 | 优先级 |
-|----------|----------|--------|
-| EX→EX | alu_result | 最高 |
-| MEM→EX | alu_result (非Load) | 中 |
-| WB→EX | mem_data/alu_result | 最低 |
+| 前递路径 | 数据来源 | 优先级 | 说明 |
+|----------|----------|--------|------|
+| MEM→EX | ex2mem.first | 高 | 直接读取 FIFO，同周期可用 |
+| WB→EX | mem2wb.first | 中 | 直接读取 FIFO，同周期可用 |
+| WB→ID | wb_forward_data | 低 | Reg 存储，解决分支读寄存器延迟 |
+
+**注**: 前递直接从 FIFO 读取，绕过 BSV 规则顺序限制
 
 ### Load-Use 冒险处理
 
@@ -142,9 +144,10 @@ IF → ID → EX → MEM → WB
 ## 已验证功能
 
 - [x] 五级流水线 (IF, ID, EX, MEM, WB)
-- [x] 数据前递 (EX→EX, MEM→EX, WB→EX)
+- [x] 数据前递 (MEM→EX, WB→EX, WB→ID)
 - [x] Load-Use 冒险检测 + stall + 气泡插入
 - [x] 动态分支预测 (BHT + BTB)
+- [x] 分支/跳转 PC 更新 (MEM 阶段执行)
 - [x] 所有 R-Type 指令 (10条)
 - [x] Load/Store 字节/半字/字 (8条)
 - [x] 所有分支指令 (6条)
@@ -187,13 +190,30 @@ typedef struct {
 - Verilator 4.038 不支持 VerilatedVar API
 - DMem 地址必须 < 2048 (512 words)
 
+## 已知问题
+
+### 分支冲刷时序问题
+
+**现象**: 跳转到自身的指令（如 `j end`）会导致 PC 循环增加，形成无限循环
+
+**原因**:
+- MEM 阶段执行分支，设置 pcReg
+- IF 阶段在同一周期已执行，使用旧 PC fetch 并增加 pcReg
+- BSV 规则执行顺序导致 IF 阶段先于 MEM 阶段
+
+**影响**: 测试无法正常结束（依赖死循环检测或 tohost 写入）
+
+**解决方案**:
+- 研究 BSV 规则调度机制
+- 可能需要使用 Wire 或调整规则结构
+
 ## 后续任务
 
 ### 阶段 2（当前）
 
 1. ✓ R-Type 指令 (已完成)
-2. 验证 I-Type ALU 指令 (SLTI/ANDI/SLLI 等)
-3. 运行 riscv-tests 官方测试
+2. ⏳ 验证 I-Type ALU 指令 (SLTI/ANDI/SLLI 等) - 阻塞于分支冲刷问题
+3. ⏳ 运行 riscv-tests 官方测试 - 阻塞于分支冲刷问题
 4. 添加性能计数器 (CPI, 分支预测率)
 
 ### 阶段 3-4
