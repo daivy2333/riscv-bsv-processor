@@ -15,11 +15,16 @@ interface CSRs;
     method Action setMode(PrivilegeMode mode);
     method Addr getTrapVector(TrapInfo trap);
     method Bool hasPendingInterrupt();
+    method Maybe#(Bit#(5)) getPendingInterruptCause();  // Returns cause of highest priority interrupt
     method Action setMEIP(Bool v);
     method Action setMSIP(Bool v);
     method Action setMTIP(Bool v);
     method Action incrementCycle;
     method Action incrementMinstret;
+    method Bit#(64) getMtime();
+    method Action setMtime(Bit#(64) v);
+    method Bit#(64) getMtimecmp();
+    method Action setMtimecmp(Bit#(64) v);
 endinterface
 
 // Helper function: check if CSR is read-only
@@ -118,7 +123,7 @@ module mkCSR(CSRs);
     // Machine Counter/Timer (64-bit)
     Reg#(Bit#(64)) mcycle <- mkReg(0);         // Machine cycle count
     Reg#(Bit#(64)) mtime <- mkReg(0);         // Machine time
-    Reg#(Bit#(64)) mtimecmp <- mkReg(0);      // Machine time compare
+    Reg#(Bit#(64)) mtimecmp <- mkReg('hFFFFFFFFFFFFFFFF);      // Machine time compare (初始化为最大值，避免立即触发定时器中断)
     Reg#(Bit#(64)) minstret <- mkReg(0);      // Machine instructions retired
 
     // Interrupt pending signals from external sources
@@ -130,7 +135,7 @@ module mkCSR(CSRs);
     rule update_mip;
         Bit#(32) new_mip = 0;
         new_mip[11] = meip ? 1 : 0;  // MEIP
-        new_mip[7] = mtip ? 1 : 0;   // MTIP
+        new_mip[7] = (mtime >= mtimecmp) ? 1 : 0;  // MTIP - timer comparison
         new_mip[3] = msip ? 1 : 0;   // MSIP
         mip <= new_mip;
     endrule
@@ -242,6 +247,27 @@ module mkCSR(CSRs);
         return (enabled_interrupts != 0) && global_enable;
     endmethod
 
+    // Get the highest priority pending interrupt cause
+    // Returns Nothing if no interrupt pending
+    // Priority: MEIP(11) > MTIP(7) > MSIP(3) for M-mode
+    method Maybe#(Bit#(5)) getPendingInterruptCause();
+        Maybe#(Bit#(5)) result = Invalid;
+        Bit#(32) enabled_interrupts = mie & mip;
+        Bool global_enable = mstatus.mie == 1;
+
+        if (global_enable) begin
+            if (enabled_interrupts[11] == 1) begin
+                result = Valid (5'd11);  // INT_EXTERNAL_M
+            end else if (enabled_interrupts[7] == 1) begin
+                result = Valid (5'd7);   // INT_TIMER_M
+            end else if (enabled_interrupts[3] == 1) begin
+                result = Valid (5'd3);  // INT_SOFTWARE_M
+            end
+        end
+
+        return result;
+    endmethod
+
     method Action setMEIP(Bool v);
         meip <= v;
     endmethod
@@ -260,6 +286,22 @@ module mkCSR(CSRs);
 
     method Action incrementMinstret;
         minstret <= minstret + 1;
+    endmethod
+
+    method Bit#(64) getMtime();
+        return mtime;
+    endmethod
+
+    method Action setMtime(Bit#(64) v);
+        mtime <= v;
+    endmethod
+
+    method Bit#(64) getMtimecmp();
+        return mtimecmp;
+    endmethod
+
+    method Action setMtimecmp(Bit#(64) v);
+        mtimecmp <= v;
     endmethod
 endmodule
 

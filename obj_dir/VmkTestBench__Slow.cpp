@@ -61,7 +61,8 @@ void VmkTestBench::_initial__TOP__1(VmkTestBench__Syms* __restrict vlSymsp) {
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] = 0xaaaaaaaaU;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] = 0xaaaaaaaaU;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] = 0xaaaaaaaaU;
-    vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] = 0xaaU;
+    vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] = 0xaaaaaaaaU;
+    vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] = 0xaaU;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[0U] = 0xaaaaaaaaU;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[1U] = 0xaaaaaaaaU;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[2U] = 0xaaaaaaaaU;
@@ -70,7 +71,8 @@ void VmkTestBench::_initial__TOP__1(VmkTestBench__Syms* __restrict vlSymsp) {
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[5U] = 0xaaaaaaaaU;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[6U] = 0xaaaaaaaaU;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[7U] = 0xaaaaaaaaU;
-    vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[8U] = 0xaaU;
+    vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[8U] = 0xaaaaaaaaU;
+    vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data1_reg[9U] = 0xaaU;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg = 0U;
     vlTOPp->mkTestBench__DOT__core_id2ex__DOT__full_reg = 1U;
     vlTOPp->mkTestBench__DOT__core_bht_bhtTable_0 = 2U;
@@ -344,7 +346,6 @@ void VmkTestBench::_initial__TOP__1(VmkTestBench__Syms* __restrict vlSymsp) {
     vlTOPp->mkTestBench__DOT__core_csrs_mstatus = 0xaaaaaaaaULL;
     vlTOPp->mkTestBench__DOT__core_csrs_mtime = 0xaaaaaaaaaaaaaaaaULL;
     vlTOPp->mkTestBench__DOT__core_csrs_mtimecmp = 0xaaaaaaaaaaaaaaaaULL;
-    vlTOPp->mkTestBench__DOT__core_csrs_mtip = 0U;
     vlTOPp->mkTestBench__DOT__core_csrs_mtval = 0xaaaaaaaaU;
     vlTOPp->mkTestBench__DOT__core_csrs_mtvec = 0xaaaaaaaaU;
     vlTOPp->mkTestBench__DOT__core_csrs_priv_mode = 2U;
@@ -1954,20 +1955,79 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    VmkTestBench::_settle__TOP__7\n"); );
     VmkTestBench* const __restrict vlTOPp VL_ATTR_UNUSED = vlSymsp->TOPp;
     // Variables
-    WData/*95:0*/ __Vtemp71[3];
-    WData/*95:0*/ __Vtemp72[3];
+    WData/*95:0*/ __Vtemp73[3];
     WData/*95:0*/ __Vtemp74[3];
-    WData/*95:0*/ __Vtemp75[3];
-    WData/*95:0*/ __Vtemp80[3];
-    WData/*95:0*/ __Vtemp83[3];
-    WData/*95:0*/ __Vtemp84[3];
-    WData/*95:0*/ __Vtemp85[3];
-    WData/*287:0*/ __Vtemp89[9];
-    WData/*287:0*/ __Vtemp91[9];
-    WData/*95:0*/ __Vtemp92[3];
-    WData/*159:0*/ __Vtemp100[5];
+    WData/*127:0*/ __Vtemp76[4];
+    WData/*127:0*/ __Vtemp78[4];
+    WData/*127:0*/ __Vtemp79[4];
+    WData/*127:0*/ __Vtemp84[4];
+    WData/*127:0*/ __Vtemp87[4];
+    WData/*127:0*/ __Vtemp88[4];
+    WData/*127:0*/ __Vtemp89[4];
+    WData/*319:0*/ __Vtemp93[10];
+    WData/*319:0*/ __Vtemp95[10];
+    WData/*95:0*/ __Vtemp96[3];
+    WData/*159:0*/ __Vtemp104[5];
     // Body
-    __Vtemp71[0U] = (IData)((((QData)((IData)(((((0x73U 
+    VL_EXTEND_WQ(68,35, __Vtemp73, (((QData)((IData)(
+                                                     ((((0x73U 
+                                                         == 
+                                                         (0x7fU 
+                                                          & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                              << 0x1dU) 
+                                                             | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                                >> 3U)))) 
+                                                        & (0U 
+                                                           == 
+                                                           (7U 
+                                                            & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                                << 0x11U) 
+                                                               | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                                  >> 0xfU))))) 
+                                                       & ((1U 
+                                                           == 
+                                                           (0x7fU 
+                                                            & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                                << 4U) 
+                                                               | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                                  >> 0x1cU)))) 
+                                                          | (0U 
+                                                             == 
+                                                             (0x7fU 
+                                                              & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                                  << 4U) 
+                                                                 | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                                    >> 0x1cU))))))
+                                                       ? 
+                                                      (3U 
+                                                       & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
+                                                       : 0U))) 
+                                     << 0x21U) | (((QData)((IData)(
+                                                                   (1U 
+                                                                    & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U] 
+                                                                       >> 2U)))) 
+                                                   << 0x20U) 
+                                                  | (QData)((IData)(
+                                                                    ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                                      << 0x1dU) 
+                                                                     | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U] 
+                                                                        >> 3U)))))));
+    __Vtemp74[2U] = ((0xfffffff0U & (((((0x73U == (0x7fU 
+                                                   & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                       << 0x1dU) 
+                                                      | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                         >> 3U)))) 
+                                        & (0U == (7U 
+                                                  & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                      << 0x11U) 
+                                                     | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                        >> 0xfU))))) 
+                                       & (1U == (0x7fU 
+                                                 & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                     << 4U) 
+                                                    | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                       >> 0x1cU)))))
+                                       ? 3U : ((((0x73U 
                                                   == 
                                                   (0x7fU 
                                                    & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
@@ -1981,195 +2041,25 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                          << 0x11U) 
                                                         | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                            >> 0xfU))))) 
-                                                & (1U 
+                                                & (0U 
                                                    == 
                                                    (0x7fU 
                                                     & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                                         << 4U) 
                                                        | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                           >> 0x1cU)))))
-                                                ? 3U
-                                                : (
-                                                   (((0x73U 
-                                                      == 
-                                                      (0x7fU 
-                                                       & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                           << 0x1dU) 
-                                                          | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                             >> 3U)))) 
-                                                     & (0U 
-                                                        == 
-                                                        (7U 
-                                                         & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                             << 0x11U) 
-                                                            | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                               >> 0xfU))))) 
-                                                    & (0U 
-                                                       == 
-                                                       (0x7fU 
-                                                        & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                            << 4U) 
-                                                           | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                              >> 0x1cU)))))
-                                                    ? 
-                                                   ((2U 
-                                                     & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
-                                                     ? 0xbU
-                                                     : 
-                                                    ((1U 
-                                                      & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
-                                                      ? 9U
-                                                      : 8U))
-                                                    : 0U)))) 
-                              << 0x23U) | (QData)((IData)(
-                                                          ((((0x73U 
-                                                              == 
-                                                              (0x7fU 
-                                                               & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                                   << 0x1dU) 
-                                                                  | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                     >> 3U)))) 
-                                                             & (0U 
-                                                                == 
-                                                                (7U 
-                                                                 & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                                     << 0x11U) 
-                                                                    | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                       >> 0xfU))))) 
-                                                            & ((1U 
-                                                                == 
-                                                                (0x7fU 
-                                                                 & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                                     << 4U) 
-                                                                    | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                       >> 0x1cU)))) 
-                                                               | (0U 
-                                                                  == 
-                                                                  (0x7fU 
-                                                                   & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                                       << 4U) 
-                                                                      | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                         >> 0x1cU))))))
-                                                            ? 
-                                                           (3U 
-                                                            & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
-                                                            : 0U)))));
-    __Vtemp71[1U] = ((0xffffff00U & (((((0x73U == (0x7fU 
-                                                   & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                       << 0x1dU) 
-                                                      | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                         >> 3U)))) 
-                                        & (0U == (7U 
-                                                  & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                      << 0x11U) 
-                                                     | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                        >> 0xfU))))) 
-                                       & ((1U == (0x7fU 
-                                                  & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                      << 4U) 
-                                                     | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                        >> 0x1cU)))) 
-                                          | (0U == 
-                                             (0x7fU 
-                                              & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                  << 4U) 
-                                                 | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                    >> 0x1cU))))))
-                                       ? ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U] 
-                                           << 0x1dU) 
-                                          | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                             >> 3U))
-                                       : 0U) << 8U)) 
-                     | (IData)(((((QData)((IData)((
-                                                   (((0x73U 
-                                                      == 
-                                                      (0x7fU 
-                                                       & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                           << 0x1dU) 
-                                                          | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                             >> 3U)))) 
-                                                     & (0U 
-                                                        == 
-                                                        (7U 
-                                                         & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                             << 0x11U) 
-                                                            | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                               >> 0xfU))))) 
-                                                    & (1U 
-                                                       == 
-                                                       (0x7fU 
-                                                        & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                            << 4U) 
-                                                           | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                              >> 0x1cU)))))
-                                                    ? 3U
+                                                ? (
+                                                   (2U 
+                                                    & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
+                                                    ? 0xbU
                                                     : 
-                                                   ((((0x73U 
-                                                       == 
-                                                       (0x7fU 
-                                                        & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                            << 0x1dU) 
-                                                           | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                              >> 3U)))) 
-                                                      & (0U 
-                                                         == 
-                                                         (7U 
-                                                          & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                              << 0x11U) 
-                                                             | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                >> 0xfU))))) 
-                                                     & (0U 
-                                                        == 
-                                                        (0x7fU 
-                                                         & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                             << 4U) 
-                                                            | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                               >> 0x1cU)))))
-                                                     ? 
-                                                    ((2U 
-                                                      & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
-                                                      ? 0xbU
-                                                      : 
-                                                     ((1U 
-                                                       & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
-                                                       ? 9U
-                                                       : 8U))
-                                                     : 0U)))) 
-                                  << 0x23U) | (QData)((IData)(
-                                                              ((((0x73U 
-                                                                  == 
-                                                                  (0x7fU 
-                                                                   & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                                       << 0x1dU) 
-                                                                      | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                         >> 3U)))) 
-                                                                 & (0U 
-                                                                    == 
-                                                                    (7U 
-                                                                     & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                                         << 0x11U) 
-                                                                        | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                           >> 0xfU))))) 
-                                                                & ((1U 
-                                                                    == 
-                                                                    (0x7fU 
-                                                                     & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                                         << 4U) 
-                                                                        | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                           >> 0x1cU)))) 
-                                                                   | (0U 
-                                                                      == 
-                                                                      (0x7fU 
-                                                                       & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                                           << 4U) 
-                                                                          | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                                             >> 0x1cU))))))
-                                                                ? 
-                                                               (3U 
-                                                                & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
-                                                                : 0U)))) 
-                                >> 0x20U)));
-    __Vtemp72[2U] = ((0xffffff00U & ((((0x73U == (0x7fU 
+                                                   ((1U 
+                                                     & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[0U])
+                                                     ? 9U
+                                                     : 8U))
+                                                : 0U)) 
+                                     << 4U)) | __Vtemp73[2U]);
+    __Vtemp76[3U] = ((0xfffffe00U & ((((0x73U == (0x7fU 
                                                   & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                                       << 0x1dU) 
                                                      | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
@@ -2189,7 +2079,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                        << 4U) 
                                                       | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                          >> 0x1cU)))))) 
-                                     << 8U)) | (0xffU 
+                                     << 9U)) | (0x1ffU 
                                                 & (((((0x73U 
                                                        == 
                                                        (0x7fU 
@@ -2224,8 +2114,8 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                      | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                                         >> 3U))
                                                      : 0U) 
-                                                   >> 0x18U)));
-    __Vtemp74[2U] = ((0xfffffc00U & (((0x200U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
+                                                   >> 0x17U)));
+    __Vtemp78[3U] = ((0xfffff800U & (((0x200U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                        ? 2U : ((0x100U 
                                                 & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                                 ? (
@@ -2308,7 +2198,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                            : 0U)))
                                                         : 2U)
                                                        : 2U)))))) 
-                                     << 0xaU)) | ((0xfffffe00U 
+                                     << 0xbU)) | ((0xfffffc00U 
                                                    & (((3U 
                                                         == 
                                                         (0x7fU 
@@ -2330,9 +2220,9 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                                   << 0x11U) 
                                                                  | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                                     >> 0xfU)))))) 
-                                                      << 9U)) 
-                                                  | __Vtemp72[2U]));
-    __Vtemp75[2U] = ((0xfffff000U & (((((((((0x13U 
+                                                      << 0xaU)) 
+                                                  | __Vtemp76[3U]));
+    __Vtemp79[3U] = ((0xffffe000U & (((((((((0x13U 
                                              == (0x7fU 
                                                  & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                                      << 0x1dU) 
@@ -2379,21 +2269,44 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                        << 0x1dU) 
                                                       | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                          >> 3U))))) 
-                                     << 0xcU)) | __Vtemp74[2U]);
-    vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F418_BITS_41_TO_35_419_EQ_ETC___05F_d1673[0U] 
-        = __Vtemp71[0U];
-    vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F418_BITS_41_TO_35_419_EQ_ETC___05F_d1673[1U] 
-        = __Vtemp71[1U];
-    vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F418_BITS_41_TO_35_419_EQ_ETC___05F_d1673[2U] 
-        = __Vtemp75[2U];
-    vlTOPp->mkTestBench__DOT__imm12___05Fh142637 = 
+                                     << 0xdU)) | __Vtemp78[3U]);
+    vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F422_BITS_41_TO_35_423_EQ_ETC___05F_d1680[0U] 
+        = __Vtemp73[0U];
+    vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F422_BITS_41_TO_35_423_EQ_ETC___05F_d1680[1U] 
+        = __Vtemp73[1U];
+    vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F422_BITS_41_TO_35_423_EQ_ETC___05F_d1680[2U] 
+        = ((0xfffffe00U & (((((0x73U == (0x7fU & ((
+                                                   vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                   << 0x1dU) 
+                                                  | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                     >> 3U)))) 
+                              & (0U == (7U & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                               << 0x11U) 
+                                              | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                 >> 0xfU))))) 
+                             & ((1U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                  << 4U) 
+                                                 | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                    >> 0x1cU)))) 
+                                | (0U == (0x7fU & (
+                                                   (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                    << 4U) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                      >> 0x1cU))))))
+                             ? ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U] 
+                                 << 0x1dU) | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                              >> 3U))
+                             : 0U) << 9U)) | __Vtemp74[2U]);
+    vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F422_BITS_41_TO_35_423_EQ_ETC___05F_d1680[3U] 
+        = __Vtemp79[3U];
+    vlTOPp->mkTestBench__DOT__imm12___05Fh142677 = 
         ((0xfe0U & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                      << 9U) | (0x1e0U & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                          >> 0x17U)))) 
          | (0x1fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                       << 0x16U) | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                    >> 0xaU))));
-    vlTOPp->mkTestBench__DOT__imm13___05Fh142682 = 
+    vlTOPp->mkTestBench__DOT__imm13___05Fh142722 = 
         ((0x1000U & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                      << 0xaU)) | ((0x800U & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                              << 1U)) 
@@ -2407,7 +2320,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                  | (0x3ffffeU 
                                                     & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                        >> 0xaU)))))));
-    vlTOPp->mkTestBench__DOT__imm21___05Fh142808 = 
+    vlTOPp->mkTestBench__DOT__imm21___05Fh142848 = 
         ((0x100000U & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                        << 0x12U)) | ((0xff000U & ((
                                                    vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
@@ -2424,7 +2337,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                             | (0x1feU 
                                                & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                   >> 0x17U)))))));
-    vlTOPp->mkTestBench__DOT__imm___05Fh140999 = ((0xfffff000U 
+    vlTOPp->mkTestBench__DOT__imm___05Fh141034 = ((0xfffff000U 
                                                    & ((- (IData)(
                                                                  (1U 
                                                                   & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
@@ -2435,7 +2348,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                          << 9U) 
                                                         | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                            >> 0x17U))));
-    vlTOPp->mkTestBench__DOT__op1___05F_1___05Fh143928 
+    vlTOPp->mkTestBench__DOT__op1___05F_1___05Fh143974 
         = ((1U & vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[0U])
             ? ((vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[2U] 
                 << 0x19U) | (vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[1U] 
@@ -2443,77 +2356,77 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                          << 0x19U) 
                                         | (vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[0U] 
                                            >> 7U)));
-    vlTOPp->mkTestBench__DOT__CASE_core_id2exD_OUT_BITS_214_TO_212_0b11_NOT_ETC___05Fq6 
-        = (((3U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                           << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                       >> 0x14U)))) 
-            | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                             << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                         >> 0x14U)))))
-            ? (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                << 9U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                          >> 0x17U))))
-            : (((6U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                               << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                           >> 0x14U)))) 
-                | (7U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                 << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                             >> 0x14U))))) 
-               & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                   << 9U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                             >> 0x17U))))));
-    vlTOPp->mkTestBench__DOT__actual_target___05F_1___05Fh145473 
-        = (((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-             << 0x18U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                          >> 8U)) + ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                      << 0x18U) | (
-                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                   >> 8U)));
-    vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_54_TO_50_465_EQ_cor_ETC___05F_d1466 
+    vlTOPp->mkTestBench__DOT__CASE_core_id2exD_OUT_BITS_247_TO_245_0b11_NOT_ETC___05Fq6 
+        = (((3U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                           << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                       >> 0x15U)))) 
+            | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                             << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                         >> 0x15U)))))
+            ? (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                << 8U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                          >> 0x18U))))
+            : (((6U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                               << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                           >> 0x15U)))) 
+                | (7U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                 << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                             >> 0x15U))))) 
+               & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                   << 8U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                             >> 0x18U))))));
+    vlTOPp->mkTestBench__DOT__actual_target___05F_1___05Fh145519 
+        = (((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+             << 0x17U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                          >> 9U)) + ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                      << 0x17U) | (
+                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                   >> 9U)));
+    vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_54_TO_50_469_EQ_cor_ETC___05F_d1470 
         = ((0x1fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                       << 0xeU) | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                   >> 0x12U))) == (0x1fU 
-                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                      << 7U) 
-                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                        >> 0x19U))));
-    vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_59_TO_55_431_EQ_cor_ETC___05F_d1432 
+                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                      << 6U) 
+                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                        >> 0x1aU))));
+    vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_59_TO_55_435_EQ_cor_ETC___05F_d1436 
         = ((0x1fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                       << 9U) | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                 >> 0x17U))) == (0x1fU 
-                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                    << 7U) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                      >> 0x19U))));
-    vlTOPp->mkTestBench__DOT__addr___05Fh148007 = (
-                                                   (0x4000U 
-                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
+                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                    << 6U) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                      >> 0x1aU))));
+    vlTOPp->mkTestBench__DOT__addr___05Fh148053 = (
+                                                   (0x8000U 
+                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
                                                     ? 
-                                                   ((0x2000U 
-                                                     & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
+                                                   ((0x4000U 
+                                                     & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
                                                      ? 
-                                                    ((0x1000U 
-                                                      & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
+                                                    ((0x2000U 
+                                                      & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
                                                       ? 
-                                                     ((0x800U 
-                                                       & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
+                                                     ((0x1000U 
+                                                       & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
                                                        ? 0U
                                                        : 
-                                                      ((0x400U 
-                                                        & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
+                                                      ((0x800U 
+                                                        & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
                                                         ? 0U
                                                         : 
-                                                       ((0x200U 
-                                                         & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
+                                                       ((0x400U 
+                                                         & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
                                                          ? 
-                                                        ((0x100U 
-                                                          & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
+                                                        ((0x200U 
+                                                          & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
                                                           ? 
                                                          (0xfffU 
-                                                          & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                              << 4U) 
-                                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                                >> 0x1cU)))
+                                                          & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                              << 3U) 
+                                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                                >> 0x1dU)))
                                                           : 0U)
                                                          : 0U)))
                                                       : 0U)
@@ -2533,7 +2446,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                   & (~ (IData)(vlTOPp->mkTestBench__DOT__dumpDone))) 
                                                  & (0x19U 
                                                     <= vlTOPp->mkTestBench__DOT__waitCount));
-    vlTOPp->mkTestBench__DOT__rs1_val___05Fh141393 
+    vlTOPp->mkTestBench__DOT__rs1_val___05Fh141431 
         = ((0x400000U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
             ? ((0x200000U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                 ? ((0x100000U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
@@ -2597,7 +2510,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                         : ((0x40000U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                             ? vlTOPp->mkTestBench__DOT__core_regFile_registers_1
                             : 0U)))));
-    vlTOPp->mkTestBench__DOT__rs2_val___05Fh141394 
+    vlTOPp->mkTestBench__DOT__rs2_val___05Fh141432 
         = ((0x8000000U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
             ? ((0x4000000U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                 ? ((0x2000000U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
@@ -2661,7 +2574,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                         : ((0x800000U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                             ? vlTOPp->mkTestBench__DOT__core_regFile_registers_1
                             : 0U)))));
-    vlTOPp->mkTestBench__DOT__value___05Fh148422 = 
+    vlTOPp->mkTestBench__DOT__value___05Fh148468 = 
         ((0x80000000U & ((IData)(vlTOPp->mkTestBench__DOT__core_csrs_mstatus) 
                          << 0x1fU)) | ((0x7f800000U 
                                         & ((IData)(
@@ -2773,397 +2686,397 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
         = (((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__full_reg) 
             & (IData)(vlTOPp->mkTestBench__DOT__core_stall_load_use)) 
            & (0U != (IData)(vlTOPp->mkTestBench__DOT__core_stall_count)));
-    if ((0x8000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])) {
-        vlTOPp->mkTestBench__DOT__oldState___05Fh146070 
-            = ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_63)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_62))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_61)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_60)))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_59)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_58))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_57)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_56))))
-                    : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_55)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_54))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_53)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_52)))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_51)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_50))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_49)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_48)))))
-                : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_47)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_46))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_45)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_44)))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_43)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_42))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_41)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_40))))
-                    : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_39)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_38))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_37)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_36)))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_35)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_34))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_33)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_32))))));
-        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BITS_64_TO_33_54_ETC___05F_d2020 
-            = ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+    if ((0x10000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])) {
+        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BITS_64_TO_33___05FETC___05F_d2027 
+            = ((0x8000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                ? ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_63[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_63[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_62[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_62[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_61[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_61[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_60[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_60[1U] 
                                                  >> 1U))))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_59[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_59[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_58[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_58[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_57[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_57[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_56[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_56[1U] 
                                                  >> 1U)))))
-                    : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                    : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_55[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_55[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_54[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_54[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_53[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_53[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_52[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_52[1U] 
                                                  >> 1U))))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_51[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_51[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_50[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_50[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_49[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_49[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_48[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_48[1U] 
                                                  >> 1U))))))
-                : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                : ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_47[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_47[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_46[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_46[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_45[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_45[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_44[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_44[1U] 
                                                  >> 1U))))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_43[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_43[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_42[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_42[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_41[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_41[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_40[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_40[1U] 
                                                  >> 1U)))))
-                    : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                    : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_39[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_39[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_38[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_38[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_37[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_37[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_36[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_36[1U] 
                                                  >> 1U))))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_35[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_35[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_34[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_34[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_33[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_33[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_32[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_32[1U] 
                                                  >> 1U)))))));
+        vlTOPp->mkTestBench__DOT__oldState___05Fh146116 
+            = ((0x8000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                ? ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_63)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_62))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_61)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_60)))
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_59)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_58))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_57)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_56))))
+                    : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_55)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_54))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_53)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_52)))
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_51)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_50))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_49)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_48)))))
+                : ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_47)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_46))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_45)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_44)))
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_43)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_42))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_41)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_40))))
+                    : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_39)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_38))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_37)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_36)))
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_35)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_34))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_33)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_32))))));
     } else {
-        vlTOPp->mkTestBench__DOT__oldState___05Fh146070 
-            = ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_31)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_30))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_29)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_28)))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_27)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_26))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_25)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_24))))
-                    : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_23)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_22))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_21)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_20)))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_19)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_18))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_17)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_16)))))
-                : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_15)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_14))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_13)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_12)))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_11)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_10))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_9)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_8))))
-                    : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_7)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_6))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_5)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_4)))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_3)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_2))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_1)
-                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_0))))));
-        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BITS_64_TO_33_54_ETC___05F_d2020 
-            = ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BITS_64_TO_33___05FETC___05F_d2027 
+            = ((0x8000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                ? ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_31[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_31[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_30[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_30[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_29[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_29[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_28[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_28[1U] 
                                                  >> 1U))))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_27[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_27[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_26[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_26[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_25[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_25[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_24[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_24[1U] 
                                                  >> 1U)))))
-                    : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                    : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_23[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_23[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_22[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_22[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_21[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_21[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_20[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_20[1U] 
                                                  >> 1U))))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_19[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_19[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_18[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_18[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_17[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_17[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_16[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_16[1U] 
                                                  >> 1U))))))
-                : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                : ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_15[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_15[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_14[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_14[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_13[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_13[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_12[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_12[1U] 
                                                  >> 1U))))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_11[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_11[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_10[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_10[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_9[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_9[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_8[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_8[1U] 
                                                  >> 1U)))))
-                    : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                    : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_7[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_7[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_6[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_6[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_5[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_5[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_4[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_4[1U] 
                                                  >> 1U))))
-                        : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
-                            ? ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_3[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_3[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_2[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_2[1U] 
                                                  >> 1U)))
-                            : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
                                 ? ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_1[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_1[1U] 
                                                  >> 1U))
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_0[2U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_0[1U] 
                                                  >> 1U)))))));
+        vlTOPp->mkTestBench__DOT__oldState___05Fh146116 
+            = ((0x8000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                ? ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_31)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_30))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_29)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_28)))
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_27)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_26))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_25)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_24))))
+                    : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_23)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_22))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_21)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_20)))
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_19)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_18))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_17)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_16)))))
+                : ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_15)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_14))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_13)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_12)))
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_11)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_10))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_9)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_8))))
+                    : ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_7)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_6))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_5)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_4)))
+                        : ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                            ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_3)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_2))
+                            : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U])
+                                ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_1)
+                                : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_0))))));
     }
-    vlTOPp->mkTestBench__DOT__core_pcReg_51_EQ_lastPC_261___05F_d4262 
+    vlTOPp->mkTestBench__DOT__core_pcReg_5_EQ_lastPC_274___05F_d4275 
         = (vlTOPp->mkTestBench__DOT__core_pcReg == vlTOPp->mkTestBench__DOT__lastPC);
     if ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)) {
-        vlTOPp->mkTestBench__DOT__target___05Fh108725 
+        vlTOPp->mkTestBench__DOT__prediction_target___05F_1___05Fh140543 
             = ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
                 ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
                     ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
@@ -3291,7 +3204,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_32[1U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_32[0U] 
                                                  >> 1U)))))));
-        vlTOPp->mkTestBench__DOT__state___05Fh106691 
+        vlTOPp->mkTestBench__DOT__state___05Fh138503 
             = ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
                 ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
                     ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
@@ -3355,7 +3268,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                             : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
                                 ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_33)
                                 : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_32))))));
-        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BIT_0_3_core_btb_ETC___05F_d153 
+        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BIT_0_059_core_ETC___05F_d1188 
             = (1U & ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
                       ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
                           ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
@@ -3419,7 +3332,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                   : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
                                       ? vlTOPp->mkTestBench__DOT__core_btb_btbTable_33[0U]
                                       : vlTOPp->mkTestBench__DOT__core_btb_btbTable_32[0U]))))));
-        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BITS_64_TO_33_54_ETC___05F_d219 
+        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BITS_64_TO_33___05FETC___05F_d1254 
             = ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
                 ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
                     ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
@@ -3548,7 +3461,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_32[1U] 
                                                  >> 1U)))))));
     } else {
-        vlTOPp->mkTestBench__DOT__target___05Fh108725 
+        vlTOPp->mkTestBench__DOT__prediction_target___05F_1___05Fh140543 
             = ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
                 ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
                     ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
@@ -3676,7 +3589,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                 : ((vlTOPp->mkTestBench__DOT__core_btb_btbTable_0[1U] 
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_0[0U] 
                                                  >> 1U)))))));
-        vlTOPp->mkTestBench__DOT__state___05Fh106691 
+        vlTOPp->mkTestBench__DOT__state___05Fh138503 
             = ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
                 ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
                     ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
@@ -3740,7 +3653,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                             : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
                                 ? (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_1)
                                 : (IData)(vlTOPp->mkTestBench__DOT__core_bht_bhtTable_0))))));
-        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BIT_0_3_core_btb_ETC___05F_d153 
+        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BIT_0_059_core_ETC___05F_d1188 
             = (1U & ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
                       ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
                           ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
@@ -3804,7 +3717,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                   : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
                                       ? vlTOPp->mkTestBench__DOT__core_btb_btbTable_1[0U]
                                       : vlTOPp->mkTestBench__DOT__core_btb_btbTable_0[0U]))))));
-        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BITS_64_TO_33_54_ETC___05F_d219 
+        vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BITS_64_TO_33___05FETC___05F_d1254 
             = ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
                 ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
                     ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
@@ -3933,10 +3846,2061 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                     << 0x1fU) | (vlTOPp->mkTestBench__DOT__core_btb_btbTable_0[1U] 
                                                  >> 1U)))))));
     }
+    vlTOPp->mkTestBench__DOT__instr___05Fh103983 = 
+        ((0x800U & vlTOPp->mkTestBench__DOT__core_pcReg)
+          ? ((0x400U & vlTOPp->mkTestBench__DOT__core_pcReg)
+              ? ((0x200U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                  ? ((0x100U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                      ? ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1023
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1022)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1021
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1020))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1019
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1018)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1017
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1016)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1015
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1014)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1013
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1012))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1011
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1010)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1009
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1008))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1007
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1006)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1005
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1004))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1003
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1002)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1001
+                                              : vlTOPp->mkTestBench__DOT__core_imem_1000)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_999
+                                              : vlTOPp->mkTestBench__DOT__core_imem_998)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_997
+                                              : vlTOPp->mkTestBench__DOT__core_imem_996))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_995
+                                              : vlTOPp->mkTestBench__DOT__core_imem_994)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_993
+                                              : vlTOPp->mkTestBench__DOT__core_imem_992)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_991
+                                              : vlTOPp->mkTestBench__DOT__core_imem_990)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_989
+                                              : vlTOPp->mkTestBench__DOT__core_imem_988))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_987
+                                              : vlTOPp->mkTestBench__DOT__core_imem_986)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_985
+                                              : vlTOPp->mkTestBench__DOT__core_imem_984)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_983
+                                              : vlTOPp->mkTestBench__DOT__core_imem_982)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_981
+                                              : vlTOPp->mkTestBench__DOT__core_imem_980))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_979
+                                              : vlTOPp->mkTestBench__DOT__core_imem_978)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_977
+                                              : vlTOPp->mkTestBench__DOT__core_imem_976))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_975
+                                              : vlTOPp->mkTestBench__DOT__core_imem_974)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_973
+                                              : vlTOPp->mkTestBench__DOT__core_imem_972))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_971
+                                              : vlTOPp->mkTestBench__DOT__core_imem_970)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_969
+                                              : vlTOPp->mkTestBench__DOT__core_imem_968)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_967
+                                              : vlTOPp->mkTestBench__DOT__core_imem_966)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_965
+                                              : vlTOPp->mkTestBench__DOT__core_imem_964))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_963
+                                              : vlTOPp->mkTestBench__DOT__core_imem_962)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_961
+                                              : vlTOPp->mkTestBench__DOT__core_imem_960))))))
+                      : ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_959
+                                              : vlTOPp->mkTestBench__DOT__core_imem_958)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_957
+                                              : vlTOPp->mkTestBench__DOT__core_imem_956))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_955
+                                              : vlTOPp->mkTestBench__DOT__core_imem_954)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_953
+                                              : vlTOPp->mkTestBench__DOT__core_imem_952)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_951
+                                              : vlTOPp->mkTestBench__DOT__core_imem_950)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_949
+                                              : vlTOPp->mkTestBench__DOT__core_imem_948))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_947
+                                              : vlTOPp->mkTestBench__DOT__core_imem_946)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_945
+                                              : vlTOPp->mkTestBench__DOT__core_imem_944))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_943
+                                              : vlTOPp->mkTestBench__DOT__core_imem_942)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_941
+                                              : vlTOPp->mkTestBench__DOT__core_imem_940))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_939
+                                              : vlTOPp->mkTestBench__DOT__core_imem_938)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_937
+                                              : vlTOPp->mkTestBench__DOT__core_imem_936)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_935
+                                              : vlTOPp->mkTestBench__DOT__core_imem_934)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_933
+                                              : vlTOPp->mkTestBench__DOT__core_imem_932))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_931
+                                              : vlTOPp->mkTestBench__DOT__core_imem_930)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_929
+                                              : vlTOPp->mkTestBench__DOT__core_imem_928)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_927
+                                              : vlTOPp->mkTestBench__DOT__core_imem_926)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_925
+                                              : vlTOPp->mkTestBench__DOT__core_imem_924))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_923
+                                              : vlTOPp->mkTestBench__DOT__core_imem_922)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_921
+                                              : vlTOPp->mkTestBench__DOT__core_imem_920)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_919
+                                              : vlTOPp->mkTestBench__DOT__core_imem_918)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_917
+                                              : vlTOPp->mkTestBench__DOT__core_imem_916))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_915
+                                              : vlTOPp->mkTestBench__DOT__core_imem_914)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_913
+                                              : vlTOPp->mkTestBench__DOT__core_imem_912))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_911
+                                              : vlTOPp->mkTestBench__DOT__core_imem_910)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_909
+                                              : vlTOPp->mkTestBench__DOT__core_imem_908))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_907
+                                              : vlTOPp->mkTestBench__DOT__core_imem_906)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_905
+                                              : vlTOPp->mkTestBench__DOT__core_imem_904)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_903
+                                              : vlTOPp->mkTestBench__DOT__core_imem_902)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_901
+                                              : vlTOPp->mkTestBench__DOT__core_imem_900))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_899
+                                              : vlTOPp->mkTestBench__DOT__core_imem_898)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_897
+                                              : vlTOPp->mkTestBench__DOT__core_imem_896)))))))
+                  : ((0x100U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                      ? ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_895
+                                              : vlTOPp->mkTestBench__DOT__core_imem_894)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_893
+                                              : vlTOPp->mkTestBench__DOT__core_imem_892))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_891
+                                              : vlTOPp->mkTestBench__DOT__core_imem_890)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_889
+                                              : vlTOPp->mkTestBench__DOT__core_imem_888)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_887
+                                              : vlTOPp->mkTestBench__DOT__core_imem_886)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_885
+                                              : vlTOPp->mkTestBench__DOT__core_imem_884))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_883
+                                              : vlTOPp->mkTestBench__DOT__core_imem_882)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_881
+                                              : vlTOPp->mkTestBench__DOT__core_imem_880))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_879
+                                              : vlTOPp->mkTestBench__DOT__core_imem_878)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_877
+                                              : vlTOPp->mkTestBench__DOT__core_imem_876))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_875
+                                              : vlTOPp->mkTestBench__DOT__core_imem_874)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_873
+                                              : vlTOPp->mkTestBench__DOT__core_imem_872)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_871
+                                              : vlTOPp->mkTestBench__DOT__core_imem_870)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_869
+                                              : vlTOPp->mkTestBench__DOT__core_imem_868))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_867
+                                              : vlTOPp->mkTestBench__DOT__core_imem_866)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_865
+                                              : vlTOPp->mkTestBench__DOT__core_imem_864)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_863
+                                              : vlTOPp->mkTestBench__DOT__core_imem_862)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_861
+                                              : vlTOPp->mkTestBench__DOT__core_imem_860))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_859
+                                              : vlTOPp->mkTestBench__DOT__core_imem_858)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_857
+                                              : vlTOPp->mkTestBench__DOT__core_imem_856)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_855
+                                              : vlTOPp->mkTestBench__DOT__core_imem_854)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_853
+                                              : vlTOPp->mkTestBench__DOT__core_imem_852))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_851
+                                              : vlTOPp->mkTestBench__DOT__core_imem_850)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_849
+                                              : vlTOPp->mkTestBench__DOT__core_imem_848))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_847
+                                              : vlTOPp->mkTestBench__DOT__core_imem_846)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_845
+                                              : vlTOPp->mkTestBench__DOT__core_imem_844))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_843
+                                              : vlTOPp->mkTestBench__DOT__core_imem_842)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_841
+                                              : vlTOPp->mkTestBench__DOT__core_imem_840)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_839
+                                              : vlTOPp->mkTestBench__DOT__core_imem_838)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_837
+                                              : vlTOPp->mkTestBench__DOT__core_imem_836))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_835
+                                              : vlTOPp->mkTestBench__DOT__core_imem_834)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_833
+                                              : vlTOPp->mkTestBench__DOT__core_imem_832))))))
+                      : ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_831
+                                              : vlTOPp->mkTestBench__DOT__core_imem_830)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_829
+                                              : vlTOPp->mkTestBench__DOT__core_imem_828))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_827
+                                              : vlTOPp->mkTestBench__DOT__core_imem_826)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_825
+                                              : vlTOPp->mkTestBench__DOT__core_imem_824)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_823
+                                              : vlTOPp->mkTestBench__DOT__core_imem_822)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_821
+                                              : vlTOPp->mkTestBench__DOT__core_imem_820))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_819
+                                              : vlTOPp->mkTestBench__DOT__core_imem_818)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_817
+                                              : vlTOPp->mkTestBench__DOT__core_imem_816))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_815
+                                              : vlTOPp->mkTestBench__DOT__core_imem_814)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_813
+                                              : vlTOPp->mkTestBench__DOT__core_imem_812))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_811
+                                              : vlTOPp->mkTestBench__DOT__core_imem_810)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_809
+                                              : vlTOPp->mkTestBench__DOT__core_imem_808)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_807
+                                              : vlTOPp->mkTestBench__DOT__core_imem_806)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_805
+                                              : vlTOPp->mkTestBench__DOT__core_imem_804))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_803
+                                              : vlTOPp->mkTestBench__DOT__core_imem_802)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_801
+                                              : vlTOPp->mkTestBench__DOT__core_imem_800)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_799
+                                              : vlTOPp->mkTestBench__DOT__core_imem_798)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_797
+                                              : vlTOPp->mkTestBench__DOT__core_imem_796))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_795
+                                              : vlTOPp->mkTestBench__DOT__core_imem_794)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_793
+                                              : vlTOPp->mkTestBench__DOT__core_imem_792)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_791
+                                              : vlTOPp->mkTestBench__DOT__core_imem_790)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_789
+                                              : vlTOPp->mkTestBench__DOT__core_imem_788))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_787
+                                              : vlTOPp->mkTestBench__DOT__core_imem_786)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_785
+                                              : vlTOPp->mkTestBench__DOT__core_imem_784))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_783
+                                              : vlTOPp->mkTestBench__DOT__core_imem_782)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_781
+                                              : vlTOPp->mkTestBench__DOT__core_imem_780))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_779
+                                              : vlTOPp->mkTestBench__DOT__core_imem_778)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_777
+                                              : vlTOPp->mkTestBench__DOT__core_imem_776)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_775
+                                              : vlTOPp->mkTestBench__DOT__core_imem_774)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_773
+                                              : vlTOPp->mkTestBench__DOT__core_imem_772))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_771
+                                              : vlTOPp->mkTestBench__DOT__core_imem_770)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_769
+                                              : vlTOPp->mkTestBench__DOT__core_imem_768))))))))
+              : ((0x200U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                  ? ((0x100U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                      ? ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_767
+                                              : vlTOPp->mkTestBench__DOT__core_imem_766)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_765
+                                              : vlTOPp->mkTestBench__DOT__core_imem_764))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_763
+                                              : vlTOPp->mkTestBench__DOT__core_imem_762)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_761
+                                              : vlTOPp->mkTestBench__DOT__core_imem_760)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_759
+                                              : vlTOPp->mkTestBench__DOT__core_imem_758)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_757
+                                              : vlTOPp->mkTestBench__DOT__core_imem_756))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_755
+                                              : vlTOPp->mkTestBench__DOT__core_imem_754)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_753
+                                              : vlTOPp->mkTestBench__DOT__core_imem_752))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_751
+                                              : vlTOPp->mkTestBench__DOT__core_imem_750)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_749
+                                              : vlTOPp->mkTestBench__DOT__core_imem_748))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_747
+                                              : vlTOPp->mkTestBench__DOT__core_imem_746)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_745
+                                              : vlTOPp->mkTestBench__DOT__core_imem_744)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_743
+                                              : vlTOPp->mkTestBench__DOT__core_imem_742)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_741
+                                              : vlTOPp->mkTestBench__DOT__core_imem_740))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_739
+                                              : vlTOPp->mkTestBench__DOT__core_imem_738)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_737
+                                              : vlTOPp->mkTestBench__DOT__core_imem_736)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_735
+                                              : vlTOPp->mkTestBench__DOT__core_imem_734)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_733
+                                              : vlTOPp->mkTestBench__DOT__core_imem_732))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_731
+                                              : vlTOPp->mkTestBench__DOT__core_imem_730)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_729
+                                              : vlTOPp->mkTestBench__DOT__core_imem_728)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_727
+                                              : vlTOPp->mkTestBench__DOT__core_imem_726)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_725
+                                              : vlTOPp->mkTestBench__DOT__core_imem_724))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_723
+                                              : vlTOPp->mkTestBench__DOT__core_imem_722)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_721
+                                              : vlTOPp->mkTestBench__DOT__core_imem_720))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_719
+                                              : vlTOPp->mkTestBench__DOT__core_imem_718)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_717
+                                              : vlTOPp->mkTestBench__DOT__core_imem_716))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_715
+                                              : vlTOPp->mkTestBench__DOT__core_imem_714)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_713
+                                              : vlTOPp->mkTestBench__DOT__core_imem_712)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_711
+                                              : vlTOPp->mkTestBench__DOT__core_imem_710)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_709
+                                              : vlTOPp->mkTestBench__DOT__core_imem_708))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_707
+                                              : vlTOPp->mkTestBench__DOT__core_imem_706)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_705
+                                              : vlTOPp->mkTestBench__DOT__core_imem_704))))))
+                      : ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_703
+                                              : vlTOPp->mkTestBench__DOT__core_imem_702)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_701
+                                              : vlTOPp->mkTestBench__DOT__core_imem_700))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_699
+                                              : vlTOPp->mkTestBench__DOT__core_imem_698)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_697
+                                              : vlTOPp->mkTestBench__DOT__core_imem_696)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_695
+                                              : vlTOPp->mkTestBench__DOT__core_imem_694)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_693
+                                              : vlTOPp->mkTestBench__DOT__core_imem_692))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_691
+                                              : vlTOPp->mkTestBench__DOT__core_imem_690)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_689
+                                              : vlTOPp->mkTestBench__DOT__core_imem_688))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_687
+                                              : vlTOPp->mkTestBench__DOT__core_imem_686)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_685
+                                              : vlTOPp->mkTestBench__DOT__core_imem_684))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_683
+                                              : vlTOPp->mkTestBench__DOT__core_imem_682)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_681
+                                              : vlTOPp->mkTestBench__DOT__core_imem_680)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_679
+                                              : vlTOPp->mkTestBench__DOT__core_imem_678)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_677
+                                              : vlTOPp->mkTestBench__DOT__core_imem_676))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_675
+                                              : vlTOPp->mkTestBench__DOT__core_imem_674)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_673
+                                              : vlTOPp->mkTestBench__DOT__core_imem_672)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_671
+                                              : vlTOPp->mkTestBench__DOT__core_imem_670)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_669
+                                              : vlTOPp->mkTestBench__DOT__core_imem_668))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_667
+                                              : vlTOPp->mkTestBench__DOT__core_imem_666)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_665
+                                              : vlTOPp->mkTestBench__DOT__core_imem_664)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_663
+                                              : vlTOPp->mkTestBench__DOT__core_imem_662)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_661
+                                              : vlTOPp->mkTestBench__DOT__core_imem_660))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_659
+                                              : vlTOPp->mkTestBench__DOT__core_imem_658)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_657
+                                              : vlTOPp->mkTestBench__DOT__core_imem_656))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_655
+                                              : vlTOPp->mkTestBench__DOT__core_imem_654)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_653
+                                              : vlTOPp->mkTestBench__DOT__core_imem_652))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_651
+                                              : vlTOPp->mkTestBench__DOT__core_imem_650)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_649
+                                              : vlTOPp->mkTestBench__DOT__core_imem_648)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_647
+                                              : vlTOPp->mkTestBench__DOT__core_imem_646)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_645
+                                              : vlTOPp->mkTestBench__DOT__core_imem_644))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_643
+                                              : vlTOPp->mkTestBench__DOT__core_imem_642)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_641
+                                              : vlTOPp->mkTestBench__DOT__core_imem_640)))))))
+                  : ((0x100U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                      ? ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_639
+                                              : vlTOPp->mkTestBench__DOT__core_imem_638)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_637
+                                              : vlTOPp->mkTestBench__DOT__core_imem_636))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_635
+                                              : vlTOPp->mkTestBench__DOT__core_imem_634)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_633
+                                              : vlTOPp->mkTestBench__DOT__core_imem_632)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_631
+                                              : vlTOPp->mkTestBench__DOT__core_imem_630)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_629
+                                              : vlTOPp->mkTestBench__DOT__core_imem_628))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_627
+                                              : vlTOPp->mkTestBench__DOT__core_imem_626)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_625
+                                              : vlTOPp->mkTestBench__DOT__core_imem_624))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_623
+                                              : vlTOPp->mkTestBench__DOT__core_imem_622)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_621
+                                              : vlTOPp->mkTestBench__DOT__core_imem_620))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_619
+                                              : vlTOPp->mkTestBench__DOT__core_imem_618)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_617
+                                              : vlTOPp->mkTestBench__DOT__core_imem_616)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_615
+                                              : vlTOPp->mkTestBench__DOT__core_imem_614)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_613
+                                              : vlTOPp->mkTestBench__DOT__core_imem_612))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_611
+                                              : vlTOPp->mkTestBench__DOT__core_imem_610)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_609
+                                              : vlTOPp->mkTestBench__DOT__core_imem_608)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_607
+                                              : vlTOPp->mkTestBench__DOT__core_imem_606)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_605
+                                              : vlTOPp->mkTestBench__DOT__core_imem_604))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_603
+                                              : vlTOPp->mkTestBench__DOT__core_imem_602)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_601
+                                              : vlTOPp->mkTestBench__DOT__core_imem_600)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_599
+                                              : vlTOPp->mkTestBench__DOT__core_imem_598)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_597
+                                              : vlTOPp->mkTestBench__DOT__core_imem_596))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_595
+                                              : vlTOPp->mkTestBench__DOT__core_imem_594)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_593
+                                              : vlTOPp->mkTestBench__DOT__core_imem_592))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_591
+                                              : vlTOPp->mkTestBench__DOT__core_imem_590)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_589
+                                              : vlTOPp->mkTestBench__DOT__core_imem_588))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_587
+                                              : vlTOPp->mkTestBench__DOT__core_imem_586)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_585
+                                              : vlTOPp->mkTestBench__DOT__core_imem_584)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_583
+                                              : vlTOPp->mkTestBench__DOT__core_imem_582)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_581
+                                              : vlTOPp->mkTestBench__DOT__core_imem_580))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_579
+                                              : vlTOPp->mkTestBench__DOT__core_imem_578)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_577
+                                              : vlTOPp->mkTestBench__DOT__core_imem_576))))))
+                      : ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_575
+                                              : vlTOPp->mkTestBench__DOT__core_imem_574)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_573
+                                              : vlTOPp->mkTestBench__DOT__core_imem_572))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_571
+                                              : vlTOPp->mkTestBench__DOT__core_imem_570)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_569
+                                              : vlTOPp->mkTestBench__DOT__core_imem_568)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_567
+                                              : vlTOPp->mkTestBench__DOT__core_imem_566)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_565
+                                              : vlTOPp->mkTestBench__DOT__core_imem_564))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_563
+                                              : vlTOPp->mkTestBench__DOT__core_imem_562)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_561
+                                              : vlTOPp->mkTestBench__DOT__core_imem_560))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_559
+                                              : vlTOPp->mkTestBench__DOT__core_imem_558)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_557
+                                              : vlTOPp->mkTestBench__DOT__core_imem_556))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_555
+                                              : vlTOPp->mkTestBench__DOT__core_imem_554)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_553
+                                              : vlTOPp->mkTestBench__DOT__core_imem_552)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_551
+                                              : vlTOPp->mkTestBench__DOT__core_imem_550)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_549
+                                              : vlTOPp->mkTestBench__DOT__core_imem_548))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_547
+                                              : vlTOPp->mkTestBench__DOT__core_imem_546)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_545
+                                              : vlTOPp->mkTestBench__DOT__core_imem_544)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_543
+                                              : vlTOPp->mkTestBench__DOT__core_imem_542)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_541
+                                              : vlTOPp->mkTestBench__DOT__core_imem_540))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_539
+                                              : vlTOPp->mkTestBench__DOT__core_imem_538)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_537
+                                              : vlTOPp->mkTestBench__DOT__core_imem_536)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_535
+                                              : vlTOPp->mkTestBench__DOT__core_imem_534)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_533
+                                              : vlTOPp->mkTestBench__DOT__core_imem_532))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_531
+                                              : vlTOPp->mkTestBench__DOT__core_imem_530)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_529
+                                              : vlTOPp->mkTestBench__DOT__core_imem_528))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_527
+                                              : vlTOPp->mkTestBench__DOT__core_imem_526)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_525
+                                              : vlTOPp->mkTestBench__DOT__core_imem_524))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_523
+                                              : vlTOPp->mkTestBench__DOT__core_imem_522)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_521
+                                              : vlTOPp->mkTestBench__DOT__core_imem_520)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_519
+                                              : vlTOPp->mkTestBench__DOT__core_imem_518)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_517
+                                              : vlTOPp->mkTestBench__DOT__core_imem_516))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_515
+                                              : vlTOPp->mkTestBench__DOT__core_imem_514)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_513
+                                              : vlTOPp->mkTestBench__DOT__core_imem_512)))))))))
+          : ((0x400U & vlTOPp->mkTestBench__DOT__core_pcReg)
+              ? ((0x200U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                  ? ((0x100U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                      ? ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_511
+                                              : vlTOPp->mkTestBench__DOT__core_imem_510)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_509
+                                              : vlTOPp->mkTestBench__DOT__core_imem_508))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_507
+                                              : vlTOPp->mkTestBench__DOT__core_imem_506)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_505
+                                              : vlTOPp->mkTestBench__DOT__core_imem_504)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_503
+                                              : vlTOPp->mkTestBench__DOT__core_imem_502)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_501
+                                              : vlTOPp->mkTestBench__DOT__core_imem_500))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_499
+                                              : vlTOPp->mkTestBench__DOT__core_imem_498)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_497
+                                              : vlTOPp->mkTestBench__DOT__core_imem_496))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_495
+                                              : vlTOPp->mkTestBench__DOT__core_imem_494)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_493
+                                              : vlTOPp->mkTestBench__DOT__core_imem_492))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_491
+                                              : vlTOPp->mkTestBench__DOT__core_imem_490)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_489
+                                              : vlTOPp->mkTestBench__DOT__core_imem_488)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_487
+                                              : vlTOPp->mkTestBench__DOT__core_imem_486)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_485
+                                              : vlTOPp->mkTestBench__DOT__core_imem_484))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_483
+                                              : vlTOPp->mkTestBench__DOT__core_imem_482)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_481
+                                              : vlTOPp->mkTestBench__DOT__core_imem_480)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_479
+                                              : vlTOPp->mkTestBench__DOT__core_imem_478)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_477
+                                              : vlTOPp->mkTestBench__DOT__core_imem_476))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_475
+                                              : vlTOPp->mkTestBench__DOT__core_imem_474)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_473
+                                              : vlTOPp->mkTestBench__DOT__core_imem_472)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_471
+                                              : vlTOPp->mkTestBench__DOT__core_imem_470)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_469
+                                              : vlTOPp->mkTestBench__DOT__core_imem_468))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_467
+                                              : vlTOPp->mkTestBench__DOT__core_imem_466)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_465
+                                              : vlTOPp->mkTestBench__DOT__core_imem_464))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_463
+                                              : vlTOPp->mkTestBench__DOT__core_imem_462)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_461
+                                              : vlTOPp->mkTestBench__DOT__core_imem_460))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_459
+                                              : vlTOPp->mkTestBench__DOT__core_imem_458)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_457
+                                              : vlTOPp->mkTestBench__DOT__core_imem_456)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_455
+                                              : vlTOPp->mkTestBench__DOT__core_imem_454)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_453
+                                              : vlTOPp->mkTestBench__DOT__core_imem_452))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_451
+                                              : vlTOPp->mkTestBench__DOT__core_imem_450)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_449
+                                              : vlTOPp->mkTestBench__DOT__core_imem_448))))))
+                      : ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_447
+                                              : vlTOPp->mkTestBench__DOT__core_imem_446)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_445
+                                              : vlTOPp->mkTestBench__DOT__core_imem_444))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_443
+                                              : vlTOPp->mkTestBench__DOT__core_imem_442)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_441
+                                              : vlTOPp->mkTestBench__DOT__core_imem_440)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_439
+                                              : vlTOPp->mkTestBench__DOT__core_imem_438)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_437
+                                              : vlTOPp->mkTestBench__DOT__core_imem_436))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_435
+                                              : vlTOPp->mkTestBench__DOT__core_imem_434)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_433
+                                              : vlTOPp->mkTestBench__DOT__core_imem_432))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_431
+                                              : vlTOPp->mkTestBench__DOT__core_imem_430)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_429
+                                              : vlTOPp->mkTestBench__DOT__core_imem_428))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_427
+                                              : vlTOPp->mkTestBench__DOT__core_imem_426)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_425
+                                              : vlTOPp->mkTestBench__DOT__core_imem_424)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_423
+                                              : vlTOPp->mkTestBench__DOT__core_imem_422)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_421
+                                              : vlTOPp->mkTestBench__DOT__core_imem_420))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_419
+                                              : vlTOPp->mkTestBench__DOT__core_imem_418)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_417
+                                              : vlTOPp->mkTestBench__DOT__core_imem_416)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_415
+                                              : vlTOPp->mkTestBench__DOT__core_imem_414)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_413
+                                              : vlTOPp->mkTestBench__DOT__core_imem_412))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_411
+                                              : vlTOPp->mkTestBench__DOT__core_imem_410)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_409
+                                              : vlTOPp->mkTestBench__DOT__core_imem_408)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_407
+                                              : vlTOPp->mkTestBench__DOT__core_imem_406)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_405
+                                              : vlTOPp->mkTestBench__DOT__core_imem_404))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_403
+                                              : vlTOPp->mkTestBench__DOT__core_imem_402)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_401
+                                              : vlTOPp->mkTestBench__DOT__core_imem_400))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_399
+                                              : vlTOPp->mkTestBench__DOT__core_imem_398)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_397
+                                              : vlTOPp->mkTestBench__DOT__core_imem_396))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_395
+                                              : vlTOPp->mkTestBench__DOT__core_imem_394)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_393
+                                              : vlTOPp->mkTestBench__DOT__core_imem_392)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_391
+                                              : vlTOPp->mkTestBench__DOT__core_imem_390)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_389
+                                              : vlTOPp->mkTestBench__DOT__core_imem_388))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_387
+                                              : vlTOPp->mkTestBench__DOT__core_imem_386)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_385
+                                              : vlTOPp->mkTestBench__DOT__core_imem_384)))))))
+                  : ((0x100U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                      ? ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_383
+                                              : vlTOPp->mkTestBench__DOT__core_imem_382)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_381
+                                              : vlTOPp->mkTestBench__DOT__core_imem_380))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_379
+                                              : vlTOPp->mkTestBench__DOT__core_imem_378)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_377
+                                              : vlTOPp->mkTestBench__DOT__core_imem_376)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_375
+                                              : vlTOPp->mkTestBench__DOT__core_imem_374)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_373
+                                              : vlTOPp->mkTestBench__DOT__core_imem_372))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_371
+                                              : vlTOPp->mkTestBench__DOT__core_imem_370)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_369
+                                              : vlTOPp->mkTestBench__DOT__core_imem_368))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_367
+                                              : vlTOPp->mkTestBench__DOT__core_imem_366)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_365
+                                              : vlTOPp->mkTestBench__DOT__core_imem_364))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_363
+                                              : vlTOPp->mkTestBench__DOT__core_imem_362)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_361
+                                              : vlTOPp->mkTestBench__DOT__core_imem_360)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_359
+                                              : vlTOPp->mkTestBench__DOT__core_imem_358)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_357
+                                              : vlTOPp->mkTestBench__DOT__core_imem_356))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_355
+                                              : vlTOPp->mkTestBench__DOT__core_imem_354)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_353
+                                              : vlTOPp->mkTestBench__DOT__core_imem_352)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_351
+                                              : vlTOPp->mkTestBench__DOT__core_imem_350)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_349
+                                              : vlTOPp->mkTestBench__DOT__core_imem_348))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_347
+                                              : vlTOPp->mkTestBench__DOT__core_imem_346)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_345
+                                              : vlTOPp->mkTestBench__DOT__core_imem_344)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_343
+                                              : vlTOPp->mkTestBench__DOT__core_imem_342)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_341
+                                              : vlTOPp->mkTestBench__DOT__core_imem_340))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_339
+                                              : vlTOPp->mkTestBench__DOT__core_imem_338)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_337
+                                              : vlTOPp->mkTestBench__DOT__core_imem_336))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_335
+                                              : vlTOPp->mkTestBench__DOT__core_imem_334)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_333
+                                              : vlTOPp->mkTestBench__DOT__core_imem_332))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_331
+                                              : vlTOPp->mkTestBench__DOT__core_imem_330)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_329
+                                              : vlTOPp->mkTestBench__DOT__core_imem_328)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_327
+                                              : vlTOPp->mkTestBench__DOT__core_imem_326)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_325
+                                              : vlTOPp->mkTestBench__DOT__core_imem_324))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_323
+                                              : vlTOPp->mkTestBench__DOT__core_imem_322)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_321
+                                              : vlTOPp->mkTestBench__DOT__core_imem_320))))))
+                      : ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_319
+                                              : vlTOPp->mkTestBench__DOT__core_imem_318)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_317
+                                              : vlTOPp->mkTestBench__DOT__core_imem_316))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_315
+                                              : vlTOPp->mkTestBench__DOT__core_imem_314)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_313
+                                              : vlTOPp->mkTestBench__DOT__core_imem_312)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_311
+                                              : vlTOPp->mkTestBench__DOT__core_imem_310)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_309
+                                              : vlTOPp->mkTestBench__DOT__core_imem_308))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_307
+                                              : vlTOPp->mkTestBench__DOT__core_imem_306)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_305
+                                              : vlTOPp->mkTestBench__DOT__core_imem_304))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_303
+                                              : vlTOPp->mkTestBench__DOT__core_imem_302)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_301
+                                              : vlTOPp->mkTestBench__DOT__core_imem_300))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_299
+                                              : vlTOPp->mkTestBench__DOT__core_imem_298)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_297
+                                              : vlTOPp->mkTestBench__DOT__core_imem_296)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_295
+                                              : vlTOPp->mkTestBench__DOT__core_imem_294)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_293
+                                              : vlTOPp->mkTestBench__DOT__core_imem_292))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_291
+                                              : vlTOPp->mkTestBench__DOT__core_imem_290)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_289
+                                              : vlTOPp->mkTestBench__DOT__core_imem_288)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_287
+                                              : vlTOPp->mkTestBench__DOT__core_imem_286)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_285
+                                              : vlTOPp->mkTestBench__DOT__core_imem_284))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_283
+                                              : vlTOPp->mkTestBench__DOT__core_imem_282)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_281
+                                              : vlTOPp->mkTestBench__DOT__core_imem_280)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_279
+                                              : vlTOPp->mkTestBench__DOT__core_imem_278)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_277
+                                              : vlTOPp->mkTestBench__DOT__core_imem_276))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_275
+                                              : vlTOPp->mkTestBench__DOT__core_imem_274)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_273
+                                              : vlTOPp->mkTestBench__DOT__core_imem_272))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_271
+                                              : vlTOPp->mkTestBench__DOT__core_imem_270)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_269
+                                              : vlTOPp->mkTestBench__DOT__core_imem_268))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_267
+                                              : vlTOPp->mkTestBench__DOT__core_imem_266)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_265
+                                              : vlTOPp->mkTestBench__DOT__core_imem_264)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_263
+                                              : vlTOPp->mkTestBench__DOT__core_imem_262)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_261
+                                              : vlTOPp->mkTestBench__DOT__core_imem_260))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_259
+                                              : vlTOPp->mkTestBench__DOT__core_imem_258)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_257
+                                              : vlTOPp->mkTestBench__DOT__core_imem_256))))))))
+              : ((0x200U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                  ? ((0x100U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                      ? ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_255
+                                              : vlTOPp->mkTestBench__DOT__core_imem_254)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_253
+                                              : vlTOPp->mkTestBench__DOT__core_imem_252))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_251
+                                              : vlTOPp->mkTestBench__DOT__core_imem_250)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_249
+                                              : vlTOPp->mkTestBench__DOT__core_imem_248)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_247
+                                              : vlTOPp->mkTestBench__DOT__core_imem_246)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_245
+                                              : vlTOPp->mkTestBench__DOT__core_imem_244))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_243
+                                              : vlTOPp->mkTestBench__DOT__core_imem_242)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_241
+                                              : vlTOPp->mkTestBench__DOT__core_imem_240))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_239
+                                              : vlTOPp->mkTestBench__DOT__core_imem_238)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_237
+                                              : vlTOPp->mkTestBench__DOT__core_imem_236))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_235
+                                              : vlTOPp->mkTestBench__DOT__core_imem_234)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_233
+                                              : vlTOPp->mkTestBench__DOT__core_imem_232)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_231
+                                              : vlTOPp->mkTestBench__DOT__core_imem_230)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_229
+                                              : vlTOPp->mkTestBench__DOT__core_imem_228))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_227
+                                              : vlTOPp->mkTestBench__DOT__core_imem_226)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_225
+                                              : vlTOPp->mkTestBench__DOT__core_imem_224)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_223
+                                              : vlTOPp->mkTestBench__DOT__core_imem_222)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_221
+                                              : vlTOPp->mkTestBench__DOT__core_imem_220))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_219
+                                              : vlTOPp->mkTestBench__DOT__core_imem_218)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_217
+                                              : vlTOPp->mkTestBench__DOT__core_imem_216)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_215
+                                              : vlTOPp->mkTestBench__DOT__core_imem_214)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_213
+                                              : vlTOPp->mkTestBench__DOT__core_imem_212))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_211
+                                              : vlTOPp->mkTestBench__DOT__core_imem_210)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_209
+                                              : vlTOPp->mkTestBench__DOT__core_imem_208))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_207
+                                              : vlTOPp->mkTestBench__DOT__core_imem_206)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_205
+                                              : vlTOPp->mkTestBench__DOT__core_imem_204))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_203
+                                              : vlTOPp->mkTestBench__DOT__core_imem_202)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_201
+                                              : vlTOPp->mkTestBench__DOT__core_imem_200)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_199
+                                              : vlTOPp->mkTestBench__DOT__core_imem_198)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_197
+                                              : vlTOPp->mkTestBench__DOT__core_imem_196))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_195
+                                              : vlTOPp->mkTestBench__DOT__core_imem_194)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_193
+                                              : vlTOPp->mkTestBench__DOT__core_imem_192))))))
+                      : ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_191
+                                              : vlTOPp->mkTestBench__DOT__core_imem_190)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_189
+                                              : vlTOPp->mkTestBench__DOT__core_imem_188))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_187
+                                              : vlTOPp->mkTestBench__DOT__core_imem_186)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_185
+                                              : vlTOPp->mkTestBench__DOT__core_imem_184)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_183
+                                              : vlTOPp->mkTestBench__DOT__core_imem_182)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_181
+                                              : vlTOPp->mkTestBench__DOT__core_imem_180))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_179
+                                              : vlTOPp->mkTestBench__DOT__core_imem_178)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_177
+                                              : vlTOPp->mkTestBench__DOT__core_imem_176))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_175
+                                              : vlTOPp->mkTestBench__DOT__core_imem_174)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_173
+                                              : vlTOPp->mkTestBench__DOT__core_imem_172))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_171
+                                              : vlTOPp->mkTestBench__DOT__core_imem_170)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_169
+                                              : vlTOPp->mkTestBench__DOT__core_imem_168)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_167
+                                              : vlTOPp->mkTestBench__DOT__core_imem_166)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_165
+                                              : vlTOPp->mkTestBench__DOT__core_imem_164))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_163
+                                              : vlTOPp->mkTestBench__DOT__core_imem_162)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_161
+                                              : vlTOPp->mkTestBench__DOT__core_imem_160)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_159
+                                              : vlTOPp->mkTestBench__DOT__core_imem_158)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_157
+                                              : vlTOPp->mkTestBench__DOT__core_imem_156))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_155
+                                              : vlTOPp->mkTestBench__DOT__core_imem_154)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_153
+                                              : vlTOPp->mkTestBench__DOT__core_imem_152)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_151
+                                              : vlTOPp->mkTestBench__DOT__core_imem_150)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_149
+                                              : vlTOPp->mkTestBench__DOT__core_imem_148))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_147
+                                              : vlTOPp->mkTestBench__DOT__core_imem_146)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_145
+                                              : vlTOPp->mkTestBench__DOT__core_imem_144))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_143
+                                              : vlTOPp->mkTestBench__DOT__core_imem_142)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_141
+                                              : vlTOPp->mkTestBench__DOT__core_imem_140))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_139
+                                              : vlTOPp->mkTestBench__DOT__core_imem_138)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_137
+                                              : vlTOPp->mkTestBench__DOT__core_imem_136)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_135
+                                              : vlTOPp->mkTestBench__DOT__core_imem_134)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_133
+                                              : vlTOPp->mkTestBench__DOT__core_imem_132))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_131
+                                              : vlTOPp->mkTestBench__DOT__core_imem_130)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_129
+                                              : vlTOPp->mkTestBench__DOT__core_imem_128)))))))
+                  : ((0x100U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                      ? ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_127
+                                              : vlTOPp->mkTestBench__DOT__core_imem_126)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_125
+                                              : vlTOPp->mkTestBench__DOT__core_imem_124))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_123
+                                              : vlTOPp->mkTestBench__DOT__core_imem_122)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_121
+                                              : vlTOPp->mkTestBench__DOT__core_imem_120)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_119
+                                              : vlTOPp->mkTestBench__DOT__core_imem_118)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_117
+                                              : vlTOPp->mkTestBench__DOT__core_imem_116))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_115
+                                              : vlTOPp->mkTestBench__DOT__core_imem_114)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_113
+                                              : vlTOPp->mkTestBench__DOT__core_imem_112))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_111
+                                              : vlTOPp->mkTestBench__DOT__core_imem_110)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_109
+                                              : vlTOPp->mkTestBench__DOT__core_imem_108))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_107
+                                              : vlTOPp->mkTestBench__DOT__core_imem_106)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_105
+                                              : vlTOPp->mkTestBench__DOT__core_imem_104)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_103
+                                              : vlTOPp->mkTestBench__DOT__core_imem_102)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_101
+                                              : vlTOPp->mkTestBench__DOT__core_imem_100))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_99
+                                              : vlTOPp->mkTestBench__DOT__core_imem_98)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_97
+                                              : vlTOPp->mkTestBench__DOT__core_imem_96)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_95
+                                              : vlTOPp->mkTestBench__DOT__core_imem_94)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_93
+                                              : vlTOPp->mkTestBench__DOT__core_imem_92))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_91
+                                              : vlTOPp->mkTestBench__DOT__core_imem_90)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_89
+                                              : vlTOPp->mkTestBench__DOT__core_imem_88)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_87
+                                              : vlTOPp->mkTestBench__DOT__core_imem_86)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_85
+                                              : vlTOPp->mkTestBench__DOT__core_imem_84))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_83
+                                              : vlTOPp->mkTestBench__DOT__core_imem_82)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_81
+                                              : vlTOPp->mkTestBench__DOT__core_imem_80))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_79
+                                              : vlTOPp->mkTestBench__DOT__core_imem_78)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_77
+                                              : vlTOPp->mkTestBench__DOT__core_imem_76))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_75
+                                              : vlTOPp->mkTestBench__DOT__core_imem_74)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_73
+                                              : vlTOPp->mkTestBench__DOT__core_imem_72)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_71
+                                              : vlTOPp->mkTestBench__DOT__core_imem_70)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_69
+                                              : vlTOPp->mkTestBench__DOT__core_imem_68))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_67
+                                              : vlTOPp->mkTestBench__DOT__core_imem_66)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_65
+                                              : vlTOPp->mkTestBench__DOT__core_imem_64))))))
+                      : ((0x80U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                          ? ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_63
+                                              : vlTOPp->mkTestBench__DOT__core_imem_62)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_61
+                                              : vlTOPp->mkTestBench__DOT__core_imem_60))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_59
+                                              : vlTOPp->mkTestBench__DOT__core_imem_58)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_57
+                                              : vlTOPp->mkTestBench__DOT__core_imem_56)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_55
+                                              : vlTOPp->mkTestBench__DOT__core_imem_54)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_53
+                                              : vlTOPp->mkTestBench__DOT__core_imem_52))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_51
+                                              : vlTOPp->mkTestBench__DOT__core_imem_50)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_49
+                                              : vlTOPp->mkTestBench__DOT__core_imem_48))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_47
+                                              : vlTOPp->mkTestBench__DOT__core_imem_46)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_45
+                                              : vlTOPp->mkTestBench__DOT__core_imem_44))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_43
+                                              : vlTOPp->mkTestBench__DOT__core_imem_42)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_41
+                                              : vlTOPp->mkTestBench__DOT__core_imem_40)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_39
+                                              : vlTOPp->mkTestBench__DOT__core_imem_38)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_37
+                                              : vlTOPp->mkTestBench__DOT__core_imem_36))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_35
+                                              : vlTOPp->mkTestBench__DOT__core_imem_34)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_33
+                                              : vlTOPp->mkTestBench__DOT__core_imem_32)))))
+                          : ((0x40U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                              ? ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_31
+                                              : vlTOPp->mkTestBench__DOT__core_imem_30)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_29
+                                              : vlTOPp->mkTestBench__DOT__core_imem_28))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_27
+                                              : vlTOPp->mkTestBench__DOT__core_imem_26)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_25
+                                              : vlTOPp->mkTestBench__DOT__core_imem_24)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_23
+                                              : vlTOPp->mkTestBench__DOT__core_imem_22)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_21
+                                              : vlTOPp->mkTestBench__DOT__core_imem_20))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_19
+                                              : vlTOPp->mkTestBench__DOT__core_imem_18)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_17
+                                              : vlTOPp->mkTestBench__DOT__core_imem_16))))
+                              : ((0x20U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_15
+                                              : vlTOPp->mkTestBench__DOT__core_imem_14)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_13
+                                              : vlTOPp->mkTestBench__DOT__core_imem_12))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_11
+                                              : vlTOPp->mkTestBench__DOT__core_imem_10)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_9
+                                              : vlTOPp->mkTestBench__DOT__core_imem_8)))
+                                  : ((0x10U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                      ? ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_7
+                                              : vlTOPp->mkTestBench__DOT__core_imem_6)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_5
+                                              : vlTOPp->mkTestBench__DOT__core_imem_4))
+                                      : ((8U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                          ? ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_3
+                                              : vlTOPp->mkTestBench__DOT__core_imem_2)
+                                          : ((4U & vlTOPp->mkTestBench__DOT__core_pcReg)
+                                              ? vlTOPp->mkTestBench__DOT__core_imem_1
+                                              : vlTOPp->mkTestBench__DOT__core_imem_0))))))))));
     vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_clearBranchFlushDone 
         = ((IData)(vlTOPp->mkTestBench__DOT__core_branch_flush_done) 
            & (~ (IData)(vlTOPp->mkTestBench__DOT__core_branch_flush)));
-    vlTOPp->mkTestBench__DOT__old_word___05Fh157503 
+    vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_memoryStage 
+        = ((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
+           & (IData)(vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__full_reg));
+    vlTOPp->mkTestBench__DOT__old_word___05Fh157733 
         = ((0x4000000U & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U])
             ? ((0x2000000U & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U])
                 ? ((0x1000000U & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U])
@@ -5344,10 +7308,21 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                             & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U])
                                             ? vlTOPp->mkTestBench__DOT__core_dmem_1
                                             : vlTOPp->mkTestBench__DOT__core_dmem_0)))))))));
-    vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_memoryStage 
-        = ((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
-           & (IData)(vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__full_reg));
-    vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F727_AND_core_ex2mem_firs_ETC___05F_d1741 
+    vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F734_AND_core_ex2mem_firs_ETC___05F_d1748 
+        = ((((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
+             & (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U] 
+                >> 4U)) & (~ (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U] 
+                              >> 3U))) & ((0x1fU & 
+                                           ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
+                                             << 0x15U) 
+                                            | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[1U] 
+                                               >> 0xbU))) 
+                                          == (0x1fU 
+                                              & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                                  << 0x1cU) 
+                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                    >> 4U)))));
+    vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F734_AND_core_ex2mem_firs_ETC___05F_d1772 
         = ((((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
              & (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U] 
                 >> 4U)) & (~ (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U] 
@@ -5358,24 +7333,10 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                >> 0xbU))) 
                                           == (0x1fU 
                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                                  << 0x1dU) 
+                                                  << 1U) 
                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                    >> 3U)))));
-    vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F727_AND_core_ex2mem_firs_ETC___05F_d1765 
-        = ((((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
-             & (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U] 
-                >> 4U)) & (~ (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U] 
-                              >> 3U))) & ((0x1fU & 
-                                           ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
-                                             << 0x15U) 
-                                            | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[1U] 
-                                               >> 0xbU))) 
-                                          == (0x1fU 
-                                              & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                  << 2U) 
-                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                    >> 0x1eU)))));
-    vlTOPp->mkTestBench__DOT__x___05Fh142590 = ((0x200U 
+                                                    >> 0x1fU)))));
+    vlTOPp->mkTestBench__DOT__x___05Fh142630 = ((0x200U 
                                                  & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                                  ? 
                                                 ((0x100U 
@@ -5400,10 +7361,10 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                       ((0xffe00000U 
                                                         & ((- (IData)(
                                                                       (1U 
-                                                                       & (vlTOPp->mkTestBench__DOT__imm21___05Fh142808 
+                                                                       & (vlTOPp->mkTestBench__DOT__imm21___05Fh142848 
                                                                           >> 0x14U)))) 
                                                            << 0x15U)) 
-                                                       | vlTOPp->mkTestBench__DOT__imm21___05Fh142808)
+                                                       | vlTOPp->mkTestBench__DOT__imm21___05Fh142848)
                                                        : 0U)
                                                       : 0U)
                                                      : 0U)
@@ -5416,7 +7377,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                       ? 
                                                      ((8U 
                                                        & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
-                                                       ? vlTOPp->mkTestBench__DOT__imm___05Fh140999
+                                                       ? vlTOPp->mkTestBench__DOT__imm___05Fh141034
                                                        : 0U)
                                                       : 0U)
                                                      : 
@@ -5429,10 +7390,10 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                       ((0xffffe000U 
                                                         & ((- (IData)(
                                                                       (1U 
-                                                                       & ((IData)(vlTOPp->mkTestBench__DOT__imm13___05Fh142682) 
+                                                                       & ((IData)(vlTOPp->mkTestBench__DOT__imm13___05Fh142722) 
                                                                           >> 0xcU)))) 
                                                            << 0xdU)) 
-                                                       | (IData)(vlTOPp->mkTestBench__DOT__imm13___05Fh142682))
+                                                       | (IData)(vlTOPp->mkTestBench__DOT__imm13___05Fh142722))
                                                        : 0U)
                                                       : 0U))))
                                                   : 0U)
@@ -5483,10 +7444,10 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                       ((0xfffff000U 
                                                         & ((- (IData)(
                                                                       (1U 
-                                                                       & ((IData)(vlTOPp->mkTestBench__DOT__imm12___05Fh142637) 
+                                                                       & ((IData)(vlTOPp->mkTestBench__DOT__imm12___05Fh142677) 
                                                                           >> 0xbU)))) 
                                                            << 0xcU)) 
-                                                       | (IData)(vlTOPp->mkTestBench__DOT__imm12___05Fh142637))
+                                                       | (IData)(vlTOPp->mkTestBench__DOT__imm12___05Fh142677))
                                                        : 0U)
                                                       : 0U))))
                                                   : 
@@ -5520,7 +7481,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                       ? 
                                                      ((8U 
                                                        & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
-                                                       ? vlTOPp->mkTestBench__DOT__imm___05Fh140999
+                                                       ? vlTOPp->mkTestBench__DOT__imm___05Fh141034
                                                        : 0U)
                                                       : 0U)))
                                                    : 
@@ -5537,10 +7498,10 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                       ? 
                                                      ((8U 
                                                        & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
-                                                       ? vlTOPp->mkTestBench__DOT__imm___05Fh140999
+                                                       ? vlTOPp->mkTestBench__DOT__imm___05Fh141034
                                                        : 0U)
                                                       : 0U))))));
-    vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_41_TO_35_419_EQ_0b1_ETC___05F_d1468 
+    vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_41_TO_35_423_EQ_0b1_ETC___05F_d1472 
         = (((((0x33U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                    << 0x1dU) | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                 >> 3U)))) 
@@ -5550,7 +7511,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
              | (0x63U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                     << 0x1dU) | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                  >> 3U))))) 
-            & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_59_TO_55_431_EQ_cor_ETC___05F_d1432)) 
+            & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_59_TO_55_435_EQ_cor_ETC___05F_d1436)) 
            | ((((((((0x33U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                          << 0x1dU) 
                                         | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
@@ -5588,67 +7549,67 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                 & (7U != (7U & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                  << 0x11U) | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                               >> 0xfU)))))) 
-              & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_54_TO_50_465_EQ_cor_ETC___05F_d1466)));
-    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F404_BITS_214_TO_212_847_EQ_0_ETC___05F_d2385 
-        = ((((1U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                            << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                        >> 0x14U)))) 
-             | (2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                              << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                          >> 0x14U))))) 
-            | (IData)(vlTOPp->mkTestBench__DOT__CASE_core_id2exD_OUT_BITS_214_TO_212_0b11_NOT_ETC___05Fq6)) 
-           & (0x300U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)));
-    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F404_BITS_214_TO_212_847_EQ_0_ETC___05F_d2532 
-        = ((((1U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                            << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                        >> 0x14U)))) 
-             | (2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                              << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                          >> 0x14U))))) 
-            | (IData)(vlTOPp->mkTestBench__DOT__CASE_core_id2exD_OUT_BITS_214_TO_212_0b11_NOT_ETC___05Fq6)) 
-           & ((0xb03U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-              | (0xb83U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))));
-    vlTOPp->mkTestBench__DOT__v___05Fh147777 = ((0x800U 
-                                                 & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+              & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_54_TO_50_469_EQ_cor_ETC___05F_d1470)));
+    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BITS_247_TO_245_854_EQ_0_ETC___05F_d2390 
+        = ((((1U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                            << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                        >> 0x15U)))) 
+             | (2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                              << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                          >> 0x15U))))) 
+            | (IData)(vlTOPp->mkTestBench__DOT__CASE_core_id2exD_OUT_BITS_247_TO_245_0b11_NOT_ETC___05Fq6)) 
+           & (0x300U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)));
+    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BITS_247_TO_245_854_EQ_0_ETC___05F_d2544 
+        = ((((1U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                            << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                        >> 0x15U)))) 
+             | (2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                              << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                          >> 0x15U))))) 
+            | (IData)(vlTOPp->mkTestBench__DOT__CASE_core_id2exD_OUT_BITS_247_TO_245_0b11_NOT_ETC___05Fq6)) 
+           & ((0xb03U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+              | (0xb83U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))));
+    vlTOPp->mkTestBench__DOT__v___05Fh147823 = ((0x800U 
+                                                 & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                  ? 
                                                 ((0x400U 
-                                                  & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                  & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                   ? 0U
                                                   : 
                                                  ((0x200U 
-                                                   & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                   & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                    ? 
                                                   ((0x100U 
-                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                     ? 
                                                    ((0x80U 
-                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                      ? 
                                                     ((0x40U 
-                                                      & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                      & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                       ? 0U
                                                       : 
                                                      ((0x20U 
-                                                       & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                       & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                        ? 0U
                                                        : 
                                                       ((0x10U 
-                                                        & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                        & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                         ? 0U
                                                         : 
                                                        ((8U 
-                                                         & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                         & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                          ? 0U
                                                          : 
                                                         ((4U 
-                                                          & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                          & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                           ? 0U
                                                           : 
                                                          ((2U 
-                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                            ? 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? (IData)(
                                                                       (vlTOPp->mkTestBench__DOT__core_csrs_minstret 
                                                                        >> 0x20U))
@@ -5657,7 +7618,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                                        >> 0x20U)))
                                                            : 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? (IData)(
                                                                       (vlTOPp->mkTestBench__DOT__core_csrs_mtime 
                                                                        >> 0x20U))
@@ -5666,145 +7627,145 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                                        >> 0x20U)))))))))
                                                      : 
                                                     ((0x40U 
-                                                      & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                      & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                       ? 0U
                                                       : 
                                                      ((0x20U 
-                                                       & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                       & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                        ? 0U
                                                        : 
                                                       ((0x10U 
-                                                        & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                        & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                         ? 0U
                                                         : 
                                                        ((8U 
-                                                         & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                         & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                          ? 0U
                                                          : 
                                                         ((4U 
-                                                          & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                          & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                           ? 0U
                                                           : 
                                                          ((2U 
-                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                            ? 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? (IData)(vlTOPp->mkTestBench__DOT__core_csrs_minstret)
                                                             : (IData)(vlTOPp->mkTestBench__DOT__core_csrs_mtimecmp))
                                                            : 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? (IData)(vlTOPp->mkTestBench__DOT__core_csrs_mtime)
                                                             : (IData)(vlTOPp->mkTestBench__DOT__core_csrs_mcycle)))))))))
                                                     : 0U)
                                                    : 0U))
                                                  : 
                                                 ((0x400U 
-                                                  & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                  & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                   ? 0U
                                                   : 
                                                  ((0x200U 
-                                                   & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                   & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                    ? 
                                                   ((0x100U 
-                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                     ? 
                                                    ((0x80U 
-                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                      ? 0U
                                                      : 
                                                     ((0x40U 
-                                                      & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                      & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                       ? 
                                                      ((0x20U 
-                                                       & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                       & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                        ? 0U
                                                        : 
                                                       ((0x10U 
-                                                        & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                        & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                         ? 0U
                                                         : 
                                                        ((8U 
-                                                         & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                         & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                          ? 0U
                                                          : 
                                                         ((4U 
-                                                          & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                          & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                           ? 
                                                          ((2U 
-                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                            ? 0U
                                                            : 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? 0U
                                                             : vlTOPp->mkTestBench__DOT__core_csrs_mip))
                                                           : 
                                                          ((2U 
-                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                            ? 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? vlTOPp->mkTestBench__DOT__core_csrs_mtval
                                                             : vlTOPp->mkTestBench__DOT__core_csrs_mcause)
                                                            : 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? vlTOPp->mkTestBench__DOT__core_csrs_mepc
                                                             : 0U))))))
                                                       : 
                                                      ((0x20U 
-                                                       & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                       & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                        ? 0U
                                                        : 
                                                       ((0x10U 
-                                                        & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                        & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                         ? 0U
                                                         : 
                                                        ((8U 
-                                                         & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                         & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                          ? 0U
                                                          : 
                                                         ((4U 
-                                                          & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                          & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                           ? 
                                                          ((2U 
-                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                            ? 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? 0U
                                                             : vlTOPp->mkTestBench__DOT__core_csrs_mcounteren)
                                                            : 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? vlTOPp->mkTestBench__DOT__core_csrs_mtvec
                                                             : vlTOPp->mkTestBench__DOT__core_csrs_mie))
                                                           : 
                                                          ((2U 
-                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                           & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                            ? 0U
                                                            : 
                                                           ((1U 
-                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                            & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                             ? vlTOPp->mkTestBench__DOT__core_csrs_misa
-                                                            : vlTOPp->mkTestBench__DOT__value___05Fh148422))))))))
+                                                            : vlTOPp->mkTestBench__DOT__value___05Fh148468))))))))
                                                     : 0U)
                                                    : 0U)));
     vlTOPp->mkTestBench__DOT__stallCycles__024D_IN 
-        = ((IData)(vlTOPp->mkTestBench__DOT__core_pcReg_51_EQ_lastPC_261___05F_d4262)
+        = ((IData)(vlTOPp->mkTestBench__DOT__core_pcReg_5_EQ_lastPC_274___05F_d4275)
             ? ((IData)(1U) + vlTOPp->mkTestBench__DOT__stallCycles)
             : 0U);
-    vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BIT_0_3_core_btb_ETC___05F_d290 
-        = (((IData)(vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BIT_0_3_core_btb_ETC___05F_d153) 
-            & (vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BITS_64_TO_33_54_ETC___05F_d219 
+    vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BIT_0_059_core_ETC___05F_d1325 
+        = (((IData)(vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BIT_0_059_core_ETC___05F_d1188) 
+            & (vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BITS_64_TO_33___05FETC___05F_d1254 
                == vlTOPp->mkTestBench__DOT__core_pcReg)) 
-           & (2U <= (IData)(vlTOPp->mkTestBench__DOT__state___05Fh106691)));
-    vlTOPp->mkTestBench__DOT__core_dmem_1__024D_IN 
+           & (2U <= (IData)(vlTOPp->mkTestBench__DOT__state___05Fh138503)));
+    vlTOPp->mkTestBench__DOT__core_dmem_0__024D_IN 
         = ((4U & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
             ? ((2U & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
-                ? vlTOPp->mkTestBench__DOT__old_word___05Fh157503
+                ? vlTOPp->mkTestBench__DOT__old_word___05Fh157733
                 : ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
                     << 0x10U) | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[1U] 
                                  >> 0x10U))) : ((2U 
@@ -5816,10 +7777,10 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                  ((0xffff0000U 
                                                    & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[1U]) 
                                                   | (0xffffU 
-                                                     & vlTOPp->mkTestBench__DOT__old_word___05Fh157503))
+                                                     & vlTOPp->mkTestBench__DOT__old_word___05Fh157733))
                                                   : 
                                                  ((0xffff0000U 
-                                                   & vlTOPp->mkTestBench__DOT__old_word___05Fh157503) 
+                                                   & vlTOPp->mkTestBench__DOT__old_word___05Fh157733) 
                                                   | (0xffffU 
                                                      & ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
                                                          << 0x10U) 
@@ -5836,20 +7797,20 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                     & (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[1U] 
                                                        << 8U)) 
                                                    | (0xffffffU 
-                                                      & vlTOPp->mkTestBench__DOT__old_word___05Fh157503))
+                                                      & vlTOPp->mkTestBench__DOT__old_word___05Fh157733))
                                                    : 
                                                   ((0xff000000U 
-                                                    & vlTOPp->mkTestBench__DOT__old_word___05Fh157503) 
+                                                    & vlTOPp->mkTestBench__DOT__old_word___05Fh157733) 
                                                    | ((0xff0000U 
                                                        & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[1U]) 
                                                       | (0xffffU 
-                                                         & vlTOPp->mkTestBench__DOT__old_word___05Fh157503))))
+                                                         & vlTOPp->mkTestBench__DOT__old_word___05Fh157733))))
                                                   : 
                                                  ((0x10000U 
                                                    & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U])
                                                    ? 
                                                   ((0xffff0000U 
-                                                    & vlTOPp->mkTestBench__DOT__old_word___05Fh157503) 
+                                                    & vlTOPp->mkTestBench__DOT__old_word___05Fh157733) 
                                                    | ((0xff00U 
                                                        & ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
                                                            << 0x18U) 
@@ -5857,37 +7818,121 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                              & (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[1U] 
                                                                 >> 8U)))) 
                                                       | (0xffU 
-                                                         & vlTOPp->mkTestBench__DOT__old_word___05Fh157503)))
+                                                         & vlTOPp->mkTestBench__DOT__old_word___05Fh157733)))
                                                    : 
                                                   ((0xffffff00U 
-                                                    & vlTOPp->mkTestBench__DOT__old_word___05Fh157503) 
+                                                    & vlTOPp->mkTestBench__DOT__old_word___05Fh157733) 
                                                    | (0xffU 
                                                       & ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
                                                           << 0x10U) 
                                                          | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[1U] 
                                                             >> 0x10U))))))));
     if ((0x20000U & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U])) {
-        vlTOPp->mkTestBench__DOT__half_val___05Fh339511 
-            = (0xffffU & (vlTOPp->mkTestBench__DOT__old_word___05Fh157503 
+        vlTOPp->mkTestBench__DOT__half_val___05Fh339741 
+            = (0xffffU & (vlTOPp->mkTestBench__DOT__old_word___05Fh157733 
                           >> 0x10U));
-        vlTOPp->mkTestBench__DOT__byte_val___05Fh339592 
+        vlTOPp->mkTestBench__DOT__byte_val___05Fh339822 
             = (0xffU & ((0x10000U & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U])
-                         ? (vlTOPp->mkTestBench__DOT__old_word___05Fh157503 
-                            >> 0x18U) : (vlTOPp->mkTestBench__DOT__old_word___05Fh157503 
+                         ? (vlTOPp->mkTestBench__DOT__old_word___05Fh157733 
+                            >> 0x18U) : (vlTOPp->mkTestBench__DOT__old_word___05Fh157733 
                                          >> 0x10U)));
     } else {
-        vlTOPp->mkTestBench__DOT__half_val___05Fh339511 
-            = (0xffffU & vlTOPp->mkTestBench__DOT__old_word___05Fh157503);
-        vlTOPp->mkTestBench__DOT__byte_val___05Fh339592 
+        vlTOPp->mkTestBench__DOT__half_val___05Fh339741 
+            = (0xffffU & vlTOPp->mkTestBench__DOT__old_word___05Fh157733);
+        vlTOPp->mkTestBench__DOT__byte_val___05Fh339822 
             = (0xffU & ((0x10000U & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U])
-                         ? (vlTOPp->mkTestBench__DOT__old_word___05Fh157503 
-                            >> 8U) : vlTOPp->mkTestBench__DOT__old_word___05Fh157503));
+                         ? (vlTOPp->mkTestBench__DOT__old_word___05Fh157733 
+                            >> 8U) : vlTOPp->mkTestBench__DOT__old_word___05Fh157733));
     }
-    vlTOPp->mkTestBench__DOT___theResult___05F___05F_6___05Fh143722 
-        = (((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F727_AND_core_ex2mem_firs_ETC___05F_d1741) 
+    vlTOPp->mkTestBench__DOT___theResult___05F___05Fh143768 
+        = (((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F734_AND_core_ex2mem_firs_ETC___05F_d1748) 
+            & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                << 0x1cU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                             >> 4U)))))
+            ? ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[3U] 
+                << 0x10U) | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
+                             >> 0x10U)) : (((((IData)(vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__empty_reg) 
+                                              & (vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[0U] 
+                                                 >> 1U)) 
+                                             & ((0x1fU 
+                                                 & ((vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[1U] 
+                                                     << 0x1eU) 
+                                                    | (vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[0U] 
+                                                       >> 2U))) 
+                                                == 
+                                                (0x1fU 
+                                                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                                     << 0x1cU) 
+                                                    | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                       >> 4U))))) 
+                                            & (0U != 
+                                               (0x1fU 
+                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                                    << 0x1cU) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                      >> 4U)))))
+                                            ? vlTOPp->mkTestBench__DOT__op1___05F_1___05Fh143974
+                                            : ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
+                                                 & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
+                                                    == 
+                                                    (0x1fU 
+                                                     & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                                         << 0x1cU) 
+                                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                           >> 4U))))) 
+                                                & (0U 
+                                                   != 
+                                                   (0x1fU 
+                                                    & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                                        << 0x1cU) 
+                                                       | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                          >> 4U)))))
+                                                ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
+                                                : (
+                                                   (((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
+                                                     & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
+                                                        == 
+                                                        (0x1fU 
+                                                         & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                                             << 0x1cU) 
+                                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                               >> 4U))))) 
+                                                    & (0U 
+                                                       != 
+                                                       (0x1fU 
+                                                        & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                                            << 0x1cU) 
+                                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                              >> 4U)))))
+                                                    ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
+                                                    : 
+                                                   ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                     << 0x17U) 
+                                                    | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
+                                                       >> 9U))))));
+    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1769 
+        = (1U & ((~ ((((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
+                       & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
+                      & (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F734_AND_core_ex2mem_firs_ETC___05F_d1748)) 
+                     & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                                         << 0x1cU) 
+                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                           >> 4U)))))) 
+                 | (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg)));
+    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784 
+        = (1U & ((~ ((((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
+                       & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
+                      & (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F734_AND_core_ex2mem_firs_ETC___05F_d1772)) 
+                     & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                         << 1U) | (
+                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                   >> 0x1fU)))))) 
+                 | (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg)));
+    vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143769 
+        = (((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F734_AND_core_ex2mem_firs_ETC___05F_d1772) 
             & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                << 0x1dU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                             >> 3U)))))
+                                << 1U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                          >> 0x1fU)))))
             ? ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[3U] 
                 << 0x10U) | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
                              >> 0x10U)) : (((((IData)(vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__empty_reg) 
@@ -5901,31 +7946,31 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                 == 
                                                 (0x1fU 
                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                                     << 0x1dU) 
+                                                     << 1U) 
                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                       >> 3U))))) 
+                                                       >> 0x1fU))))) 
                                             & (0U != 
                                                (0x1fU 
                                                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                                    << 0x1dU) 
+                                                    << 1U) 
                                                    | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                      >> 3U)))))
-                                            ? vlTOPp->mkTestBench__DOT__op1___05F_1___05Fh143928
+                                                      >> 0x1fU)))))
+                                            ? vlTOPp->mkTestBench__DOT__op1___05F_1___05Fh143974
                                             : ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
                                                  & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
                                                     == 
                                                     (0x1fU 
                                                      & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                                         << 0x1dU) 
+                                                         << 1U) 
                                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                           >> 3U))))) 
+                                                           >> 0x1fU))))) 
                                                 & (0U 
                                                    != 
                                                    (0x1fU 
                                                     & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                                        << 0x1dU) 
+                                                        << 1U) 
                                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                          >> 3U)))))
+                                                          >> 0x1fU)))))
                                                 ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
                                                 : (
                                                    (((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
@@ -5933,107 +7978,23 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                         == 
                                                         (0x1fU 
                                                          & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                                             << 0x1dU) 
+                                                             << 1U) 
                                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                               >> 3U))))) 
+                                                               >> 0x1fU))))) 
                                                     & (0U 
                                                        != 
                                                        (0x1fU 
                                                         & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                                            << 0x1dU) 
+                                                            << 1U) 
                                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                              >> 3U)))))
+                                                              >> 0x1fU)))))
                                                     ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
                                                     : 
                                                    ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                     << 0x18U) 
+                                                     << 0x17U) 
                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
-                                                       >> 8U))))));
-    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1762 
-        = (1U & ((~ ((((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
-                       & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
-                      & (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F727_AND_core_ex2mem_firs_ETC___05F_d1741)) 
-                     & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                         << 0x1dU) 
-                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                           >> 3U)))))) 
-                 | (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg)));
-    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777 
-        = (1U & ((~ ((((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg) 
-                       & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
-                      & (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F727_AND_core_ex2mem_firs_ETC___05F_d1765)) 
-                     & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                         << 2U) | (
-                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                   >> 0x1eU)))))) 
-                 | (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__empty_reg)));
-    vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143723 
-        = (((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem_notEmpty___05F727_AND_core_ex2mem_firs_ETC___05F_d1765) 
-            & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                << 2U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                          >> 0x1eU)))))
-            ? ((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[3U] 
-                << 0x10U) | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[2U] 
-                             >> 0x10U)) : (((((IData)(vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__empty_reg) 
-                                              & (vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[0U] 
-                                                 >> 1U)) 
-                                             & ((0x1fU 
-                                                 & ((vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[1U] 
-                                                     << 0x1eU) 
-                                                    | (vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__data0_reg[0U] 
-                                                       >> 2U))) 
-                                                == 
-                                                (0x1fU 
-                                                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                     << 2U) 
-                                                    | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                       >> 0x1eU))))) 
-                                            & (0U != 
-                                               (0x1fU 
-                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                    << 2U) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                      >> 0x1eU)))))
-                                            ? vlTOPp->mkTestBench__DOT__op1___05F_1___05Fh143928
-                                            : ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
-                                                 & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
-                                                    == 
-                                                    (0x1fU 
-                                                     & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                         << 2U) 
-                                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                           >> 0x1eU))))) 
-                                                & (0U 
-                                                   != 
-                                                   (0x1fU 
-                                                    & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                        << 2U) 
-                                                       | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                          >> 0x1eU)))))
-                                                ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
-                                                : (
-                                                   (((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
-                                                     & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
-                                                        == 
-                                                        (0x1fU 
-                                                         & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                             << 2U) 
-                                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                               >> 0x1eU))))) 
-                                                    & (0U 
-                                                       != 
-                                                       (0x1fU 
-                                                        & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                            << 2U) 
-                                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                              >> 0x1eU)))))
-                                                    ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
-                                                    : 
-                                                   ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
-                                                     << 0x18U) 
-                                                    | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                                                       >> 8U))))));
-    __Vtemp80[2U] = ((0xffffe000U & (((((((((0x33U 
+                                                       >> 9U))))));
+    __Vtemp84[3U] = ((0xffffc000U & (((((((((0x33U 
                                              == (0x7fU 
                                                  & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                                      << 0x1dU) 
@@ -6080,8 +8041,8 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                        << 0x1dU) 
                                                       | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                          >> 3U))))) 
-                                     << 0xdU)) | vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F418_BITS_41_TO_35_419_EQ_ETC___05F_d1673[2U]);
-    __Vtemp83[2U] = ((0xffff0000U & (((0x200U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
+                                     << 0xeU)) | vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F422_BITS_41_TO_35_423_EQ_ETC___05F_d1680[3U]);
+    __Vtemp87[3U] = ((0xfffe0000U & (((0x200U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                        ? 0U : ((0x100U 
                                                 & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                                 ? (
@@ -6126,8 +8087,8 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                         ? 1U
                                                         : 0U)
                                                        : 0U)))))) 
-                                     << 0x10U)) | (
-                                                   (0xffff8000U 
+                                     << 0x11U)) | (
+                                                   (0xffff0000U 
                                                     & ((0x63U 
                                                         == 
                                                         (0x7fU 
@@ -6135,8 +8096,8 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                              << 0x1dU) 
                                                             | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                                >> 3U)))) 
-                                                       << 0xfU)) 
-                                                   | ((0xffffc000U 
+                                                       << 0x10U)) 
+                                                   | ((0xffff8000U 
                                                        & (((0x6fU 
                                                             == 
                                                             (0x7fU 
@@ -6151,9 +8112,9 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                                    << 0x1dU) 
                                                                   | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                                      >> 3U))))) 
-                                                          << 0xeU)) 
-                                                      | __Vtemp80[2U])));
-    __Vtemp84[2U] = ((0xfffc0000U & (((0x200U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
+                                                          << 0xfU)) 
+                                                      | __Vtemp84[3U])));
+    __Vtemp88[3U] = ((0xfff80000U & (((0x200U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                        ? ((0x100U & 
                                            vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                            ? ((0x80U 
@@ -6201,8 +8162,8 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                       : 6U)
                                                      : 6U))))
                                            : 6U) : 6U) 
-                                     << 0x12U)) | __Vtemp83[2U]);
-    __Vtemp85[2U] = ((0xffe00000U & (((0x200U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
+                                     << 0x13U)) | __Vtemp87[3U]);
+    __Vtemp89[3U] = ((0xffc00000U & (((0x200U & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                        ? 0U : ((0x100U 
                                                 & vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])
                                                 ? (
@@ -6346,28 +8307,11 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                         : 0U)
                                                        : 0U)))
                                                     : 0U))) 
-                                     << 0x15U)) | __Vtemp84[2U]);
-    __Vtemp89[4U] = ((0xffU & (vlTOPp->mkTestBench__DOT__x___05Fh142590 
-                               >> 0x18U)) | (0xffffff00U 
-                                             & (((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
-                                                   & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
-                                                      == 
-                                                      (0x1fU 
-                                                       & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                           << 9U) 
-                                                          | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                             >> 0x17U))))) 
-                                                  & (0U 
-                                                     != 
-                                                     (0x1fU 
-                                                      & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                          << 9U) 
-                                                         | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                            >> 0x17U)))))
-                                                  ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
-                                                  : 
-                                                 ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
-                                                    & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
+                                     << 0x16U)) | __Vtemp88[3U]);
+    __Vtemp93[5U] = ((0x1ffU & (vlTOPp->mkTestBench__DOT__x___05Fh142630 
+                                >> 0x17U)) | (0xfffffe00U 
+                                              & (((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
+                                                    & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
                                                        == 
                                                        (0x1fU 
                                                         & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
@@ -6381,56 +8325,56 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                            << 9U) 
                                                           | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                              >> 0x17U)))))
-                                                   ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
-                                                   : vlTOPp->mkTestBench__DOT__rs2_val___05Fh141394)) 
-                                                << 8U)));
-    __Vtemp89[5U] = ((0xffU & (((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
-                                  & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
-                                     == (0x1fU & ((
-                                                   vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                   << 9U) 
-                                                  | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                     >> 0x17U))))) 
-                                 & (0U != (0x1fU & 
-                                           ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                             << 9U) 
-                                            | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                               >> 0x17U)))))
-                                 ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
-                                 : ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
-                                      & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
-                                         == (0x1fU 
-                                             & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                 << 9U) 
-                                                | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                   >> 0x17U))))) 
-                                     & (0U != (0x1fU 
-                                               & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                   << 9U) 
-                                                  | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                     >> 0x17U)))))
-                                     ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
-                                     : vlTOPp->mkTestBench__DOT__rs2_val___05Fh141394)) 
-                               >> 0x18U)) | (0xffffff00U 
-                                             & (((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
-                                                   & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
-                                                      == 
-                                                      (0x1fU 
-                                                       & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                           << 0xeU) 
-                                                          | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                             >> 0x12U))))) 
-                                                  & (0U 
-                                                     != 
-                                                     (0x1fU 
-                                                      & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                          << 0xeU) 
-                                                         | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                            >> 0x12U)))))
-                                                  ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
-                                                  : 
-                                                 ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
-                                                    & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
+                                                   ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
+                                                   : 
+                                                  ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
+                                                     & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
+                                                        == 
+                                                        (0x1fU 
+                                                         & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                             << 9U) 
+                                                            | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                               >> 0x17U))))) 
+                                                    & (0U 
+                                                       != 
+                                                       (0x1fU 
+                                                        & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                            << 9U) 
+                                                           | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                              >> 0x17U)))))
+                                                    ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
+                                                    : vlTOPp->mkTestBench__DOT__rs2_val___05Fh141432)) 
+                                                 << 9U)));
+    __Vtemp93[6U] = ((0x1ffU & (((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
+                                   & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
+                                      == (0x1fU & (
+                                                   (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                    << 9U) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                      >> 0x17U))))) 
+                                  & (0U != (0x1fU & 
+                                            ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                              << 9U) 
+                                             | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                >> 0x17U)))))
+                                  ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
+                                  : ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
+                                       & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
+                                          == (0x1fU 
+                                              & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                  << 9U) 
+                                                 | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                    >> 0x17U))))) 
+                                      & (0U != (0x1fU 
+                                                & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                    << 9U) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                      >> 0x17U)))))
+                                      ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
+                                      : vlTOPp->mkTestBench__DOT__rs2_val___05Fh141432)) 
+                                >> 0x17U)) | (0xfffffe00U 
+                                              & (((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
+                                                    & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
                                                        == 
                                                        (0x1fU 
                                                         & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
@@ -6444,168 +8388,186 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                            << 0xeU) 
                                                           | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                              >> 0x12U)))))
-                                                   ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
-                                                   : vlTOPp->mkTestBench__DOT__rs1_val___05Fh141393)) 
-                                                << 8U)));
-    __Vtemp89[6U] = ((0xffU & (((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
-                                  & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
-                                     == (0x1fU & ((
-                                                   vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                   << 0xeU) 
-                                                  | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                     >> 0x12U))))) 
-                                 & (0U != (0x1fU & 
-                                           ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                             << 0xeU) 
-                                            | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                               >> 0x12U)))))
-                                 ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
-                                 : ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
-                                      & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
-                                         == (0x1fU 
-                                             & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                 << 0xeU) 
-                                                | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                   >> 0x12U))))) 
-                                     & (0U != (0x1fU 
-                                               & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                   << 0xeU) 
-                                                  | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                     >> 0x12U)))))
-                                     ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
-                                     : vlTOPp->mkTestBench__DOT__rs1_val___05Fh141393)) 
-                               >> 0x18U)) | (0xffffff00U 
-                                             & ((IData)(
-                                                        (((QData)((IData)(
-                                                                          vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U])) 
-                                                          << 0x3dU) 
-                                                         | (((QData)((IData)(
-                                                                             vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U])) 
-                                                             << 0x1dU) 
-                                                            | ((QData)((IData)(
-                                                                               vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])) 
-                                                               >> 3U)))) 
-                                                << 8U)));
+                                                   ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
+                                                   : 
+                                                  ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
+                                                     & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
+                                                        == 
+                                                        (0x1fU 
+                                                         & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                             << 0xeU) 
+                                                            | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                               >> 0x12U))))) 
+                                                    & (0U 
+                                                       != 
+                                                       (0x1fU 
+                                                        & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                            << 0xeU) 
+                                                           | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                              >> 0x12U)))))
+                                                    ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
+                                                    : vlTOPp->mkTestBench__DOT__rs1_val___05Fh141431)) 
+                                                 << 9U)));
+    __Vtemp93[7U] = ((0x1ffU & (((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid0) 
+                                   & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd0) 
+                                      == (0x1fU & (
+                                                   (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                    << 0xeU) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                      >> 0x12U))))) 
+                                  & (0U != (0x1fU & 
+                                            ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                              << 0xeU) 
+                                             | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                >> 0x12U)))))
+                                  ? vlTOPp->mkTestBench__DOT__core_wb_forward_data0
+                                  : ((((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_valid1) 
+                                       & ((IData)(vlTOPp->mkTestBench__DOT__core_wb_forward_rd1) 
+                                          == (0x1fU 
+                                              & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                  << 0xeU) 
+                                                 | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                    >> 0x12U))))) 
+                                      & (0U != (0x1fU 
+                                                & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                    << 0xeU) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                      >> 0x12U)))))
+                                      ? vlTOPp->mkTestBench__DOT__core_wb_forward_data1
+                                      : vlTOPp->mkTestBench__DOT__rs1_val___05Fh141431)) 
+                                >> 0x17U)) | (0xfffffe00U 
+                                              & ((IData)(
+                                                         (((QData)((IData)(
+                                                                           vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U])) 
+                                                           << 0x3dU) 
+                                                          | (((QData)((IData)(
+                                                                              vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U])) 
+                                                              << 0x1dU) 
+                                                             | ((QData)((IData)(
+                                                                                vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])) 
+                                                                >> 3U)))) 
+                                                 << 9U)));
     if (((((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-           & (1U == (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                            << 0x10U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                         >> 0x10U))))) 
-          & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                              << 7U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                        >> 0x19U))))) 
-         & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_41_TO_35_419_EQ_0b1_ETC___05F_d1468))) {
-        __Vtemp91[7U] = 0U;
+           & (1U == (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                            << 0xfU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                        >> 0x11U))))) 
+          & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                              << 6U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                        >> 0x1aU))))) 
+         & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_41_TO_35_423_EQ_0b1_ETC___05F_d1472))) {
+        __Vtemp95[8U] = 0U;
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[0U] = 0U;
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[1U] = 0U;
-        vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[2U] = 0x180800U;
-        vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[3U] = 0U;
+        vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[2U] = 0U;
+        vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[3U] = 0x301000U;
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[4U] = 0U;
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[5U] = 0U;
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[6U] = 0U;
+        vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[7U] = 0U;
     } else {
-        __Vtemp91[7U] = ((0xffU & ((IData)((((QData)((IData)(
-                                                             vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U])) 
-                                             << 0x3dU) 
-                                            | (((QData)((IData)(
-                                                                vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U])) 
-                                                << 0x1dU) 
-                                               | ((QData)((IData)(
-                                                                  vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])) 
-                                                  >> 3U)))) 
-                                   >> 0x18U)) | (0xffffff00U 
-                                                 & ((IData)(
-                                                            ((((QData)((IData)(
-                                                                               vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U])) 
-                                                               << 0x3dU) 
-                                                              | (((QData)((IData)(
+        __Vtemp95[8U] = ((0x1ffU & ((IData)((((QData)((IData)(
+                                                              vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U])) 
+                                              << 0x3dU) 
+                                             | (((QData)((IData)(
+                                                                 vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U])) 
+                                                 << 0x1dU) 
+                                                | ((QData)((IData)(
+                                                                   vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])) 
+                                                   >> 3U)))) 
+                                    >> 0x17U)) | (0xfffffe00U 
+                                                  & ((IData)(
+                                                             ((((QData)((IData)(
+                                                                                vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U])) 
+                                                                << 0x3dU) 
+                                                               | (((QData)((IData)(
                                                                                 vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U])) 
-                                                                  << 0x1dU) 
-                                                                 | ((QData)((IData)(
+                                                                   << 0x1dU) 
+                                                                  | ((QData)((IData)(
                                                                                 vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])) 
-                                                                    >> 3U))) 
-                                                             >> 0x20U)) 
-                                                    << 8U)));
+                                                                     >> 3U))) 
+                                                              >> 0x20U)) 
+                                                     << 9U)));
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[0U] 
-            = vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F418_BITS_41_TO_35_419_EQ_ETC___05F_d1673[0U];
+            = vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F422_BITS_41_TO_35_423_EQ_ETC___05F_d1680[0U];
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[1U] 
-            = vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F418_BITS_41_TO_35_419_EQ_ETC___05F_d1673[1U];
+            = vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F422_BITS_41_TO_35_423_EQ_ETC___05F_d1680[1U];
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[2U] 
-            = ((0xc0000000U & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                               << 7U)) | ((0x3e000000U 
-                                           & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                              << 0xfU)) 
-                                          | __Vtemp85[2U]));
+            = vlTOPp->mkTestBench__DOT__NOT_core_if2id_first___05F422_BITS_41_TO_35_423_EQ_ETC___05F_d1680[2U];
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[3U] 
-            = ((0xffffff00U & (vlTOPp->mkTestBench__DOT__x___05Fh142590 
-                               << 8U)) | ((0xf8U & 
-                                           ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                             << 0x11U) 
-                                            | (0x1fff8U 
-                                               & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                  >> 0xfU)))) 
-                                          | (7U & (
-                                                   (0x3fffff80U 
-                                                    & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
-                                                       << 7U)) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
-                                                      >> 0x19U)))));
+            = ((0x80000000U & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                               << 8U)) | ((0x7c000000U 
+                                           & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                              << 0x10U)) 
+                                          | __Vtemp89[3U]));
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[4U] 
-            = __Vtemp89[4U];
+            = ((0xfffffe00U & (vlTOPp->mkTestBench__DOT__x___05Fh142630 
+                               << 9U)) | ((0x1f0U & 
+                                           ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                             << 0x12U) 
+                                            | (0x3fff0U 
+                                               & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                  >> 0xeU)))) 
+                                          | (0xfU & 
+                                             ((0x7fffff00U 
+                                               & (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
+                                                  << 8U)) 
+                                              | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
+                                                 >> 0x18U)))));
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[5U] 
-            = __Vtemp89[5U];
+            = __Vtemp93[5U];
         vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[6U] 
-            = __Vtemp89[6U];
+            = __Vtemp93[6U];
+        vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[7U] 
+            = __Vtemp93[7U];
     }
-    vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[7U] 
-        = __Vtemp91[7U];
     vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[8U] 
+        = __Vtemp95[8U];
+    vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[9U] 
         = (((((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-              & (1U == (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                               << 0x10U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                            >> 0x10U))))) 
-             & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                 << 7U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                           >> 0x19U))))) 
-            & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_41_TO_35_419_EQ_0b1_ETC___05F_d1468))
-            ? 0U : (0xffU & ((IData)(((((QData)((IData)(
-                                                        vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U])) 
-                                        << 0x3dU) | 
-                                       (((QData)((IData)(
-                                                         vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U])) 
-                                         << 0x1dU) 
-                                        | ((QData)((IData)(
-                                                           vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])) 
-                                           >> 3U))) 
-                                      >> 0x20U)) >> 0x18U)));
+              & (1U == (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                               << 0xfU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                           >> 0x11U))))) 
+             & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                 << 6U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                           >> 0x1aU))))) 
+            & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_41_TO_35_423_EQ_0b1_ETC___05F_d1472))
+            ? 0U : (0x1ffU & ((IData)(((((QData)((IData)(
+                                                         vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[3U])) 
+                                         << 0x3dU) 
+                                        | (((QData)((IData)(
+                                                            vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U])) 
+                                            << 0x1dU) 
+                                           | ((QData)((IData)(
+                                                              vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U])) 
+                                              >> 3U))) 
+                                       >> 0x20U)) >> 0x17U)));
     vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_decodeStage 
         = ((((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__full_reg) 
              & ((((~ (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
-                  | (1U != (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                   << 0x10U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                >> 0x10U))))) 
-                 | (0U == (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                     << 7U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                               >> 0x19U))))) 
+                  | (1U != (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                   << 0xfU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                               >> 0x11U))))) 
+                 | (0U == (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                     << 6U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                               >> 0x1aU))))) 
                 | (IData)(vlTOPp->mkTestBench__DOT__core_if2id__DOT__empty_reg))) 
             & (((((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-                  & (1U == (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                   << 0x10U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                >> 0x10U))))) 
-                 & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                     << 7U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                               >> 0x19U))))) 
-                & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_41_TO_35_419_EQ_0b1_ETC___05F_d1468)) 
+                  & (1U == (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                   << 0xfU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                               >> 0x11U))))) 
+                 & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                     << 6U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                               >> 0x1aU))))) 
+                & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_41_TO_35_423_EQ_0b1_ETC___05F_d1472)) 
                | (IData)(vlTOPp->mkTestBench__DOT__core_if2id__DOT__empty_reg))) 
            & (~ (IData)(vlTOPp->mkTestBench__DOT__core_stall_load_use)));
-    if (vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BIT_0_3_core_btb_ETC___05F_d290) {
-        vlTOPp->mkTestBench__DOT__prediction_target___05Fh103977 
-            = vlTOPp->mkTestBench__DOT__target___05Fh108725;
-        vlTOPp->mkTestBench__DOT__x___05Fh104009 = vlTOPp->mkTestBench__DOT__target___05Fh108725;
-    } else {
-        vlTOPp->mkTestBench__DOT__prediction_target___05Fh103977 = 0U;
-        vlTOPp->mkTestBench__DOT__x___05Fh104009 = vlTOPp->mkTestBench__DOT__core_pcReg;
-    }
-    __Vtemp92[1U] = (IData)((((QData)((IData)(((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[4U] 
+    vlTOPp->mkTestBench__DOT__prediction_target___05Fh103981 
+        = ((1U & ((~ (IData)(vlTOPp->mkTestBench__DOT__core_branch_flush_done)) 
+                  & (~ (IData)(vlTOPp->mkTestBench__DOT__core_no_pc_update))))
+            ? ((IData)(vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BIT_0_059_core_ETC___05F_d1325)
+                ? vlTOPp->mkTestBench__DOT__prediction_target___05F_1___05Fh140543
+                : 0U) : 0U);
+    __Vtemp96[1U] = (IData)((((QData)((IData)(((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[4U] 
                                                 << 0x10U) 
                                                | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[3U] 
                                                   >> 0x10U)))) 
@@ -6624,36 +8586,36 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                             ((2U 
                                                               & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
                                                               ? 0U
-                                                              : vlTOPp->mkTestBench__DOT__old_word___05Fh157503)
+                                                              : vlTOPp->mkTestBench__DOT__old_word___05Fh157733)
                                                              : 
                                                             ((2U 
                                                               & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
                                                               ? 
                                                              ((1U 
                                                                & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
-                                                               ? (IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339511)
+                                                               ? (IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339741)
                                                                : 
                                                               ((0xffff0000U 
                                                                 & ((- (IData)(
                                                                               (1U 
-                                                                               & ((IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339511) 
+                                                                               & ((IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339741) 
                                                                                 >> 0xfU)))) 
                                                                    << 0x10U)) 
-                                                               | (IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339511)))
+                                                               | (IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339741)))
                                                               : 
                                                              ((1U 
                                                                & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
-                                                               ? (IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339592)
+                                                               ? (IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339822)
                                                                : 
                                                               ((0xffffff00U 
                                                                 & ((- (IData)(
                                                                               (1U 
-                                                                               & ((IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339592) 
+                                                                               & ((IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339822) 
                                                                                 >> 7U)))) 
                                                                    << 8U)) 
-                                                               | (IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339592)))))
+                                                               | (IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339822)))))
                                                             : 0U)))));
-    __Vtemp92[2U] = (IData)(((((QData)((IData)(((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[4U] 
+    __Vtemp96[2U] = (IData)(((((QData)((IData)(((vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[4U] 
                                                  << 0x10U) 
                                                 | (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[3U] 
                                                    >> 0x10U)))) 
@@ -6672,34 +8634,34 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                              ((2U 
                                                                & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
                                                                ? 0U
-                                                               : vlTOPp->mkTestBench__DOT__old_word___05Fh157503)
+                                                               : vlTOPp->mkTestBench__DOT__old_word___05Fh157733)
                                                               : 
                                                              ((2U 
                                                                & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
                                                                ? 
                                                               ((1U 
                                                                 & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
-                                                                ? (IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339511)
+                                                                ? (IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339741)
                                                                 : 
                                                                ((0xffff0000U 
                                                                  & ((- (IData)(
                                                                                (1U 
-                                                                                & ((IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339511) 
+                                                                                & ((IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339741) 
                                                                                 >> 0xfU)))) 
                                                                     << 0x10U)) 
-                                                                | (IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339511)))
+                                                                | (IData)(vlTOPp->mkTestBench__DOT__half_val___05Fh339741)))
                                                                : 
                                                               ((1U 
                                                                 & vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[0U])
-                                                                ? (IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339592)
+                                                                ? (IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339822)
                                                                 : 
                                                                ((0xffffff00U 
                                                                  & ((- (IData)(
                                                                                (1U 
-                                                                                & ((IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339592) 
+                                                                                & ((IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339822) 
                                                                                 >> 7U)))) 
                                                                     << 8U)) 
-                                                                | (IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339592)))))
+                                                                | (IData)(vlTOPp->mkTestBench__DOT__byte_val___05Fh339822)))))
                                                              : 0U)))) 
                              >> 0x20U));
     vlTOPp->mkTestBench__DOT__core_mem2wb__024D_IN[0U] 
@@ -6716,183 +8678,183 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                      >> 3U)))));
     vlTOPp->mkTestBench__DOT__core_mem2wb__024D_IN[1U] 
         = ((0x7fU & (vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__data0_reg[3U] 
-                     >> 9U)) | (0xffffff80U & (__Vtemp92[1U] 
+                     >> 9U)) | (0xffffff80U & (__Vtemp96[1U] 
                                                << 7U)));
     vlTOPp->mkTestBench__DOT__core_mem2wb__024D_IN[2U] 
-        = ((0x7fU & (__Vtemp92[1U] >> 0x19U)) | (0xffffff80U 
-                                                 & (__Vtemp92[2U] 
+        = ((0x7fU & (__Vtemp96[1U] >> 0x19U)) | (0xffffff80U 
+                                                 & (__Vtemp96[2U] 
                                                     << 7U)));
     vlTOPp->mkTestBench__DOT__core_mem2wb__024D_IN[3U] 
-        = (0x7fU & (__Vtemp92[2U] >> 0x19U));
-    vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_206_TO_200_787_E_ETC___05F_d2281 
-        = (((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                 << 0x18U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                              >> 8U)))) 
-            & (((2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                               << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                           >> 0x14U)))) 
-                | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                 << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                             >> 0x14U))))) 
-               | (7U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                            >> 0x14U))))))
-            ? ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
-                ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
-                    ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
-                        ? ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
-                            ? 0U : ((0x400U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
-                                     ? 0U : ((0x200U 
-                                              & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
-                                              ? ((0x100U 
-                                                  & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U])
+        = (0x7fU & (__Vtemp96[2U] >> 0x19U));
+    vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_239_TO_233_794_E_ETC___05F_d2288 
+        = (((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                 << 0x17U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                              >> 9U)))) 
+            & (((2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                               << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                           >> 0x15U)))) 
+                | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                 << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                             >> 0x15U))))) 
+               | (7U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                            >> 0x15U))))))
+            ? ((0x8000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                ? ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                    ? ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                        ? ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                            ? 0U : ((0x800U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                                     ? 0U : ((0x400U 
+                                              & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
+                                              ? ((0x200U 
+                                                  & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U])
                                                   ? 
                                                  ((((2U 
                                                      == 
                                                      (7U 
-                                                      & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                          << 0xcU) 
-                                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                            >> 0x14U)))) 
+                                                      & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                          << 0xbU) 
+                                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                            >> 0x15U)))) 
                                                     | (5U 
                                                        == 
                                                        (7U 
-                                                        & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                            << 0xcU) 
-                                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                              >> 0x14U))))) 
+                                                        & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                            << 0xbU) 
+                                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                              >> 0x15U))))) 
                                                    | (7U 
                                                       == 
                                                       (7U 
-                                                       & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                           << 0xcU) 
-                                                          | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                             >> 0x14U)))))
+                                                       & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                           << 0xbU) 
+                                                          | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                             >> 0x15U)))))
                                                    ? 
                                                   (0x1fU 
-                                                   & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                       << 9U) 
-                                                      | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                         >> 0x17U)))
+                                                   & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                       << 8U) 
+                                                      | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                         >> 0x18U)))
                                                    : 0U)
                                                   : 0U)
                                               : 0U)))
-                        : 0U) : 0U) : 0U) : vlTOPp->mkTestBench__DOT___theResult___05F___05F_6___05Fh143722);
-    vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-        = ((0xaU == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                              << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                          >> 0x15U))))
-            ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                << 0x18U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                             >> 8U)) : ((0xbU == (0xfU 
-                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                      << 0xbU) 
-                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                        >> 0x15U))))
-                                         ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                             << 0x18U) 
-                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                               >> 8U))
-                                         : vlTOPp->mkTestBench__DOT___theResult___05F___05F_6___05Fh143722));
-    vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939 
+                        : 0U) : 0U) : 0U) : vlTOPp->mkTestBench__DOT___theResult___05F___05Fh143768);
+    vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+        = ((0xaU == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                              << 0xaU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                          >> 0x16U))))
+            ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                << 0x17U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                             >> 9U)) : ((0xbU == (0xfU 
+                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                      << 0xaU) 
+                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                        >> 0x16U))))
+                                         ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                             << 0x17U) 
+                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                               >> 9U))
+                                         : vlTOPp->mkTestBench__DOT___theResult___05F___05Fh143768));
+    vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946 
         = (1U & ((((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-                   & (0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                          << 0x18U) 
-                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                            >> 8U))))) 
-                  & (((1U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                     << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                 >> 0x14U)))) 
-                      | (2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                       << 0xcU) | (
-                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                   >> 0x14U))))) 
-                     | (((3U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                        << 0xcU) | 
-                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                        >> 0x14U)))) 
-                         | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                          << 0xcU) 
-                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                            >> 0x14U))))) 
-                        & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                            << 9U) 
-                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                              >> 0x17U)))))))
-                  ? ((((2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                      << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                  >> 0x14U)))) 
-                       | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                        << 0xcU) | 
-                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                        >> 0x14U))))) 
-                      | (7U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                       << 0xcU) | (
-                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                   >> 0x14U))))) 
-                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1762))
+                   & (0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                          << 0x17U) 
+                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                            >> 9U))))) 
+                  & (((1U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                     << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                 >> 0x15U)))) 
+                      | (2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                       << 0xbU) | (
+                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                   >> 0x15U))))) 
+                     | (((3U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                        << 0xbU) | 
+                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                        >> 0x15U)))) 
+                         | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                          << 0xbU) 
+                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                            >> 0x15U))))) 
+                        & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                            << 8U) 
+                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                              >> 0x18U)))))))
+                  ? ((((2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                      << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                  >> 0x15U)))) 
+                       | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                        << 0xbU) | 
+                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                        >> 0x15U))))) 
+                      | (7U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                       << 0xbU) | (
+                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                   >> 0x15U))))) 
+                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1769))
                   : (((((~ (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
-                        | (0x73U != (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                               << 0x18U) 
-                                              | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                 >> 8U))))) 
-                       | (6U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                        << 0xcU) | 
-                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                        >> 0x14U))))) 
-                      | (0U == (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                          << 9U) | 
-                                         (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                          >> 0x17U))))) 
-                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1762))));
-    vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d1783 
-        = ((0x100000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-            ? ((0x80000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                ? ((5U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                  << 0xeU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                              >> 0x12U)))) 
-                   | ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1762) 
-                      & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777)))
-                : ((0x40000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                    ? ((5U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                      << 0xeU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                  >> 0x12U)))) 
-                       | ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1762) 
-                          & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777)))
-                    : ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1762) 
-                       & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777))))
-            : ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1762) 
-               & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777)));
-    vlTOPp->mkTestBench__DOT___0_OR_0_OR_NOT_core_ex2mem_notEmpty___05F727_728_OR_ETC___05F_d1822 
-        = ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1762) 
+                        | (0x73U != (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                               << 0x17U) 
+                                              | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                 >> 9U))))) 
+                       | (6U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                        << 0xbU) | 
+                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                        >> 0x15U))))) 
+                      | (0U == (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                          << 8U) | 
+                                         (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                          >> 0x18U))))) 
+                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1769))));
+    vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d1790 
+        = ((0x200000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+            ? ((0x100000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                ? ((5U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                  << 0xdU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                              >> 0x13U)))) 
+                   | ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1769) 
+                      & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784)))
+                : ((0x80000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                    ? ((5U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                      << 0xdU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                  >> 0x13U)))) 
+                       | ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1769) 
+                          & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784)))
+                    : ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1769) 
+                       & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784))))
+            : ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1769) 
+               & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784)));
+    vlTOPp->mkTestBench__DOT___0_OR_0_OR_NOT_core_ex2mem_notEmpty___05F734_735_OR_ETC___05F_d1829 
+        = ((IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1769) 
            & (((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-               & (0U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                  << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                              >> 0x15U)))))
-               ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                   >> 0xcU) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777))
+               & (0U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                  << 0xaU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                              >> 0x16U)))))
+               ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                   >> 0xdU) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784))
                : (((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-                   & (1U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                      << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                  >> 0x15U)))))
-                   ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777)
+                   & (1U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                      << 0xaU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                  >> 0x16U)))))
+                   ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784)
                    : (((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-                       & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                          >> 0xcU)) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777)))));
-    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2005 
-        = (vlTOPp->mkTestBench__DOT___theResult___05F___05F_6___05Fh143722 
-           == vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143723);
-    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2007 
-        = ((0x80000000U ^ vlTOPp->mkTestBench__DOT___theResult___05F___05F_6___05Fh143722) 
-           < (0x80000000U ^ vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143723));
-    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2009 
-        = (vlTOPp->mkTestBench__DOT___theResult___05F___05F_6___05Fh143722 
-           < vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143723);
-    vlTOPp->mkTestBench__DOT__alu_in2___05Fh145546 
-        = ((0x1000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-            ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                << 0x18U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                             >> 8U)) : vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143723);
+                       & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                          >> 0xdU)) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784)))));
+    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2012 
+        = (vlTOPp->mkTestBench__DOT___theResult___05F___05Fh143768 
+           == vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143769);
+    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2014 
+        = ((0x80000000U ^ vlTOPp->mkTestBench__DOT___theResult___05F___05Fh143768) 
+           < (0x80000000U ^ vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143769));
+    vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2016 
+        = (vlTOPp->mkTestBench__DOT___theResult___05F___05Fh143768 
+           < vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143769);
+    vlTOPp->mkTestBench__DOT__alu_in2___05Fh145592 
+        = ((0x2000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+            ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                << 0x17U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                             >> 9U)) : vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143769);
     if (vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_decodeStage) {
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[0U] 
             = vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[0U];
@@ -6912,16 +8874,19 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
             = vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[7U];
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[8U] 
             = vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[8U];
+        vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[9U] 
+            = vlTOPp->mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[9U];
     } else {
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[0U] = 0U;
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[1U] = 0U;
-        vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[2U] = 0x180800U;
-        vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[3U] = 0U;
+        vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[2U] = 0U;
+        vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[3U] = 0x301000U;
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[4U] = 0U;
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[5U] = 0U;
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[6U] = 0U;
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[7U] = 0U;
         vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[8U] = 0U;
+        vlTOPp->mkTestBench__DOT__core_id2ex__024D_IN[9U] = 0U;
     }
     vlTOPp->mkTestBench__DOT__core_id2ex__024ENQ = 
         ((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_decodeStage) 
@@ -6929,12 +8894,12 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
     vlTOPp->mkTestBench__DOT__core_if2id__024DEQ = 
         ((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_decodeStage) 
          & ((((~ (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
-              | (1U != (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                               << 0x10U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                            >> 0x10U))))) 
-             | (0U == (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                 << 7U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                           >> 0x19U))))) 
+              | (1U != (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                               << 0xfU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                           >> 0x11U))))) 
+             | (0U == (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                 << 6U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                           >> 0x1aU))))) 
             | (((((0x33U != (0x7fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                        << 0x1dU) | 
                                       (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
@@ -6947,7 +8912,7 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                       << 0x1dU) | (
                                                    vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                                    >> 3U))))) 
-                | (~ (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_59_TO_55_431_EQ_cor_ETC___05F_d1432))) 
+                | (~ (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_59_TO_55_435_EQ_cor_ETC___05F_d1436))) 
                & ((((((((0x33U != (0x7fU & ((vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[2U] 
                                              << 0x1dU) 
                                             | (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
@@ -6988,2391 +8953,345 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                        << 0x11U) | 
                                       (vlTOPp->mkTestBench__DOT__core_if2id__DOT__data0_reg[1U] 
                                        >> 0xfU)))))) 
-                  | (~ (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_54_TO_50_465_EQ_cor_ETC___05F_d1466))))));
+                  | (~ (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_54_TO_50_469_EQ_cor_ETC___05F_d1470))))));
     vlTOPp->mkTestBench__DOT__MUX_core_stall_count__024write_1___05FSEL_1 
         = (((((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_decodeStage) 
               & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
-             & (1U == (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                              << 0x10U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                           >> 0x10U))))) 
-            & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                << 7U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                          >> 0x19U))))) 
-           & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F418_BITS_41_TO_35_419_EQ_0b1_ETC___05F_d1468));
-    vlTOPp->mkTestBench__DOT__instr___05Fh103979 = 
-        ((0x800U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-          ? ((0x400U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-              ? ((0x200U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                  ? ((0x100U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                      ? ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1023
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1022)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1021
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1020))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1019
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1018)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1017
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1016)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1015
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1014)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1013
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1012))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1011
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1010)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1009
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1008))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1007
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1006)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1005
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1004))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1003
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1002)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1001
-                                              : vlTOPp->mkTestBench__DOT__core_imem_1000)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_999
-                                              : vlTOPp->mkTestBench__DOT__core_imem_998)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_997
-                                              : vlTOPp->mkTestBench__DOT__core_imem_996))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_995
-                                              : vlTOPp->mkTestBench__DOT__core_imem_994)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_993
-                                              : vlTOPp->mkTestBench__DOT__core_imem_992)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_991
-                                              : vlTOPp->mkTestBench__DOT__core_imem_990)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_989
-                                              : vlTOPp->mkTestBench__DOT__core_imem_988))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_987
-                                              : vlTOPp->mkTestBench__DOT__core_imem_986)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_985
-                                              : vlTOPp->mkTestBench__DOT__core_imem_984)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_983
-                                              : vlTOPp->mkTestBench__DOT__core_imem_982)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_981
-                                              : vlTOPp->mkTestBench__DOT__core_imem_980))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_979
-                                              : vlTOPp->mkTestBench__DOT__core_imem_978)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_977
-                                              : vlTOPp->mkTestBench__DOT__core_imem_976))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_975
-                                              : vlTOPp->mkTestBench__DOT__core_imem_974)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_973
-                                              : vlTOPp->mkTestBench__DOT__core_imem_972))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_971
-                                              : vlTOPp->mkTestBench__DOT__core_imem_970)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_969
-                                              : vlTOPp->mkTestBench__DOT__core_imem_968)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_967
-                                              : vlTOPp->mkTestBench__DOT__core_imem_966)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_965
-                                              : vlTOPp->mkTestBench__DOT__core_imem_964))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_963
-                                              : vlTOPp->mkTestBench__DOT__core_imem_962)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_961
-                                              : vlTOPp->mkTestBench__DOT__core_imem_960))))))
-                      : ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_959
-                                              : vlTOPp->mkTestBench__DOT__core_imem_958)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_957
-                                              : vlTOPp->mkTestBench__DOT__core_imem_956))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_955
-                                              : vlTOPp->mkTestBench__DOT__core_imem_954)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_953
-                                              : vlTOPp->mkTestBench__DOT__core_imem_952)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_951
-                                              : vlTOPp->mkTestBench__DOT__core_imem_950)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_949
-                                              : vlTOPp->mkTestBench__DOT__core_imem_948))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_947
-                                              : vlTOPp->mkTestBench__DOT__core_imem_946)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_945
-                                              : vlTOPp->mkTestBench__DOT__core_imem_944))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_943
-                                              : vlTOPp->mkTestBench__DOT__core_imem_942)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_941
-                                              : vlTOPp->mkTestBench__DOT__core_imem_940))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_939
-                                              : vlTOPp->mkTestBench__DOT__core_imem_938)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_937
-                                              : vlTOPp->mkTestBench__DOT__core_imem_936)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_935
-                                              : vlTOPp->mkTestBench__DOT__core_imem_934)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_933
-                                              : vlTOPp->mkTestBench__DOT__core_imem_932))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_931
-                                              : vlTOPp->mkTestBench__DOT__core_imem_930)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_929
-                                              : vlTOPp->mkTestBench__DOT__core_imem_928)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_927
-                                              : vlTOPp->mkTestBench__DOT__core_imem_926)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_925
-                                              : vlTOPp->mkTestBench__DOT__core_imem_924))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_923
-                                              : vlTOPp->mkTestBench__DOT__core_imem_922)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_921
-                                              : vlTOPp->mkTestBench__DOT__core_imem_920)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_919
-                                              : vlTOPp->mkTestBench__DOT__core_imem_918)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_917
-                                              : vlTOPp->mkTestBench__DOT__core_imem_916))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_915
-                                              : vlTOPp->mkTestBench__DOT__core_imem_914)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_913
-                                              : vlTOPp->mkTestBench__DOT__core_imem_912))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_911
-                                              : vlTOPp->mkTestBench__DOT__core_imem_910)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_909
-                                              : vlTOPp->mkTestBench__DOT__core_imem_908))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_907
-                                              : vlTOPp->mkTestBench__DOT__core_imem_906)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_905
-                                              : vlTOPp->mkTestBench__DOT__core_imem_904)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_903
-                                              : vlTOPp->mkTestBench__DOT__core_imem_902)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_901
-                                              : vlTOPp->mkTestBench__DOT__core_imem_900))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_899
-                                              : vlTOPp->mkTestBench__DOT__core_imem_898)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_897
-                                              : vlTOPp->mkTestBench__DOT__core_imem_896)))))))
-                  : ((0x100U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                      ? ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_895
-                                              : vlTOPp->mkTestBench__DOT__core_imem_894)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_893
-                                              : vlTOPp->mkTestBench__DOT__core_imem_892))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_891
-                                              : vlTOPp->mkTestBench__DOT__core_imem_890)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_889
-                                              : vlTOPp->mkTestBench__DOT__core_imem_888)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_887
-                                              : vlTOPp->mkTestBench__DOT__core_imem_886)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_885
-                                              : vlTOPp->mkTestBench__DOT__core_imem_884))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_883
-                                              : vlTOPp->mkTestBench__DOT__core_imem_882)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_881
-                                              : vlTOPp->mkTestBench__DOT__core_imem_880))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_879
-                                              : vlTOPp->mkTestBench__DOT__core_imem_878)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_877
-                                              : vlTOPp->mkTestBench__DOT__core_imem_876))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_875
-                                              : vlTOPp->mkTestBench__DOT__core_imem_874)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_873
-                                              : vlTOPp->mkTestBench__DOT__core_imem_872)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_871
-                                              : vlTOPp->mkTestBench__DOT__core_imem_870)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_869
-                                              : vlTOPp->mkTestBench__DOT__core_imem_868))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_867
-                                              : vlTOPp->mkTestBench__DOT__core_imem_866)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_865
-                                              : vlTOPp->mkTestBench__DOT__core_imem_864)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_863
-                                              : vlTOPp->mkTestBench__DOT__core_imem_862)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_861
-                                              : vlTOPp->mkTestBench__DOT__core_imem_860))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_859
-                                              : vlTOPp->mkTestBench__DOT__core_imem_858)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_857
-                                              : vlTOPp->mkTestBench__DOT__core_imem_856)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_855
-                                              : vlTOPp->mkTestBench__DOT__core_imem_854)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_853
-                                              : vlTOPp->mkTestBench__DOT__core_imem_852))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_851
-                                              : vlTOPp->mkTestBench__DOT__core_imem_850)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_849
-                                              : vlTOPp->mkTestBench__DOT__core_imem_848))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_847
-                                              : vlTOPp->mkTestBench__DOT__core_imem_846)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_845
-                                              : vlTOPp->mkTestBench__DOT__core_imem_844))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_843
-                                              : vlTOPp->mkTestBench__DOT__core_imem_842)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_841
-                                              : vlTOPp->mkTestBench__DOT__core_imem_840)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_839
-                                              : vlTOPp->mkTestBench__DOT__core_imem_838)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_837
-                                              : vlTOPp->mkTestBench__DOT__core_imem_836))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_835
-                                              : vlTOPp->mkTestBench__DOT__core_imem_834)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_833
-                                              : vlTOPp->mkTestBench__DOT__core_imem_832))))))
-                      : ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_831
-                                              : vlTOPp->mkTestBench__DOT__core_imem_830)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_829
-                                              : vlTOPp->mkTestBench__DOT__core_imem_828))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_827
-                                              : vlTOPp->mkTestBench__DOT__core_imem_826)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_825
-                                              : vlTOPp->mkTestBench__DOT__core_imem_824)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_823
-                                              : vlTOPp->mkTestBench__DOT__core_imem_822)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_821
-                                              : vlTOPp->mkTestBench__DOT__core_imem_820))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_819
-                                              : vlTOPp->mkTestBench__DOT__core_imem_818)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_817
-                                              : vlTOPp->mkTestBench__DOT__core_imem_816))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_815
-                                              : vlTOPp->mkTestBench__DOT__core_imem_814)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_813
-                                              : vlTOPp->mkTestBench__DOT__core_imem_812))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_811
-                                              : vlTOPp->mkTestBench__DOT__core_imem_810)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_809
-                                              : vlTOPp->mkTestBench__DOT__core_imem_808)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_807
-                                              : vlTOPp->mkTestBench__DOT__core_imem_806)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_805
-                                              : vlTOPp->mkTestBench__DOT__core_imem_804))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_803
-                                              : vlTOPp->mkTestBench__DOT__core_imem_802)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_801
-                                              : vlTOPp->mkTestBench__DOT__core_imem_800)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_799
-                                              : vlTOPp->mkTestBench__DOT__core_imem_798)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_797
-                                              : vlTOPp->mkTestBench__DOT__core_imem_796))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_795
-                                              : vlTOPp->mkTestBench__DOT__core_imem_794)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_793
-                                              : vlTOPp->mkTestBench__DOT__core_imem_792)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_791
-                                              : vlTOPp->mkTestBench__DOT__core_imem_790)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_789
-                                              : vlTOPp->mkTestBench__DOT__core_imem_788))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_787
-                                              : vlTOPp->mkTestBench__DOT__core_imem_786)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_785
-                                              : vlTOPp->mkTestBench__DOT__core_imem_784))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_783
-                                              : vlTOPp->mkTestBench__DOT__core_imem_782)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_781
-                                              : vlTOPp->mkTestBench__DOT__core_imem_780))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_779
-                                              : vlTOPp->mkTestBench__DOT__core_imem_778)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_777
-                                              : vlTOPp->mkTestBench__DOT__core_imem_776)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_775
-                                              : vlTOPp->mkTestBench__DOT__core_imem_774)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_773
-                                              : vlTOPp->mkTestBench__DOT__core_imem_772))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_771
-                                              : vlTOPp->mkTestBench__DOT__core_imem_770)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_769
-                                              : vlTOPp->mkTestBench__DOT__core_imem_768))))))))
-              : ((0x200U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                  ? ((0x100U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                      ? ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_767
-                                              : vlTOPp->mkTestBench__DOT__core_imem_766)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_765
-                                              : vlTOPp->mkTestBench__DOT__core_imem_764))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_763
-                                              : vlTOPp->mkTestBench__DOT__core_imem_762)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_761
-                                              : vlTOPp->mkTestBench__DOT__core_imem_760)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_759
-                                              : vlTOPp->mkTestBench__DOT__core_imem_758)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_757
-                                              : vlTOPp->mkTestBench__DOT__core_imem_756))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_755
-                                              : vlTOPp->mkTestBench__DOT__core_imem_754)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_753
-                                              : vlTOPp->mkTestBench__DOT__core_imem_752))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_751
-                                              : vlTOPp->mkTestBench__DOT__core_imem_750)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_749
-                                              : vlTOPp->mkTestBench__DOT__core_imem_748))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_747
-                                              : vlTOPp->mkTestBench__DOT__core_imem_746)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_745
-                                              : vlTOPp->mkTestBench__DOT__core_imem_744)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_743
-                                              : vlTOPp->mkTestBench__DOT__core_imem_742)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_741
-                                              : vlTOPp->mkTestBench__DOT__core_imem_740))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_739
-                                              : vlTOPp->mkTestBench__DOT__core_imem_738)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_737
-                                              : vlTOPp->mkTestBench__DOT__core_imem_736)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_735
-                                              : vlTOPp->mkTestBench__DOT__core_imem_734)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_733
-                                              : vlTOPp->mkTestBench__DOT__core_imem_732))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_731
-                                              : vlTOPp->mkTestBench__DOT__core_imem_730)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_729
-                                              : vlTOPp->mkTestBench__DOT__core_imem_728)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_727
-                                              : vlTOPp->mkTestBench__DOT__core_imem_726)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_725
-                                              : vlTOPp->mkTestBench__DOT__core_imem_724))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_723
-                                              : vlTOPp->mkTestBench__DOT__core_imem_722)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_721
-                                              : vlTOPp->mkTestBench__DOT__core_imem_720))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_719
-                                              : vlTOPp->mkTestBench__DOT__core_imem_718)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_717
-                                              : vlTOPp->mkTestBench__DOT__core_imem_716))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_715
-                                              : vlTOPp->mkTestBench__DOT__core_imem_714)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_713
-                                              : vlTOPp->mkTestBench__DOT__core_imem_712)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_711
-                                              : vlTOPp->mkTestBench__DOT__core_imem_710)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_709
-                                              : vlTOPp->mkTestBench__DOT__core_imem_708))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_707
-                                              : vlTOPp->mkTestBench__DOT__core_imem_706)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_705
-                                              : vlTOPp->mkTestBench__DOT__core_imem_704))))))
-                      : ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_703
-                                              : vlTOPp->mkTestBench__DOT__core_imem_702)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_701
-                                              : vlTOPp->mkTestBench__DOT__core_imem_700))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_699
-                                              : vlTOPp->mkTestBench__DOT__core_imem_698)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_697
-                                              : vlTOPp->mkTestBench__DOT__core_imem_696)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_695
-                                              : vlTOPp->mkTestBench__DOT__core_imem_694)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_693
-                                              : vlTOPp->mkTestBench__DOT__core_imem_692))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_691
-                                              : vlTOPp->mkTestBench__DOT__core_imem_690)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_689
-                                              : vlTOPp->mkTestBench__DOT__core_imem_688))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_687
-                                              : vlTOPp->mkTestBench__DOT__core_imem_686)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_685
-                                              : vlTOPp->mkTestBench__DOT__core_imem_684))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_683
-                                              : vlTOPp->mkTestBench__DOT__core_imem_682)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_681
-                                              : vlTOPp->mkTestBench__DOT__core_imem_680)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_679
-                                              : vlTOPp->mkTestBench__DOT__core_imem_678)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_677
-                                              : vlTOPp->mkTestBench__DOT__core_imem_676))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_675
-                                              : vlTOPp->mkTestBench__DOT__core_imem_674)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_673
-                                              : vlTOPp->mkTestBench__DOT__core_imem_672)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_671
-                                              : vlTOPp->mkTestBench__DOT__core_imem_670)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_669
-                                              : vlTOPp->mkTestBench__DOT__core_imem_668))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_667
-                                              : vlTOPp->mkTestBench__DOT__core_imem_666)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_665
-                                              : vlTOPp->mkTestBench__DOT__core_imem_664)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_663
-                                              : vlTOPp->mkTestBench__DOT__core_imem_662)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_661
-                                              : vlTOPp->mkTestBench__DOT__core_imem_660))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_659
-                                              : vlTOPp->mkTestBench__DOT__core_imem_658)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_657
-                                              : vlTOPp->mkTestBench__DOT__core_imem_656))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_655
-                                              : vlTOPp->mkTestBench__DOT__core_imem_654)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_653
-                                              : vlTOPp->mkTestBench__DOT__core_imem_652))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_651
-                                              : vlTOPp->mkTestBench__DOT__core_imem_650)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_649
-                                              : vlTOPp->mkTestBench__DOT__core_imem_648)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_647
-                                              : vlTOPp->mkTestBench__DOT__core_imem_646)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_645
-                                              : vlTOPp->mkTestBench__DOT__core_imem_644))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_643
-                                              : vlTOPp->mkTestBench__DOT__core_imem_642)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_641
-                                              : vlTOPp->mkTestBench__DOT__core_imem_640)))))))
-                  : ((0x100U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                      ? ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_639
-                                              : vlTOPp->mkTestBench__DOT__core_imem_638)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_637
-                                              : vlTOPp->mkTestBench__DOT__core_imem_636))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_635
-                                              : vlTOPp->mkTestBench__DOT__core_imem_634)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_633
-                                              : vlTOPp->mkTestBench__DOT__core_imem_632)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_631
-                                              : vlTOPp->mkTestBench__DOT__core_imem_630)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_629
-                                              : vlTOPp->mkTestBench__DOT__core_imem_628))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_627
-                                              : vlTOPp->mkTestBench__DOT__core_imem_626)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_625
-                                              : vlTOPp->mkTestBench__DOT__core_imem_624))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_623
-                                              : vlTOPp->mkTestBench__DOT__core_imem_622)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_621
-                                              : vlTOPp->mkTestBench__DOT__core_imem_620))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_619
-                                              : vlTOPp->mkTestBench__DOT__core_imem_618)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_617
-                                              : vlTOPp->mkTestBench__DOT__core_imem_616)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_615
-                                              : vlTOPp->mkTestBench__DOT__core_imem_614)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_613
-                                              : vlTOPp->mkTestBench__DOT__core_imem_612))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_611
-                                              : vlTOPp->mkTestBench__DOT__core_imem_610)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_609
-                                              : vlTOPp->mkTestBench__DOT__core_imem_608)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_607
-                                              : vlTOPp->mkTestBench__DOT__core_imem_606)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_605
-                                              : vlTOPp->mkTestBench__DOT__core_imem_604))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_603
-                                              : vlTOPp->mkTestBench__DOT__core_imem_602)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_601
-                                              : vlTOPp->mkTestBench__DOT__core_imem_600)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_599
-                                              : vlTOPp->mkTestBench__DOT__core_imem_598)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_597
-                                              : vlTOPp->mkTestBench__DOT__core_imem_596))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_595
-                                              : vlTOPp->mkTestBench__DOT__core_imem_594)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_593
-                                              : vlTOPp->mkTestBench__DOT__core_imem_592))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_591
-                                              : vlTOPp->mkTestBench__DOT__core_imem_590)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_589
-                                              : vlTOPp->mkTestBench__DOT__core_imem_588))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_587
-                                              : vlTOPp->mkTestBench__DOT__core_imem_586)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_585
-                                              : vlTOPp->mkTestBench__DOT__core_imem_584)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_583
-                                              : vlTOPp->mkTestBench__DOT__core_imem_582)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_581
-                                              : vlTOPp->mkTestBench__DOT__core_imem_580))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_579
-                                              : vlTOPp->mkTestBench__DOT__core_imem_578)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_577
-                                              : vlTOPp->mkTestBench__DOT__core_imem_576))))))
-                      : ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_575
-                                              : vlTOPp->mkTestBench__DOT__core_imem_574)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_573
-                                              : vlTOPp->mkTestBench__DOT__core_imem_572))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_571
-                                              : vlTOPp->mkTestBench__DOT__core_imem_570)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_569
-                                              : vlTOPp->mkTestBench__DOT__core_imem_568)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_567
-                                              : vlTOPp->mkTestBench__DOT__core_imem_566)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_565
-                                              : vlTOPp->mkTestBench__DOT__core_imem_564))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_563
-                                              : vlTOPp->mkTestBench__DOT__core_imem_562)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_561
-                                              : vlTOPp->mkTestBench__DOT__core_imem_560))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_559
-                                              : vlTOPp->mkTestBench__DOT__core_imem_558)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_557
-                                              : vlTOPp->mkTestBench__DOT__core_imem_556))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_555
-                                              : vlTOPp->mkTestBench__DOT__core_imem_554)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_553
-                                              : vlTOPp->mkTestBench__DOT__core_imem_552)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_551
-                                              : vlTOPp->mkTestBench__DOT__core_imem_550)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_549
-                                              : vlTOPp->mkTestBench__DOT__core_imem_548))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_547
-                                              : vlTOPp->mkTestBench__DOT__core_imem_546)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_545
-                                              : vlTOPp->mkTestBench__DOT__core_imem_544)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_543
-                                              : vlTOPp->mkTestBench__DOT__core_imem_542)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_541
-                                              : vlTOPp->mkTestBench__DOT__core_imem_540))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_539
-                                              : vlTOPp->mkTestBench__DOT__core_imem_538)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_537
-                                              : vlTOPp->mkTestBench__DOT__core_imem_536)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_535
-                                              : vlTOPp->mkTestBench__DOT__core_imem_534)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_533
-                                              : vlTOPp->mkTestBench__DOT__core_imem_532))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_531
-                                              : vlTOPp->mkTestBench__DOT__core_imem_530)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_529
-                                              : vlTOPp->mkTestBench__DOT__core_imem_528))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_527
-                                              : vlTOPp->mkTestBench__DOT__core_imem_526)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_525
-                                              : vlTOPp->mkTestBench__DOT__core_imem_524))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_523
-                                              : vlTOPp->mkTestBench__DOT__core_imem_522)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_521
-                                              : vlTOPp->mkTestBench__DOT__core_imem_520)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_519
-                                              : vlTOPp->mkTestBench__DOT__core_imem_518)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_517
-                                              : vlTOPp->mkTestBench__DOT__core_imem_516))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_515
-                                              : vlTOPp->mkTestBench__DOT__core_imem_514)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_513
-                                              : vlTOPp->mkTestBench__DOT__core_imem_512)))))))))
-          : ((0x400U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-              ? ((0x200U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                  ? ((0x100U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                      ? ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_511
-                                              : vlTOPp->mkTestBench__DOT__core_imem_510)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_509
-                                              : vlTOPp->mkTestBench__DOT__core_imem_508))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_507
-                                              : vlTOPp->mkTestBench__DOT__core_imem_506)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_505
-                                              : vlTOPp->mkTestBench__DOT__core_imem_504)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_503
-                                              : vlTOPp->mkTestBench__DOT__core_imem_502)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_501
-                                              : vlTOPp->mkTestBench__DOT__core_imem_500))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_499
-                                              : vlTOPp->mkTestBench__DOT__core_imem_498)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_497
-                                              : vlTOPp->mkTestBench__DOT__core_imem_496))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_495
-                                              : vlTOPp->mkTestBench__DOT__core_imem_494)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_493
-                                              : vlTOPp->mkTestBench__DOT__core_imem_492))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_491
-                                              : vlTOPp->mkTestBench__DOT__core_imem_490)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_489
-                                              : vlTOPp->mkTestBench__DOT__core_imem_488)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_487
-                                              : vlTOPp->mkTestBench__DOT__core_imem_486)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_485
-                                              : vlTOPp->mkTestBench__DOT__core_imem_484))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_483
-                                              : vlTOPp->mkTestBench__DOT__core_imem_482)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_481
-                                              : vlTOPp->mkTestBench__DOT__core_imem_480)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_479
-                                              : vlTOPp->mkTestBench__DOT__core_imem_478)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_477
-                                              : vlTOPp->mkTestBench__DOT__core_imem_476))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_475
-                                              : vlTOPp->mkTestBench__DOT__core_imem_474)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_473
-                                              : vlTOPp->mkTestBench__DOT__core_imem_472)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_471
-                                              : vlTOPp->mkTestBench__DOT__core_imem_470)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_469
-                                              : vlTOPp->mkTestBench__DOT__core_imem_468))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_467
-                                              : vlTOPp->mkTestBench__DOT__core_imem_466)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_465
-                                              : vlTOPp->mkTestBench__DOT__core_imem_464))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_463
-                                              : vlTOPp->mkTestBench__DOT__core_imem_462)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_461
-                                              : vlTOPp->mkTestBench__DOT__core_imem_460))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_459
-                                              : vlTOPp->mkTestBench__DOT__core_imem_458)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_457
-                                              : vlTOPp->mkTestBench__DOT__core_imem_456)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_455
-                                              : vlTOPp->mkTestBench__DOT__core_imem_454)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_453
-                                              : vlTOPp->mkTestBench__DOT__core_imem_452))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_451
-                                              : vlTOPp->mkTestBench__DOT__core_imem_450)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_449
-                                              : vlTOPp->mkTestBench__DOT__core_imem_448))))))
-                      : ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_447
-                                              : vlTOPp->mkTestBench__DOT__core_imem_446)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_445
-                                              : vlTOPp->mkTestBench__DOT__core_imem_444))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_443
-                                              : vlTOPp->mkTestBench__DOT__core_imem_442)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_441
-                                              : vlTOPp->mkTestBench__DOT__core_imem_440)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_439
-                                              : vlTOPp->mkTestBench__DOT__core_imem_438)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_437
-                                              : vlTOPp->mkTestBench__DOT__core_imem_436))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_435
-                                              : vlTOPp->mkTestBench__DOT__core_imem_434)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_433
-                                              : vlTOPp->mkTestBench__DOT__core_imem_432))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_431
-                                              : vlTOPp->mkTestBench__DOT__core_imem_430)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_429
-                                              : vlTOPp->mkTestBench__DOT__core_imem_428))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_427
-                                              : vlTOPp->mkTestBench__DOT__core_imem_426)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_425
-                                              : vlTOPp->mkTestBench__DOT__core_imem_424)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_423
-                                              : vlTOPp->mkTestBench__DOT__core_imem_422)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_421
-                                              : vlTOPp->mkTestBench__DOT__core_imem_420))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_419
-                                              : vlTOPp->mkTestBench__DOT__core_imem_418)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_417
-                                              : vlTOPp->mkTestBench__DOT__core_imem_416)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_415
-                                              : vlTOPp->mkTestBench__DOT__core_imem_414)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_413
-                                              : vlTOPp->mkTestBench__DOT__core_imem_412))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_411
-                                              : vlTOPp->mkTestBench__DOT__core_imem_410)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_409
-                                              : vlTOPp->mkTestBench__DOT__core_imem_408)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_407
-                                              : vlTOPp->mkTestBench__DOT__core_imem_406)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_405
-                                              : vlTOPp->mkTestBench__DOT__core_imem_404))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_403
-                                              : vlTOPp->mkTestBench__DOT__core_imem_402)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_401
-                                              : vlTOPp->mkTestBench__DOT__core_imem_400))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_399
-                                              : vlTOPp->mkTestBench__DOT__core_imem_398)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_397
-                                              : vlTOPp->mkTestBench__DOT__core_imem_396))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_395
-                                              : vlTOPp->mkTestBench__DOT__core_imem_394)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_393
-                                              : vlTOPp->mkTestBench__DOT__core_imem_392)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_391
-                                              : vlTOPp->mkTestBench__DOT__core_imem_390)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_389
-                                              : vlTOPp->mkTestBench__DOT__core_imem_388))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_387
-                                              : vlTOPp->mkTestBench__DOT__core_imem_386)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_385
-                                              : vlTOPp->mkTestBench__DOT__core_imem_384)))))))
-                  : ((0x100U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                      ? ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_383
-                                              : vlTOPp->mkTestBench__DOT__core_imem_382)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_381
-                                              : vlTOPp->mkTestBench__DOT__core_imem_380))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_379
-                                              : vlTOPp->mkTestBench__DOT__core_imem_378)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_377
-                                              : vlTOPp->mkTestBench__DOT__core_imem_376)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_375
-                                              : vlTOPp->mkTestBench__DOT__core_imem_374)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_373
-                                              : vlTOPp->mkTestBench__DOT__core_imem_372))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_371
-                                              : vlTOPp->mkTestBench__DOT__core_imem_370)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_369
-                                              : vlTOPp->mkTestBench__DOT__core_imem_368))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_367
-                                              : vlTOPp->mkTestBench__DOT__core_imem_366)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_365
-                                              : vlTOPp->mkTestBench__DOT__core_imem_364))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_363
-                                              : vlTOPp->mkTestBench__DOT__core_imem_362)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_361
-                                              : vlTOPp->mkTestBench__DOT__core_imem_360)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_359
-                                              : vlTOPp->mkTestBench__DOT__core_imem_358)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_357
-                                              : vlTOPp->mkTestBench__DOT__core_imem_356))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_355
-                                              : vlTOPp->mkTestBench__DOT__core_imem_354)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_353
-                                              : vlTOPp->mkTestBench__DOT__core_imem_352)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_351
-                                              : vlTOPp->mkTestBench__DOT__core_imem_350)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_349
-                                              : vlTOPp->mkTestBench__DOT__core_imem_348))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_347
-                                              : vlTOPp->mkTestBench__DOT__core_imem_346)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_345
-                                              : vlTOPp->mkTestBench__DOT__core_imem_344)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_343
-                                              : vlTOPp->mkTestBench__DOT__core_imem_342)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_341
-                                              : vlTOPp->mkTestBench__DOT__core_imem_340))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_339
-                                              : vlTOPp->mkTestBench__DOT__core_imem_338)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_337
-                                              : vlTOPp->mkTestBench__DOT__core_imem_336))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_335
-                                              : vlTOPp->mkTestBench__DOT__core_imem_334)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_333
-                                              : vlTOPp->mkTestBench__DOT__core_imem_332))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_331
-                                              : vlTOPp->mkTestBench__DOT__core_imem_330)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_329
-                                              : vlTOPp->mkTestBench__DOT__core_imem_328)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_327
-                                              : vlTOPp->mkTestBench__DOT__core_imem_326)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_325
-                                              : vlTOPp->mkTestBench__DOT__core_imem_324))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_323
-                                              : vlTOPp->mkTestBench__DOT__core_imem_322)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_321
-                                              : vlTOPp->mkTestBench__DOT__core_imem_320))))))
-                      : ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_319
-                                              : vlTOPp->mkTestBench__DOT__core_imem_318)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_317
-                                              : vlTOPp->mkTestBench__DOT__core_imem_316))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_315
-                                              : vlTOPp->mkTestBench__DOT__core_imem_314)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_313
-                                              : vlTOPp->mkTestBench__DOT__core_imem_312)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_311
-                                              : vlTOPp->mkTestBench__DOT__core_imem_310)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_309
-                                              : vlTOPp->mkTestBench__DOT__core_imem_308))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_307
-                                              : vlTOPp->mkTestBench__DOT__core_imem_306)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_305
-                                              : vlTOPp->mkTestBench__DOT__core_imem_304))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_303
-                                              : vlTOPp->mkTestBench__DOT__core_imem_302)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_301
-                                              : vlTOPp->mkTestBench__DOT__core_imem_300))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_299
-                                              : vlTOPp->mkTestBench__DOT__core_imem_298)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_297
-                                              : vlTOPp->mkTestBench__DOT__core_imem_296)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_295
-                                              : vlTOPp->mkTestBench__DOT__core_imem_294)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_293
-                                              : vlTOPp->mkTestBench__DOT__core_imem_292))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_291
-                                              : vlTOPp->mkTestBench__DOT__core_imem_290)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_289
-                                              : vlTOPp->mkTestBench__DOT__core_imem_288)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_287
-                                              : vlTOPp->mkTestBench__DOT__core_imem_286)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_285
-                                              : vlTOPp->mkTestBench__DOT__core_imem_284))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_283
-                                              : vlTOPp->mkTestBench__DOT__core_imem_282)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_281
-                                              : vlTOPp->mkTestBench__DOT__core_imem_280)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_279
-                                              : vlTOPp->mkTestBench__DOT__core_imem_278)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_277
-                                              : vlTOPp->mkTestBench__DOT__core_imem_276))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_275
-                                              : vlTOPp->mkTestBench__DOT__core_imem_274)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_273
-                                              : vlTOPp->mkTestBench__DOT__core_imem_272))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_271
-                                              : vlTOPp->mkTestBench__DOT__core_imem_270)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_269
-                                              : vlTOPp->mkTestBench__DOT__core_imem_268))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_267
-                                              : vlTOPp->mkTestBench__DOT__core_imem_266)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_265
-                                              : vlTOPp->mkTestBench__DOT__core_imem_264)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_263
-                                              : vlTOPp->mkTestBench__DOT__core_imem_262)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_261
-                                              : vlTOPp->mkTestBench__DOT__core_imem_260))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_259
-                                              : vlTOPp->mkTestBench__DOT__core_imem_258)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_257
-                                              : vlTOPp->mkTestBench__DOT__core_imem_256))))))))
-              : ((0x200U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                  ? ((0x100U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                      ? ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_255
-                                              : vlTOPp->mkTestBench__DOT__core_imem_254)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_253
-                                              : vlTOPp->mkTestBench__DOT__core_imem_252))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_251
-                                              : vlTOPp->mkTestBench__DOT__core_imem_250)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_249
-                                              : vlTOPp->mkTestBench__DOT__core_imem_248)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_247
-                                              : vlTOPp->mkTestBench__DOT__core_imem_246)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_245
-                                              : vlTOPp->mkTestBench__DOT__core_imem_244))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_243
-                                              : vlTOPp->mkTestBench__DOT__core_imem_242)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_241
-                                              : vlTOPp->mkTestBench__DOT__core_imem_240))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_239
-                                              : vlTOPp->mkTestBench__DOT__core_imem_238)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_237
-                                              : vlTOPp->mkTestBench__DOT__core_imem_236))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_235
-                                              : vlTOPp->mkTestBench__DOT__core_imem_234)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_233
-                                              : vlTOPp->mkTestBench__DOT__core_imem_232)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_231
-                                              : vlTOPp->mkTestBench__DOT__core_imem_230)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_229
-                                              : vlTOPp->mkTestBench__DOT__core_imem_228))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_227
-                                              : vlTOPp->mkTestBench__DOT__core_imem_226)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_225
-                                              : vlTOPp->mkTestBench__DOT__core_imem_224)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_223
-                                              : vlTOPp->mkTestBench__DOT__core_imem_222)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_221
-                                              : vlTOPp->mkTestBench__DOT__core_imem_220))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_219
-                                              : vlTOPp->mkTestBench__DOT__core_imem_218)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_217
-                                              : vlTOPp->mkTestBench__DOT__core_imem_216)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_215
-                                              : vlTOPp->mkTestBench__DOT__core_imem_214)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_213
-                                              : vlTOPp->mkTestBench__DOT__core_imem_212))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_211
-                                              : vlTOPp->mkTestBench__DOT__core_imem_210)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_209
-                                              : vlTOPp->mkTestBench__DOT__core_imem_208))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_207
-                                              : vlTOPp->mkTestBench__DOT__core_imem_206)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_205
-                                              : vlTOPp->mkTestBench__DOT__core_imem_204))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_203
-                                              : vlTOPp->mkTestBench__DOT__core_imem_202)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_201
-                                              : vlTOPp->mkTestBench__DOT__core_imem_200)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_199
-                                              : vlTOPp->mkTestBench__DOT__core_imem_198)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_197
-                                              : vlTOPp->mkTestBench__DOT__core_imem_196))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_195
-                                              : vlTOPp->mkTestBench__DOT__core_imem_194)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_193
-                                              : vlTOPp->mkTestBench__DOT__core_imem_192))))))
-                      : ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_191
-                                              : vlTOPp->mkTestBench__DOT__core_imem_190)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_189
-                                              : vlTOPp->mkTestBench__DOT__core_imem_188))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_187
-                                              : vlTOPp->mkTestBench__DOT__core_imem_186)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_185
-                                              : vlTOPp->mkTestBench__DOT__core_imem_184)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_183
-                                              : vlTOPp->mkTestBench__DOT__core_imem_182)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_181
-                                              : vlTOPp->mkTestBench__DOT__core_imem_180))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_179
-                                              : vlTOPp->mkTestBench__DOT__core_imem_178)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_177
-                                              : vlTOPp->mkTestBench__DOT__core_imem_176))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_175
-                                              : vlTOPp->mkTestBench__DOT__core_imem_174)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_173
-                                              : vlTOPp->mkTestBench__DOT__core_imem_172))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_171
-                                              : vlTOPp->mkTestBench__DOT__core_imem_170)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_169
-                                              : vlTOPp->mkTestBench__DOT__core_imem_168)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_167
-                                              : vlTOPp->mkTestBench__DOT__core_imem_166)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_165
-                                              : vlTOPp->mkTestBench__DOT__core_imem_164))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_163
-                                              : vlTOPp->mkTestBench__DOT__core_imem_162)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_161
-                                              : vlTOPp->mkTestBench__DOT__core_imem_160)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_159
-                                              : vlTOPp->mkTestBench__DOT__core_imem_158)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_157
-                                              : vlTOPp->mkTestBench__DOT__core_imem_156))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_155
-                                              : vlTOPp->mkTestBench__DOT__core_imem_154)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_153
-                                              : vlTOPp->mkTestBench__DOT__core_imem_152)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_151
-                                              : vlTOPp->mkTestBench__DOT__core_imem_150)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_149
-                                              : vlTOPp->mkTestBench__DOT__core_imem_148))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_147
-                                              : vlTOPp->mkTestBench__DOT__core_imem_146)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_145
-                                              : vlTOPp->mkTestBench__DOT__core_imem_144))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_143
-                                              : vlTOPp->mkTestBench__DOT__core_imem_142)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_141
-                                              : vlTOPp->mkTestBench__DOT__core_imem_140))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_139
-                                              : vlTOPp->mkTestBench__DOT__core_imem_138)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_137
-                                              : vlTOPp->mkTestBench__DOT__core_imem_136)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_135
-                                              : vlTOPp->mkTestBench__DOT__core_imem_134)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_133
-                                              : vlTOPp->mkTestBench__DOT__core_imem_132))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_131
-                                              : vlTOPp->mkTestBench__DOT__core_imem_130)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_129
-                                              : vlTOPp->mkTestBench__DOT__core_imem_128)))))))
-                  : ((0x100U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                      ? ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_127
-                                              : vlTOPp->mkTestBench__DOT__core_imem_126)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_125
-                                              : vlTOPp->mkTestBench__DOT__core_imem_124))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_123
-                                              : vlTOPp->mkTestBench__DOT__core_imem_122)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_121
-                                              : vlTOPp->mkTestBench__DOT__core_imem_120)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_119
-                                              : vlTOPp->mkTestBench__DOT__core_imem_118)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_117
-                                              : vlTOPp->mkTestBench__DOT__core_imem_116))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_115
-                                              : vlTOPp->mkTestBench__DOT__core_imem_114)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_113
-                                              : vlTOPp->mkTestBench__DOT__core_imem_112))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_111
-                                              : vlTOPp->mkTestBench__DOT__core_imem_110)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_109
-                                              : vlTOPp->mkTestBench__DOT__core_imem_108))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_107
-                                              : vlTOPp->mkTestBench__DOT__core_imem_106)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_105
-                                              : vlTOPp->mkTestBench__DOT__core_imem_104)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_103
-                                              : vlTOPp->mkTestBench__DOT__core_imem_102)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_101
-                                              : vlTOPp->mkTestBench__DOT__core_imem_100))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_99
-                                              : vlTOPp->mkTestBench__DOT__core_imem_98)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_97
-                                              : vlTOPp->mkTestBench__DOT__core_imem_96)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_95
-                                              : vlTOPp->mkTestBench__DOT__core_imem_94)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_93
-                                              : vlTOPp->mkTestBench__DOT__core_imem_92))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_91
-                                              : vlTOPp->mkTestBench__DOT__core_imem_90)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_89
-                                              : vlTOPp->mkTestBench__DOT__core_imem_88)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_87
-                                              : vlTOPp->mkTestBench__DOT__core_imem_86)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_85
-                                              : vlTOPp->mkTestBench__DOT__core_imem_84))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_83
-                                              : vlTOPp->mkTestBench__DOT__core_imem_82)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_81
-                                              : vlTOPp->mkTestBench__DOT__core_imem_80))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_79
-                                              : vlTOPp->mkTestBench__DOT__core_imem_78)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_77
-                                              : vlTOPp->mkTestBench__DOT__core_imem_76))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_75
-                                              : vlTOPp->mkTestBench__DOT__core_imem_74)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_73
-                                              : vlTOPp->mkTestBench__DOT__core_imem_72)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_71
-                                              : vlTOPp->mkTestBench__DOT__core_imem_70)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_69
-                                              : vlTOPp->mkTestBench__DOT__core_imem_68))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_67
-                                              : vlTOPp->mkTestBench__DOT__core_imem_66)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_65
-                                              : vlTOPp->mkTestBench__DOT__core_imem_64))))))
-                      : ((0x80U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                          ? ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_63
-                                              : vlTOPp->mkTestBench__DOT__core_imem_62)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_61
-                                              : vlTOPp->mkTestBench__DOT__core_imem_60))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_59
-                                              : vlTOPp->mkTestBench__DOT__core_imem_58)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_57
-                                              : vlTOPp->mkTestBench__DOT__core_imem_56)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_55
-                                              : vlTOPp->mkTestBench__DOT__core_imem_54)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_53
-                                              : vlTOPp->mkTestBench__DOT__core_imem_52))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_51
-                                              : vlTOPp->mkTestBench__DOT__core_imem_50)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_49
-                                              : vlTOPp->mkTestBench__DOT__core_imem_48))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_47
-                                              : vlTOPp->mkTestBench__DOT__core_imem_46)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_45
-                                              : vlTOPp->mkTestBench__DOT__core_imem_44))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_43
-                                              : vlTOPp->mkTestBench__DOT__core_imem_42)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_41
-                                              : vlTOPp->mkTestBench__DOT__core_imem_40)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_39
-                                              : vlTOPp->mkTestBench__DOT__core_imem_38)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_37
-                                              : vlTOPp->mkTestBench__DOT__core_imem_36))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_35
-                                              : vlTOPp->mkTestBench__DOT__core_imem_34)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_33
-                                              : vlTOPp->mkTestBench__DOT__core_imem_32)))))
-                          : ((0x40U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                              ? ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_31
-                                              : vlTOPp->mkTestBench__DOT__core_imem_30)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_29
-                                              : vlTOPp->mkTestBench__DOT__core_imem_28))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_27
-                                              : vlTOPp->mkTestBench__DOT__core_imem_26)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_25
-                                              : vlTOPp->mkTestBench__DOT__core_imem_24)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_23
-                                              : vlTOPp->mkTestBench__DOT__core_imem_22)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_21
-                                              : vlTOPp->mkTestBench__DOT__core_imem_20))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_19
-                                              : vlTOPp->mkTestBench__DOT__core_imem_18)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_17
-                                              : vlTOPp->mkTestBench__DOT__core_imem_16))))
-                              : ((0x20U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                  ? ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_15
-                                              : vlTOPp->mkTestBench__DOT__core_imem_14)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_13
-                                              : vlTOPp->mkTestBench__DOT__core_imem_12))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_11
-                                              : vlTOPp->mkTestBench__DOT__core_imem_10)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_9
-                                              : vlTOPp->mkTestBench__DOT__core_imem_8)))
-                                  : ((0x10U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                      ? ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_7
-                                              : vlTOPp->mkTestBench__DOT__core_imem_6)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_5
-                                              : vlTOPp->mkTestBench__DOT__core_imem_4))
-                                      : ((8U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                          ? ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_3
-                                              : vlTOPp->mkTestBench__DOT__core_imem_2)
-                                          : ((4U & vlTOPp->mkTestBench__DOT__x___05Fh104009)
-                                              ? vlTOPp->mkTestBench__DOT__core_imem_1
-                                              : vlTOPp->mkTestBench__DOT__core_imem_0))))))))));
-    vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
-        = (((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                 << 0x18U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                              >> 8U)))) 
-            & ((1U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                              << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                          >> 0x14U)))) 
-               | (2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                            >> 0x14U))))))
-            ? vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_206_TO_200_787_E_ETC___05F_d2281
-            : ((((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                      << 0x18U) | (
-                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                   >> 8U)))) 
-                 & ((3U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                   << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                               >> 0x14U)))) 
-                    | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                     << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                 >> 0x14U)))))) 
-                & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                    << 9U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                              >> 0x17U)))))
-                ? (vlTOPp->mkTestBench__DOT__v___05Fh147777 
-                   | vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_206_TO_200_787_E_ETC___05F_d2281)
-                : ((((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                          << 0x18U) 
-                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                            >> 8U)))) 
-                     & ((6U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                       << 0xcU) | (
-                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                   >> 0x14U)))) 
-                        | (7U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                         << 0xcU) | 
-                                        (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                         >> 0x14U)))))) 
-                    & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                        << 9U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                  >> 0x17U)))))
-                    ? (vlTOPp->mkTestBench__DOT__v___05Fh147777 
-                       & (~ vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_206_TO_200_787_E_ETC___05F_d2281))
-                    : vlTOPp->mkTestBench__DOT__v___05Fh147777)));
-    vlTOPp->mkTestBench__DOT__CASE_addr48007_0x300_IF_core_id2ex_i_notEmpty___05FETC___05Fq5 
-        = ((0x800U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-            ? ((0x400U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                : ((0x200U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                    ? ((0x100U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                        ? ((0x80U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                            ? ((0x40U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                : ((0x20U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                    ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                    : ((0x10U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+             & (1U == (3U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                              << 0xfU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                          >> 0x11U))))) 
+            & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                << 6U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                          >> 0x1aU))))) 
+           & (IData)(vlTOPp->mkTestBench__DOT__core_if2id_first___05F422_BITS_41_TO_35_423_EQ_0b1_ETC___05F_d1472));
+    vlTOPp->mkTestBench__DOT__core_if2id__024D_IN[0U] 
+        = ((0xfffffff8U & (vlTOPp->mkTestBench__DOT__prediction_target___05Fh103981 
+                           << 3U)) | (((((~ (IData)(vlTOPp->mkTestBench__DOT__core_branch_flush_done)) 
+                                         & (~ (IData)(vlTOPp->mkTestBench__DOT__core_no_pc_update))) 
+                                        & (IData)(vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BIT_0_059_core_ETC___05F_d1325)) 
+                                       << 2U) | (IData)(vlTOPp->mkTestBench__DOT__core_csrs_priv_mode)));
+    vlTOPp->mkTestBench__DOT__core_if2id__024D_IN[1U] 
+        = ((7U & (vlTOPp->mkTestBench__DOT__prediction_target___05Fh103981 
+                  >> 0x1dU)) | (0xfffffff8U & ((IData)(
+                                                       (((QData)((IData)(vlTOPp->mkTestBench__DOT__core_pcReg)) 
+                                                         << 0x20U) 
+                                                        | (QData)((IData)(vlTOPp->mkTestBench__DOT__instr___05Fh103983)))) 
+                                               << 3U)));
+    vlTOPp->mkTestBench__DOT__core_if2id__024D_IN[2U] 
+        = ((7U & ((IData)((((QData)((IData)(vlTOPp->mkTestBench__DOT__core_pcReg)) 
+                            << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__instr___05Fh103983)))) 
+                  >> 0x1dU)) | (0xfffffff8U & ((IData)(
+                                                       ((((QData)((IData)(vlTOPp->mkTestBench__DOT__core_pcReg)) 
+                                                          << 0x20U) 
+                                                         | (QData)((IData)(vlTOPp->mkTestBench__DOT__instr___05Fh103983))) 
+                                                        >> 0x20U)) 
+                                               << 3U)));
+    vlTOPp->mkTestBench__DOT__core_if2id__024D_IN[3U] 
+        = (7U & ((IData)(((((QData)((IData)(vlTOPp->mkTestBench__DOT__core_pcReg)) 
+                            << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__instr___05Fh103983))) 
+                          >> 0x20U)) >> 0x1dU));
+    vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
+        = (((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                 << 0x17U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                              >> 9U)))) 
+            & ((1U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                              << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                          >> 0x15U)))) 
+               | (2U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                            >> 0x15U))))))
+            ? vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_239_TO_233_794_E_ETC___05F_d2288
+            : ((((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                      << 0x17U) | (
+                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                   >> 9U)))) 
+                 & ((3U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                   << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                               >> 0x15U)))) 
+                    | (5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                     << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                 >> 0x15U)))))) 
+                & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                    << 8U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                              >> 0x18U)))))
+                ? (vlTOPp->mkTestBench__DOT__v___05Fh147823 
+                   | vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_239_TO_233_794_E_ETC___05F_d2288)
+                : ((((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                          << 0x17U) 
+                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                            >> 9U)))) 
+                     & ((6U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                       << 0xbU) | (
+                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                   >> 0x15U)))) 
+                        | (7U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                         << 0xbU) | 
+                                        (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                         >> 0x15U)))))) 
+                    & (0U != (0x1fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                        << 8U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                  >> 0x18U)))))
+                    ? (vlTOPp->mkTestBench__DOT__v___05Fh147823 
+                       & (~ vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_239_TO_233_794_E_ETC___05F_d2288))
+                    : vlTOPp->mkTestBench__DOT__v___05Fh147823)));
+    vlTOPp->mkTestBench__DOT__CASE_addr48053_0x300_IF_core_id2ex_i_notEmpty___05FETC___05Fq5 
+        = ((0x800U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+            ? ((0x400U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                : ((0x200U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                    ? ((0x100U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                        ? ((0x80U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                            ? ((0x40U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                : ((0x20U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                    ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                    : ((0x10U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                         ? ((0xb83U 
-                                            != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                        : ((8U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                            != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                        : ((8U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                             ? ((0xb83U 
-                                                != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
+                                                != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
                                             : ((4U 
-                                                & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                 ? (
                                                    (0xb83U 
-                                                    != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
+                                                    != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
                                                 : (
                                                    (2U 
-                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                     ? 
                                                    ((1U 
-                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                      ? 
                                                     ((0xb83U 
-                                                      != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                                     : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                                    : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939)))))))
-                            : ((0x40U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                : ((0x20U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                    ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                    : ((0x10U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                      != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                                     : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                                    : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946)))))))
+                            : ((0x40U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                : ((0x20U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                    ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                    : ((0x10U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                         ? ((0xb83U 
-                                            != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                        : ((8U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                            != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                        : ((8U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                             ? ((0xb83U 
-                                                != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
+                                                != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
                                             : ((4U 
-                                                & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                 ? (
                                                    (0xb83U 
-                                                    != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                                : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939)))))))
-                        : ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939)))
-                    : ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))))
-            : ((0x400U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                : ((0x200U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                    ? ((0x100U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                        ? ((0x80U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                            ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                            : ((0x40U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                ? ((0x20U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                    ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                    : ((0x10U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                    != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                                : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946)))))))
+                        : ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946)))
+                    : ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))))
+            : ((0x400U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                : ((0x200U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                    ? ((0x100U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                        ? ((0x80U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                            ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                            : ((0x40U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                ? ((0x20U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                    ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                    : ((0x10U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                         ? ((0xb83U 
-                                            != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                        : ((8U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                            != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                        : ((8U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                             ? ((0xb83U 
-                                                != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
+                                                != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
                                             : ((4U 
-                                                & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                 ? (
                                                    (0xb83U 
-                                                    != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
+                                                    != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
                                                 : (
                                                    (2U 
-                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                                    ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939)
+                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                                    ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946)
                                                     : 
                                                    ((1U 
-                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                                     ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939)
+                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                                     ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946)
                                                      : 
                                                     ((0xb83U 
-                                                      != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))))))))
-                                : ((0x20U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                                    ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                    : ((0x10U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                      != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))))))))
+                                : ((0x20U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                                    ? ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                    : ((0x10U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                         ? ((0xb83U 
-                                            != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                        : ((8U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                            != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                        : ((8U & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                             ? ((0xb83U 
-                                                != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
+                                                != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                               | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
                                             : ((4U 
-                                                & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                 ? (
                                                    (2U 
-                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                     ? 
                                                    ((1U 
-                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                      ? 
                                                     ((0xb83U 
-                                                      != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                                     : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                                    : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
+                                                      != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                                     : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                                    : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
                                                 : (
                                                    (2U 
-                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                    & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                     ? 
                                                    ((0xb83U 
-                                                     != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                                    | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
+                                                     != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                                    | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
                                                     : 
                                                    ((1U 
-                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+                                                     & (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
                                                      ? 
                                                     ((0xb83U 
-                                                      != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939))
-                                                     : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939)))))))))
-                        : ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939)))
-                    : ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007)) 
-                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1939)))));
-    vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1827 
+                                                      != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946))
+                                                     : (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946)))))))))
+                        : ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946)))
+                    : ((0xb83U != (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053)) 
+                       | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1946)))));
+    vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1834 
         = (1U & (((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-                  & (((((((((0U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                             << 0xbU) 
-                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                               >> 0x15U)))) 
-                            | (1U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                               << 0xbU) 
-                                              | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                 >> 0x15U))))) 
-                           | (2U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                              << 0xbU) 
-                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                >> 0x15U))))) 
-                          | (3U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                             << 0xbU) 
-                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                               >> 0x15U))))) 
-                         | (4U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                            << 0xbU) 
-                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                              >> 0x15U))))) 
-                        | (5U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                           << 0xbU) 
-                                          | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                             >> 0x15U))))) 
-                       | (6U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                          << 0xbU) 
-                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                            >> 0x15U))))) 
-                      | (7U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                         << 0xbU) | 
-                                        (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                         >> 0x15U))))) 
-                     | (8U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                        << 0xbU) | 
-                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                        >> 0x15U))))))
-                  ? (IData)(vlTOPp->mkTestBench__DOT___0_OR_0_OR_NOT_core_ex2mem_notEmpty___05F727_728_OR_ETC___05F_d1822)
+                  & (((((((((0U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                             << 0xaU) 
+                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                               >> 0x16U)))) 
+                            | (1U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                               << 0xaU) 
+                                              | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                 >> 0x16U))))) 
+                           | (2U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                              << 0xaU) 
+                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                >> 0x16U))))) 
+                          | (3U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                             << 0xaU) 
+                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                               >> 0x16U))))) 
+                         | (4U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                            << 0xaU) 
+                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                              >> 0x16U))))) 
+                        | (5U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                           << 0xaU) 
+                                          | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                             >> 0x16U))))) 
+                       | (6U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                          << 0xaU) 
+                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                            >> 0x16U))))) 
+                      | (7U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                         << 0xaU) | 
+                                        (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                         >> 0x16U))))) 
+                     | (8U == (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                        << 0xaU) | 
+                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                        >> 0x16U))))))
+                  ? (IData)(vlTOPp->mkTestBench__DOT___0_OR_0_OR_NOT_core_ex2mem_notEmpty___05F734_735_OR_ETC___05F_d1829)
                   : (((~ (IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg)) 
-                      | (9U != (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                         << 0xbU) | 
-                                        (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                         >> 0x15U))))) 
-                     | (IData)(vlTOPp->mkTestBench__DOT___0_OR_0_OR_NOT_core_ex2mem_notEmpty___05F727_728_OR_ETC___05F_d1822))));
-    vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016 
-        = (1U & ((0x100000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                  ? ((0x80000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                      ? ((5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                        << 0xeU) | 
-                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                        >> 0x12U)))) 
-                         & (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2009)))
-                      : ((0x40000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                          ? ((5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                            << 0xeU) 
-                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                              >> 0x12U)))) 
-                             & (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2009)))
-                          : (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2009)))
-                  : ((0x80000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                      ? ((0x40000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                          ? (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2007))
-                          : (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2007))
-                      : ((0x40000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                          ? (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2005))
-                          : (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2005)))));
-    vlTOPp->mkTestBench__DOT__operand2___05Fh145491 
-        = ((0x1000000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-            ? ((0x800000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                ? vlTOPp->mkTestBench__DOT__alu_in2___05Fh145546
-                : ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                    ? ((0x200000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                        ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
-                            << 0x18U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                         >> 8U)) : 0U)
-                    : vlTOPp->mkTestBench__DOT__alu_in2___05Fh145546))
-            : ((0x800000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                ? vlTOPp->mkTestBench__DOT__alu_in2___05Fh145546
-                : ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                    ? vlTOPp->mkTestBench__DOT__alu_in2___05Fh145546
-                    : ((0x200000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                        ? vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143723
-                        : vlTOPp->mkTestBench__DOT__alu_in2___05Fh145546))));
+                      | (9U != (0xfU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                         << 0xaU) | 
+                                        (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                         >> 0x16U))))) 
+                     | (IData)(vlTOPp->mkTestBench__DOT___0_OR_0_OR_NOT_core_ex2mem_notEmpty___05F734_735_OR_ETC___05F_d1829))));
+    vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023 
+        = (1U & ((0x200000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                  ? ((0x100000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                      ? ((5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                        << 0xdU) | 
+                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                        >> 0x13U)))) 
+                         & (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2016)))
+                      : ((0x80000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                          ? ((5U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                            << 0xdU) 
+                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                              >> 0x13U)))) 
+                             & (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2016)))
+                          : (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2016)))
+                  : ((0x100000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                      ? ((0x80000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                          ? (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2014))
+                          : (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2014))
+                      : ((0x80000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                          ? (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2012))
+                          : (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2012)))));
+    vlTOPp->mkTestBench__DOT__operand2___05Fh145537 
+        = ((0x2000000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+            ? ((0x1000000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                ? vlTOPp->mkTestBench__DOT__alu_in2___05Fh145592
+                : ((0x800000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                    ? ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                        ? ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[5U] 
+                            << 0x17U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                         >> 9U)) : 0U)
+                    : vlTOPp->mkTestBench__DOT__alu_in2___05Fh145592))
+            : ((0x1000000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                ? vlTOPp->mkTestBench__DOT__alu_in2___05Fh145592
+                : ((0x800000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                    ? vlTOPp->mkTestBench__DOT__alu_in2___05Fh145592
+                    : ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                        ? vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143769
+                        : vlTOPp->mkTestBench__DOT__alu_in2___05Fh145592))));
     vlTOPp->mkTestBench__DOT__core_stall_count__024D_IN 
         = ((IData)(vlTOPp->mkTestBench__DOT__MUX_core_stall_count__024write_1___05FSEL_1)
             ? 2U : (3U & ((IData)(vlTOPp->mkTestBench__DOT__core_stall_count) 
                           - (IData)(1U))));
-    vlTOPp->mkTestBench__DOT__core_if2id__024D_IN[0U] 
-        = ((0xfffffff8U & (vlTOPp->mkTestBench__DOT__prediction_target___05Fh103977 
-                           << 3U)) | (((IData)(vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BIT_0_3_core_btb_ETC___05F_d290) 
-                                       << 2U) | (IData)(vlTOPp->mkTestBench__DOT__core_csrs_priv_mode)));
-    vlTOPp->mkTestBench__DOT__core_if2id__024D_IN[1U] 
-        = ((7U & (vlTOPp->mkTestBench__DOT__prediction_target___05Fh103977 
-                  >> 0x1dU)) | (0xfffffff8U & ((IData)(
-                                                       (((QData)((IData)(vlTOPp->mkTestBench__DOT__x___05Fh104009)) 
-                                                         << 0x20U) 
-                                                        | (QData)((IData)(vlTOPp->mkTestBench__DOT__instr___05Fh103979)))) 
-                                               << 3U)));
-    vlTOPp->mkTestBench__DOT__core_if2id__024D_IN[2U] 
-        = ((7U & ((IData)((((QData)((IData)(vlTOPp->mkTestBench__DOT__x___05Fh104009)) 
-                            << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__instr___05Fh103979)))) 
-                  >> 0x1dU)) | (0xfffffff8U & ((IData)(
-                                                       ((((QData)((IData)(vlTOPp->mkTestBench__DOT__x___05Fh104009)) 
-                                                          << 0x20U) 
-                                                         | (QData)((IData)(vlTOPp->mkTestBench__DOT__instr___05Fh103979))) 
-                                                        >> 0x20U)) 
-                                               << 3U)));
-    vlTOPp->mkTestBench__DOT__core_if2id__024D_IN[3U] 
-        = (7U & ((IData)(((((QData)((IData)(vlTOPp->mkTestBench__DOT__x___05Fh104009)) 
-                            << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__instr___05Fh103979))) 
-                          >> 0x20U)) >> 0x1dU));
     vlTOPp->mkTestBench__DOT__core_csrs_mcycle__024D_IN 
-        = ((0xb00U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+        = ((0xb00U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
             ? (((QData)((IData)((vlTOPp->mkTestBench__DOT__core_csrs_mcycle 
                                  >> 0x20U))) << 0x20U) 
-               | (QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147781)))
-            : (((QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147781)) 
+               | (QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147827)))
+            : (((QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147827)) 
                 << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__core_csrs_mcycle))));
     vlTOPp->mkTestBench__DOT__core_csrs_mtime__024D_IN 
-        = ((0xb01U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+        = ((0xb01U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
             ? (((QData)((IData)((vlTOPp->mkTestBench__DOT__core_csrs_mtime 
                                  >> 0x20U))) << 0x20U) 
-               | (QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147781)))
-            : (((QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147781)) 
+               | (QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147827)))
+            : (((QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147827)) 
                 << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__core_csrs_mtime))));
     vlTOPp->mkTestBench__DOT__core_csrs_mtimecmp__024D_IN 
-        = ((0xb02U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
+        = ((0xb02U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
             ? (((QData)((IData)((vlTOPp->mkTestBench__DOT__core_csrs_mtimecmp 
                                  >> 0x20U))) << 0x20U) 
-               | (QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147781)))
-            : (((QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147781)) 
+               | (QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147827)))
+            : (((QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147827)) 
                 << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__core_csrs_mtimecmp))));
-    vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BIT_72_844_THEN_IF_IF_ETC___05F_d2433 
-        = ((0x100U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+    vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BIT_105_851_THEN_IF_I_ETC___05F_d2438 
+        = ((0x200U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
             ? (((QData)((IData)((((1U & (IData)((vlTOPp->mkTestBench__DOT__core_csrs_mstatus 
                                                  >> 0x20U)))
                                    ? 1U : 0U) ? 1U : 0U))) 
@@ -9402,235 +9321,224 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                                       >> 0x11U)) 
                                                              << 0x15U)) 
                                                          | ((0x100000U 
-                                                             & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[0U] 
-                                                                << 0x14U)) 
+                                                             & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[1U] 
+                                                                << 0x13U)) 
                                                             | (0xfffffU 
                                                                & (IData)(vlTOPp->mkTestBench__DOT__core_csrs_mstatus)))))))))))
-            : (((QData)((IData)(((0x80000000U & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+            : (((QData)((IData)(((0x80000000U & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                  << 0x1fU)) 
                                  | ((0x40000000U & 
-                                     (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                     (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                       << 0x1dU)) | 
                                     ((0x20000000U & 
-                                      (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                      (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                        << 0x1bU)) | 
                                      ((0x10000000U 
-                                       & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                       & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                           << 0x19U)) 
                                       | ((0x8000000U 
-                                          & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                          & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                              << 0x17U)) 
                                          | ((0x4000000U 
-                                             & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                             & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                 << 0x15U)) 
                                             | ((0x2000000U 
-                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                    << 0x13U)) 
                                                | ((0x1000000U 
-                                                   & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                   & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                       << 0x11U)) 
                                                   | ((0x800000U 
-                                                      & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                      & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                          << 0xfU)) 
                                                      | ((0x400000U 
-                                                         & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                         & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                             << 0xdU)) 
                                                         | ((0x200000U 
-                                                            & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                            & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                << 0xbU)) 
                                                            | ((0x180000U 
-                                                               & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                               & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                   << 8U)) 
                                                               | ((0x70000U 
-                                                                  & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                  & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                      << 4U)) 
                                                                  | ((0xc000U 
-                                                                     & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                     & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                         >> 1U)) 
                                                                     | ((0x2000U 
-                                                                        & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                        & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                            >> 4U)) 
                                                                        | ((0x1000U 
-                                                                           & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                           & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                               >> 6U)) 
                                                                           | ((0x800U 
-                                                                              & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                              & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                                 >> 8U)) 
                                                                              | ((0x400U 
-                                                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                                 >> 0xaU)) 
                                                                                 | ((0x200U 
-                                                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                                 >> 0xcU)) 
                                                                                 | ((0x100U 
-                                                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                                 >> 0xeU)) 
                                                                                 | (0xffU 
-                                                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                                                                                & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                                                 >> 0x17U)))))))))))))))))))))))) 
-                << 1U) | (QData)((IData)((1U & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147781 
+                << 1U) | (QData)((IData)((1U & (vlTOPp->mkTestBench__DOT__new_csr___05Fh147827 
                                                 >> 0x1fU))))));
-    vlTOPp->mkTestBench__DOT__NOT_core_id2ex_first___05F404_BIT_79_714_715_OR_IF_ETC___05F_d1964 
-        = (1U & (((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                      >> 0xfU)) | ((2U & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146070))
-                                    ? ((1U & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146070))
-                                        ? (((3U != (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146070)) 
-                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                               >> 0xeU)) 
-                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d1783))
-                                        : ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                            >> 0xeU) 
-                                           | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d1783)))
-                                    : ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                        >> 0xeU) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d1783)))) 
-                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                     >> 8U) | (((0x73U != (0x7fU & 
-                                           ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                             << 0x18U) 
-                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                               >> 8U)))) 
+    vlTOPp->mkTestBench__DOT__NOT_core_id2ex_first___05F408_BIT_112_721_722_OR_I_ETC___05F_d1971 
+        = (1U & (((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                      >> 0x10U)) | ((2U & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146116))
+                                     ? ((1U & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146116))
+                                         ? (((3U != (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146116)) 
+                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                >> 0xfU)) 
+                                            | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d1790))
+                                         : ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                             >> 0xfU) 
+                                            | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d1790)))
+                                     : ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                         >> 0xfU) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d1790)))) 
+                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                     >> 9U) | (((0x73U != (0x7fU & 
+                                           ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                             << 0x17U) 
+                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                               >> 9U)))) 
                                 | ((((1U != (7U & (
-                                                   (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                    << 0xcU) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                      >> 0x14U)))) 
+                                                   (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                    << 0xbU) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                      >> 0x15U)))) 
                                      & (2U != (7U & 
-                                               ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                 << 0xcU) 
-                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                   >> 0x14U))))) 
+                                               ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                 << 0xbU) 
+                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                   >> 0x15U))))) 
                                     & (((3U == (7U 
-                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                    << 0xcU) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                      >> 0x14U)))) 
+                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                    << 0xbU) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                      >> 0x15U)))) 
                                         | (5U == (7U 
-                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                      << 0xcU) 
-                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                        >> 0x14U)))))
+                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                      << 0xbU) 
+                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                        >> 0x15U)))))
                                         ? (0U == (0x1fU 
-                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                      << 9U) 
-                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                        >> 0x17U))))
+                                                  & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                      << 8U) 
+                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                        >> 0x18U))))
                                         : (((6U != 
                                              (7U & 
-                                              ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                << 0xcU) 
-                                               | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                  >> 0x14U)))) 
+                                              ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                << 0xbU) 
+                                               | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                  >> 0x15U)))) 
                                             & (7U != 
                                                (7U 
-                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                    << 0xcU) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                      >> 0x14U))))) 
+                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                    << 0xbU) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                      >> 0x15U))))) 
                                            | (0U == 
                                               (0x1fU 
-                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                   << 9U) 
-                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                     >> 0x17U))))))) 
-                                   | (IData)(vlTOPp->mkTestBench__DOT__CASE_addr48007_0x300_IF_core_id2ex_i_notEmpty___05FETC___05Fq5))) 
+                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                   << 8U) 
+                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                     >> 0x18U))))))) 
+                                   | (IData)(vlTOPp->mkTestBench__DOT__CASE_addr48053_0x300_IF_core_id2ex_i_notEmpty___05FETC___05Fq5))) 
                                & ((((0x73U == (0x7fU 
-                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                   << 0x18U) 
-                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                     >> 8U)))) 
+                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                   << 0x17U) 
+                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                     >> 9U)))) 
                                     & (0U == (7U & 
-                                              ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                << 0xcU) 
-                                               | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                  >> 0x14U))))) 
+                                              ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                << 0xbU) 
+                                               | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                  >> 0x15U))))) 
                                    & (0x18U == (0x7fU 
-                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                    << 0x1fU) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                      >> 1U))))) 
+                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                    << 0x1eU) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                      >> 2U))))) 
                                   | ((((IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__full_reg) 
-                                       & (((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                            >> 0xeU) 
-                                           | (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                 >> 0xfU))) 
-                                          | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d1783))) 
-                                      & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F729_AND_core_id2ex___05FETC___05F_d1777)) 
+                                       & (((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                            >> 0xfU) 
+                                           | (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                 >> 0x10U))) 
+                                          | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d1790))) 
+                                      & (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F736_AND_core_id2ex___05FETC___05F_d1784)) 
                                      & (((0x73U == 
                                           (0x7fU & 
-                                           ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                             << 0x18U) 
-                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                               >> 8U)))) 
-                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                            >> 0xeU)) 
-                                        | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1827))))))));
+                                           ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                             << 0x17U) 
+                                            | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                               >> 9U)))) 
+                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                            >> 0xfU)) 
+                                        | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1834))))))));
     vlTOPp->mkTestBench__DOT__core_bht_bhtTable_0__024D_IN 
-        = ((2U & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146070))
-            ? ((1U & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146070))
-                ? ((1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                           >> 0xeU) | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                        >> 0xfU) & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016))))
-                    ? 3U : 2U) : ((1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                          >> 0xeU) 
-                                         | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                             >> 0xfU) 
-                                            & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016))))
+        = ((2U & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146116))
+            ? ((1U & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146116))
+                ? ((1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                           >> 0xfU) | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                        >> 0x10U) & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023))))
+                    ? 3U : 2U) : ((1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                          >> 0xfU) 
+                                         | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                             >> 0x10U) 
+                                            & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023))))
                                    ? 3U : 1U)) : ((1U 
-                                                   & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146070))
+                                                   & (IData)(vlTOPp->mkTestBench__DOT__oldState___05Fh146116))
                                                    ? 
                                                   ((1U 
-                                                    & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                        >> 0xeU) 
-                                                       | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                           >> 0xfU) 
-                                                          & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016))))
+                                                    & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                        >> 0xfU) 
+                                                       | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                           >> 0x10U) 
+                                                          & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023))))
                                                     ? 2U
                                                     : 0U)
                                                    : 
                                                   ((1U 
-                                                    & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                        >> 0xeU) 
-                                                       | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                           >> 0xfU) 
-                                                          & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016))))
+                                                    & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                        >> 0xfU) 
+                                                       | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                           >> 0x10U) 
+                                                          & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023))))
                                                     ? 1U
                                                     : 0U)));
-    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F404_BIT_78_716_OR_core_id2ex_ETC___05F_d2023 
-        = (1U & (((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                   >> 0xeU) | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                >> 0xfU) & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                             >> 0xeU) 
-                                            | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016)))) 
-                 | (vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BITS_64_TO_33_54_ETC___05F_d2020 
-                    == ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                         << 0x18U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                      >> 8U)))));
-    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F404_BITS_206_TO_200_787_EQ_0_ETC___05F_d2437 
-        = (1U & (((((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                         << 0x18U) 
-                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                           >> 8U)))) 
-                    & (0U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                     << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                 >> 0x14U))))) 
-                   & (0x18U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                          << 0x1fU) 
-                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                            >> 1U))))) 
-                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                     >> 0xeU)) | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                   >> 0xfU) & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016))));
-    vlTOPp->mkTestBench__DOT__result___05Fh145502 = 
-        (vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-         + vlTOPp->mkTestBench__DOT__operand2___05Fh145491);
+    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BIT_111_723_OR_core_id2e_ETC___05F_d2030 
+        = (1U & (((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                   >> 0xfU) | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                >> 0x10U) & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                              >> 0xfU) 
+                                             | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023)))) 
+                 | (vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BITS_64_TO_33___05FETC___05F_d2027 
+                    == ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                         << 0x17U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                      >> 9U)))));
+    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BIT_32_442_EQ_core_id2ex_ETC___05F_d2443 
+        = ((1U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[1U]) 
+           == (1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                      >> 0xfU) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023))));
+    vlTOPp->mkTestBench__DOT__result___05Fh145548 = 
+        (vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+         + vlTOPp->mkTestBench__DOT__operand2___05Fh145537);
     vlTOPp->mkTestBench__DOT__core_csrs_mstatus__024D_IN 
-        = ((1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                   >> 8U) | ((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                  << 0x18U) 
-                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                    >> 8U)))) 
-                             & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F404_BITS_214_TO_212_847_EQ_0_ETC___05F_d2385))))
-            ? vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BIT_72_844_THEN_IF_IF_ETC___05F_d2433
+        = ((1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                   >> 9U) | ((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                  << 0x17U) 
+                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                    >> 9U)))) 
+                             & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BITS_247_TO_245_854_EQ_0_ETC___05F_d2390))))
+            ? vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BIT_105_851_THEN_IF_I_ETC___05F_d2438
             : (((QData)((IData)((((1U & (IData)((vlTOPp->mkTestBench__DOT__core_csrs_mstatus 
                                                  >> 0x20U)))
                                    ? 1U : 0U) ? 1U : 0U))) 
@@ -9664,177 +9572,186 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
                                                                & (IData)(vlTOPp->mkTestBench__DOT__core_csrs_mstatus))))))))))));
     vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage 
         = (((((IData)(vlTOPp->mkTestBench__DOT__core_id2ex__DOT__empty_reg) 
-              & (((((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                        >> 0xfU)) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                     >> 0xeU)) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d1783)) 
-                  & (((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                          >> 0xeU)) | (0x6fU == (0x7fU 
-                                                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                     << 0x18U) 
-                                                    | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                       >> 8U))))) 
-                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F401_AND_core_id2ex_f_ETC___05F_d1827))) 
-                 & (IData)(vlTOPp->mkTestBench__DOT__NOT_core_id2ex_first___05F404_BIT_79_714_715_OR_IF_ETC___05F_d1964))) 
+              & (((((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                        >> 0x10U)) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                      >> 0xfU)) | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d1790)) 
+                  & (((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                          >> 0xfU)) | (0x6fU == (0x7fU 
+                                                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                     << 0x17U) 
+                                                    | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                       >> 9U))))) 
+                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F405_AND_core_id2ex_f_ETC___05F_d1834))) 
+                 & (IData)(vlTOPp->mkTestBench__DOT__NOT_core_id2ex_first___05F408_BIT_112_721_722_OR_I_ETC___05F_d1971))) 
              & (~ (IData)(vlTOPp->mkTestBench__DOT__core_stall_load_use))) 
             & (IData)(vlTOPp->mkTestBench__DOT__core_ex2mem__DOT__full_reg)) 
            & (~ (IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_decodeStage)));
-    vlTOPp->mkTestBench__DOT__alu_result___05Fh143727 
-        = ((0x1000000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-            ? ((0x800000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                ? 0U : ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                         ? ((0x200000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                             ? vlTOPp->mkTestBench__DOT__result___05Fh145502
-                             : vlTOPp->mkTestBench__DOT__operand1___05Fh145490)
-                         : ((0x200000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                             ? (vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-                                & vlTOPp->mkTestBench__DOT__operand2___05Fh145491)
-                             : (vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-                                | vlTOPp->mkTestBench__DOT__operand2___05Fh145491))))
-            : ((0x800000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                ? ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                    ? ((0x200000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                        ? ((vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-                            >> (0x1fU & vlTOPp->mkTestBench__DOT__operand2___05Fh145491)) 
+    vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BITS_239_TO_233_794_EQ_0_ETC___05F_d2447 
+        = (1U & (((((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                         << 0x17U) 
+                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                           >> 9U)))) 
+                    & (0U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                     << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                 >> 0x15U))))) 
+                   & (0x18U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                          << 0x1eU) 
+                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                            >> 2U))))) 
+                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                     >> 0xfU)) | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                   >> 0x10U) & ((IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023) 
+                                                | (~ (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BIT_32_442_EQ_core_id2ex_ETC___05F_d2443))))));
+    vlTOPp->mkTestBench__DOT__alu_result___05Fh143773 
+        = ((0x2000000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+            ? ((0x1000000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                ? 0U : ((0x800000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                         ? ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                             ? vlTOPp->mkTestBench__DOT__result___05Fh145548
+                             : vlTOPp->mkTestBench__DOT__operand1___05Fh145536)
+                         : ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                             ? (vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+                                & vlTOPp->mkTestBench__DOT__operand2___05Fh145537)
+                             : (vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+                                | vlTOPp->mkTestBench__DOT__operand2___05Fh145537))))
+            : ((0x1000000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                ? ((0x800000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                    ? ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                        ? ((vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+                            >> (0x1fU & vlTOPp->mkTestBench__DOT__operand2___05Fh145537)) 
                            | ((~ (0xffffffffU >> (0x1fU 
-                                                  & vlTOPp->mkTestBench__DOT__operand2___05Fh145491))) 
-                              & (- (IData)((1U & (vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
+                                                  & vlTOPp->mkTestBench__DOT__operand2___05Fh145537))) 
+                              & (- (IData)((1U & (vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
                                                   >> 0x1fU))))))
-                        : (vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-                           >> (0x1fU & vlTOPp->mkTestBench__DOT__operand2___05Fh145491)))
-                    : ((0x200000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                        ? (vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-                           ^ vlTOPp->mkTestBench__DOT__operand2___05Fh145491)
-                        : ((vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-                            < vlTOPp->mkTestBench__DOT__operand2___05Fh145491)
-                            ? 1U : 0U))) : ((0x400000U 
-                                             & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                                             ? ((0x200000U 
-                                                 & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+                        : (vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+                           >> (0x1fU & vlTOPp->mkTestBench__DOT__operand2___05Fh145537)))
+                    : ((0x400000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                        ? (vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+                           ^ vlTOPp->mkTestBench__DOT__operand2___05Fh145537)
+                        : ((vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+                            < vlTOPp->mkTestBench__DOT__operand2___05Fh145537)
+                            ? 1U : 0U))) : ((0x800000U 
+                                             & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                                             ? ((0x400000U 
+                                                 & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
                                                  ? 
                                                 (((0x80000000U 
-                                                   ^ vlTOPp->mkTestBench__DOT__operand1___05Fh145490) 
+                                                   ^ vlTOPp->mkTestBench__DOT__operand1___05Fh145536) 
                                                   < 
                                                   (0x80000000U 
-                                                   ^ vlTOPp->mkTestBench__DOT__operand2___05Fh145491))
+                                                   ^ vlTOPp->mkTestBench__DOT__operand2___05Fh145537))
                                                   ? 1U
                                                   : 0U)
                                                  : 
-                                                (vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
+                                                (vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
                                                  << 
                                                  (0x1fU 
-                                                  & vlTOPp->mkTestBench__DOT__operand2___05Fh145491)))
-                                             : ((0x200000U 
-                                                 & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+                                                  & vlTOPp->mkTestBench__DOT__operand2___05Fh145537)))
+                                             : ((0x400000U 
+                                                 & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
                                                  ? 
-                                                (vlTOPp->mkTestBench__DOT__operand1___05Fh145490 
-                                                 - vlTOPp->mkTestBench__DOT__operand2___05Fh145491)
-                                                 : vlTOPp->mkTestBench__DOT__result___05Fh145502))));
+                                                (vlTOPp->mkTestBench__DOT__operand1___05Fh145536 
+                                                 - vlTOPp->mkTestBench__DOT__operand2___05Fh145537)
+                                                 : vlTOPp->mkTestBench__DOT__result___05Fh145548))));
     vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_writebackStage 
         = ((IData)(vlTOPp->mkTestBench__DOT__core_mem2wb__DOT__empty_reg) 
            & (~ (IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage)));
     vlTOPp->mkTestBench__DOT__core_ex2mem__024ENQ = 
         (((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
-          & (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                >> 8U))) & (((0x73U != (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                  << 0x18U) 
-                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                    >> 8U)))) 
-                             | (0U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                              << 0xcU) 
-                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                >> 0x14U))))) 
+          & (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                >> 9U))) & (((0x73U != (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                  << 0x17U) 
+                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                    >> 9U)))) 
+                             | (0U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                              << 0xbU) 
+                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                >> 0x15U))))) 
                             | (0x18U != (0x7fU & ((
-                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                   << 0x1fU) 
-                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                     >> 1U))))));
-    vlTOPp->mkTestBench__DOT__MUX_core_branch_flush__024write_1___05FSEL_1 
-        = ((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
-           & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-               >> 8U) | (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F404_BITS_206_TO_200_787_EQ_0_ETC___05F_d2437)));
-    vlTOPp->mkTestBench__DOT__core_branch_flush__024EN 
-        = (((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
-            & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                >> 8U) | (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F404_BITS_206_TO_200_787_EQ_0_ETC___05F_d2437))) 
-           | (IData)(vlTOPp->mkTestBench__DOT__core_branch_flush));
+                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                   << 0x1eU) 
+                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                     >> 2U))))));
+    vlTOPp->mkTestBench__DOT__core_csrs_minstret__024D_IN 
+        = (((((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
+              & (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                    >> 9U))) & (0x73U == (0x7fU & (
+                                                   (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                    << 0x17U) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                      >> 9U))))) 
+            & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BITS_247_TO_245_854_EQ_0_ETC___05F_d2544))
+            ? ((0xb03U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148053))
+                ? (((QData)((IData)((vlTOPp->mkTestBench__DOT__core_csrs_minstret 
+                                     >> 0x20U))) << 0x20U) 
+                   | (QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147827)))
+                : (((QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147827)) 
+                    << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__core_csrs_minstret))))
+            : (1ULL + vlTOPp->mkTestBench__DOT__core_csrs_minstret));
     vlTOPp->mkTestBench__DOT__core_id2ex__024DEQ = 
-        (((((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
-            & (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                  >> 8U))) & (((0x73U != (0x7fU & (
-                                                   (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                    << 0x18U) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                      >> 8U)))) 
-                               | (0U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                << 0xcU) 
-                                               | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                  >> 0x14U))))) 
-                              | (0x18U != (0x7fU & 
+        ((((((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
+             & (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                   >> 9U))) & (((0x73U != (0x7fU & 
                                            ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                             << 0x1fU) 
+                                             << 0x17U) 
                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                               >> 1U)))))) 
-          & (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                >> 0xeU))) & ((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                  >> 0xfU)) | ((0x100000U 
-                                                & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                                                ? (
-                                                   (0x80000U 
-                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+                                               >> 9U)))) 
+                                | (0U != (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                 << 0xbU) 
+                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                   >> 0x15U))))) 
+                               | (0x18U != (0x7fU & 
+                                            ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                              << 0x1eU) 
+                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                >> 2U)))))) 
+           & (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                 >> 0xfU))) & ((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                   >> 0x10U)) | ((0x200000U 
+                                                  & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                                                  ? 
+                                                 ((0x100000U 
+                                                   & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                                                   ? 
+                                                  ((5U 
+                                                    != 
+                                                    (7U 
+                                                     & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                         << 0xdU) 
+                                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                           >> 0x13U)))) 
+                                                   | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2016))
+                                                   : 
+                                                  ((0x80000U 
+                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
                                                     ? 
                                                    ((5U 
                                                      != 
                                                      (7U 
-                                                      & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                          << 0xeU) 
-                                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                            >> 0x12U)))) 
-                                                    | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2009))
+                                                      & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                          << 0xdU) 
+                                                         | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                            >> 0x13U)))) 
+                                                    | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2016))
                                                     : 
-                                                   ((0x40000U 
-                                                     & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                                                     ? 
-                                                    ((5U 
-                                                      != 
-                                                      (7U 
-                                                       & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                           << 0xeU) 
-                                                          | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                             >> 0x12U)))) 
-                                                     | (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2009))
-                                                     : 
-                                                    (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2009))))
-                                                : (
-                                                   (0x80000U 
-                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                                                    ? 
-                                                   ((0x40000U 
-                                                     & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                                                     ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2007)
-                                                     : 
-                                                    (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2007)))
+                                                   (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2016))))
+                                                  : 
+                                                 ((0x100000U 
+                                                   & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                                                   ? 
+                                                  ((0x80000U 
+                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                                                    ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2014)
                                                     : 
-                                                   ((0x40000U 
-                                                     & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                                                     ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2005)
-                                                     : 
-                                                    (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F727_AND_core_ex2mem_f_ETC___05F_d2005)))))));
-    vlTOPp->mkTestBench__DOT__core_csrs_minstret__024D_IN 
-        = (((((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
-              & (~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                    >> 8U))) & (0x73U == (0x7fU & (
-                                                   (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                    << 0x18U) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                      >> 8U))))) 
-            & (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F404_BITS_214_TO_212_847_EQ_0_ETC___05F_d2532))
-            ? ((0xb03U == (IData)(vlTOPp->mkTestBench__DOT__addr___05Fh148007))
-                ? (((QData)((IData)((vlTOPp->mkTestBench__DOT__core_csrs_minstret 
-                                     >> 0x20U))) << 0x20U) 
-                   | (QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147781)))
-                : (((QData)((IData)(vlTOPp->mkTestBench__DOT__new_csr___05Fh147781)) 
-                    << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__core_csrs_minstret))))
-            : (1ULL + vlTOPp->mkTestBench__DOT__core_csrs_minstret));
+                                                   (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2014)))
+                                                   : 
+                                                  ((0x80000U 
+                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                                                    ? (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2012)
+                                                    : 
+                                                   (~ (IData)(vlTOPp->mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F734_AND_core_ex2mem_f_ETC___05F_d2012))))))) 
+         & ((~ (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                >> 0x10U)) | (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BIT_32_442_EQ_core_id2ex_ETC___05F_d2443)));
     vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_fetchStage 
         = ((((((IData)(vlTOPp->mkTestBench__DOT__core_if2id__DOT__full_reg) 
                & (IData)(vlTOPp->mkTestBench__DOT__core_programLoaded)) 
@@ -9842,275 +9759,298 @@ void VmkTestBench::_settle__TOP__7(VmkTestBench__Syms* __restrict vlSymsp) {
              & (~ (IData)(vlTOPp->mkTestBench__DOT__core_stall_load_use))) 
             & (~ (IData)(vlTOPp->mkTestBench__DOT__core_branch_flush))) 
            & (~ (IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage)));
-    vlTOPp->mkTestBench__DOT__actual_target___05Fh143734 
-        = ((0x4000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-            ? ((0x6fU == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                    << 0x18U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                 >> 8U))))
-                ? vlTOPp->mkTestBench__DOT__actual_target___05F_1___05Fh145473
-                : (0xfffffffeU & vlTOPp->mkTestBench__DOT__alu_result___05Fh143727))
-            : ((0x8000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
-                ? vlTOPp->mkTestBench__DOT__actual_target___05F_1___05Fh145473
+    vlTOPp->mkTestBench__DOT__MUX_core_branch_flush__024write_1___05FSEL_1 
+        = ((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
+           & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+               >> 9U) | (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BITS_239_TO_233_794_EQ_0_ETC___05F_d2447)));
+    vlTOPp->mkTestBench__DOT__core_branch_flush__024EN 
+        = (((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_executeStage) 
+            & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                >> 9U) | (IData)(vlTOPp->mkTestBench__DOT__core_id2ex_first___05F408_BITS_239_TO_233_794_EQ_0_ETC___05F_d2447))) 
+           | (IData)(vlTOPp->mkTestBench__DOT__core_branch_flush));
+    vlTOPp->mkTestBench__DOT__actual_target___05Fh143780 
+        = ((0x8000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+            ? ((0x6fU == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                    << 0x17U) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                 >> 9U))))
+                ? vlTOPp->mkTestBench__DOT__actual_target___05F_1___05Fh145519
+                : (0xfffffffeU & vlTOPp->mkTestBench__DOT__alu_result___05Fh143773))
+            : ((0x10000U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
+                ? vlTOPp->mkTestBench__DOT__actual_target___05F_1___05Fh145519
                 : 0U));
     vlTOPp->mkTestBench__DOT__core_btb_btbTable_0__024D_IN[0U] 
         = ((0xfffffffeU & ((IData)((((QData)((IData)(
-                                                     ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                       << 0x18U) 
-                                                      | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                         >> 8U)))) 
-                                     << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143734)))) 
-                           << 1U)) | (1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                             >> 0xeU) 
-                                            | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                >> 0xfU) 
-                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                   >> 0xeU) 
-                                                  | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016))))));
+                                                     ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                       << 0x17U) 
+                                                      | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                         >> 9U)))) 
+                                     << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143780)))) 
+                           << 1U)) | (1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                             >> 0xfU) 
+                                            | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                >> 0x10U) 
+                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                   >> 0xfU) 
+                                                  | (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023))))));
     vlTOPp->mkTestBench__DOT__core_btb_btbTable_0__024D_IN[1U] 
-        = ((1U & ((IData)((((QData)((IData)(((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                              << 0x18U) 
-                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                >> 8U)))) 
-                            << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143734)))) 
+        = ((1U & ((IData)((((QData)((IData)(((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                              << 0x17U) 
+                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                >> 9U)))) 
+                            << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143780)))) 
                   >> 0x1fU)) | (0xfffffffeU & ((IData)(
                                                        ((((QData)((IData)(
-                                                                          ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                                            << 0x18U) 
-                                                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                              >> 8U)))) 
+                                                                          ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                                            << 0x17U) 
+                                                                           | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                              >> 9U)))) 
                                                           << 0x20U) 
-                                                         | (QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143734))) 
+                                                         | (QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143780))) 
                                                         >> 0x20U)) 
                                                << 1U)));
     vlTOPp->mkTestBench__DOT__core_btb_btbTable_0__024D_IN[2U] 
-        = (1U & ((IData)(((((QData)((IData)(((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                              << 0x18U) 
-                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                >> 8U)))) 
-                            << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143734))) 
+        = (1U & ((IData)(((((QData)((IData)(((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                              << 0x17U) 
+                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                >> 9U)))) 
+                            << 0x20U) | (QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143780))) 
                           >> 0x20U)) >> 0x1fU));
-    __Vtemp100[0U] = (IData)((((QData)((IData)((0x1fU 
-                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                    << 7U) 
-                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                      >> 0x19U))))) 
+    __Vtemp104[0U] = (IData)((((QData)((IData)((0x1fU 
+                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                    << 6U) 
+                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                      >> 0x1aU))))) 
                                << 0x2bU) | (((QData)((IData)(
                                                              (0xfU 
-                                                              & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                                  << 0x12U) 
-                                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                    >> 0xeU))))) 
+                                                              & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                                  << 0x11U) 
+                                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                    >> 0xfU))))) 
                                              << 0x27U) 
                                             | (((QData)((IData)(
                                                                 (1U 
-                                                                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                     >> 0xeU) 
-                                                                    | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                        >> 0xfU) 
-                                                                       & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016)))))) 
+                                                                 & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                     >> 0xfU) 
+                                                                    | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                        >> 0x10U) 
+                                                                       & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023)))))) 
                                                 << 0x26U) 
-                                               | (((QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143734)) 
+                                               | (((QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143780)) 
                                                    << 6U) 
                                                   | (QData)((IData)(
-                                                                    ((0x10U 
-                                                                      & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                         >> 9U)) 
-                                                                     | (((1U 
-                                                                          == 
-                                                                          (3U 
-                                                                           & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                                               << 0x10U) 
-                                                                              | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                                >> 0x10U)))) 
-                                                                         << 3U) 
-                                                                        | (7U 
-                                                                           & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                                               << 0x17U) 
-                                                                              | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                                >> 9U))))))))))));
-    __Vtemp100[1U] = ((0xffff0000U & (vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143723 
+                                                                    ((0x20U 
+                                                                      & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[1U] 
+                                                                         << 5U)) 
+                                                                     | ((0x10U 
+                                                                         & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                            >> 0xaU)) 
+                                                                        | (((1U 
+                                                                             == 
+                                                                             (3U 
+                                                                              & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                                                << 0xfU) 
+                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                                >> 0x11U)))) 
+                                                                            << 3U) 
+                                                                           | (7U 
+                                                                              & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                                                << 0x16U) 
+                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                                >> 0xaU)))))))))))));
+    __Vtemp104[1U] = ((0xffff0000U & (vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143769 
                                       << 0x10U)) | (IData)(
                                                            ((((QData)((IData)(
                                                                               (0x1fU 
-                                                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                                                << 7U) 
-                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                                >> 0x19U))))) 
+                                                                               & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                                                << 6U) 
+                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                                >> 0x1aU))))) 
                                                               << 0x2bU) 
                                                              | (((QData)((IData)(
                                                                                 (0xfU 
-                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                                                << 0x12U) 
-                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                                >> 0xeU))))) 
+                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                                                << 0x11U) 
+                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                                >> 0xfU))))) 
                                                                  << 0x27U) 
                                                                 | (((QData)((IData)(
                                                                                 (1U 
-                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                                >> 0xeU) 
-                                                                                | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
+                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
                                                                                 >> 0xfU) 
-                                                                                & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F404_BITS_84_TO_82_717_EQ___05FETC___05F_d2016)))))) 
+                                                                                | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                                >> 0x10U) 
+                                                                                & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023)))))) 
                                                                     << 0x26U) 
-                                                                   | (((QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143734)) 
+                                                                   | (((QData)((IData)(vlTOPp->mkTestBench__DOT__actual_target___05Fh143780)) 
                                                                        << 6U) 
                                                                       | (QData)((IData)(
-                                                                                ((0x10U 
-                                                                                & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                                >> 9U)) 
+                                                                                ((0x20U 
+                                                                                & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[1U] 
+                                                                                << 5U)) 
+                                                                                | ((0x10U 
+                                                                                & (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                                >> 0xaU)) 
                                                                                 | (((1U 
                                                                                 == 
                                                                                 (3U 
-                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                                                << 0x10U) 
-                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                                >> 0x10U)))) 
+                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                                                << 0xfU) 
+                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                                >> 0x11U)))) 
                                                                                 << 3U) 
                                                                                 | (7U 
-                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
-                                                                                << 0x17U) 
-                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U] 
-                                                                                >> 9U))))))))))) 
+                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[4U] 
+                                                                                << 0x16U) 
+                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                                                                >> 0xaU)))))))))))) 
                                                             >> 0x20U)));
-    __Vtemp100[3U] = ((0xffffU & ((IData)((((QData)((IData)(
-                                                            ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                              << 0x18U) 
-                                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                >> 8U)))) 
+    __Vtemp104[3U] = ((0xffffU & ((IData)((((QData)((IData)(
+                                                            ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                              << 0x17U) 
+                                                             | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                >> 9U)))) 
                                             << 0x20U) 
                                            | (QData)((IData)(
                                                              ((0x73U 
                                                                == 
                                                                (0x7fU 
-                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                    << 0x18U) 
-                                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                                      >> 8U))))
-                                                               ? vlTOPp->mkTestBench__DOT__v___05Fh147777
+                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                    << 0x17U) 
+                                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                                      >> 9U))))
+                                                               ? vlTOPp->mkTestBench__DOT__v___05Fh147823
                                                                : 
-                                                              ((0x4000U 
-                                                                & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+                                                              ((0x8000U 
+                                                                & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
                                                                 ? 
                                                                ((IData)(4U) 
                                                                 + 
-                                                                ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                                  << 0x18U) 
-                                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                    >> 8U)))
-                                                                : vlTOPp->mkTestBench__DOT__alu_result___05Fh143727)))))) 
+                                                                ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                                  << 0x17U) 
+                                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                    >> 9U)))
+                                                                : vlTOPp->mkTestBench__DOT__alu_result___05Fh143773)))))) 
                                   >> 0x10U)) | (0xffff0000U 
                                                 & ((IData)(
                                                            ((((QData)((IData)(
-                                                                              ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                                                << 0x18U) 
-                                                                               | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                                >> 8U)))) 
+                                                                              ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                                                << 0x17U) 
+                                                                               | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                                >> 9U)))) 
                                                               << 0x20U) 
                                                              | (QData)((IData)(
                                                                                ((0x73U 
                                                                                 == 
                                                                                 (0x7fU 
-                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                                << 0x18U) 
-                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                                                >> 8U))))
-                                                                                 ? vlTOPp->mkTestBench__DOT__v___05Fh147777
+                                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                                << 0x17U) 
+                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                                                >> 9U))))
+                                                                                 ? vlTOPp->mkTestBench__DOT__v___05Fh147823
                                                                                  : 
-                                                                                ((0x4000U 
-                                                                                & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+                                                                                ((0x8000U 
+                                                                                & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
                                                                                  ? 
                                                                                 ((IData)(4U) 
                                                                                 + 
-                                                                                ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                                                << 0x18U) 
-                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                                >> 8U)))
-                                                                                 : vlTOPp->mkTestBench__DOT__alu_result___05Fh143727))))) 
+                                                                                ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                                                << 0x17U) 
+                                                                                | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                                >> 9U)))
+                                                                                 : vlTOPp->mkTestBench__DOT__alu_result___05Fh143773))))) 
                                                             >> 0x20U)) 
                                                    << 0x10U)));
     vlTOPp->mkTestBench__DOT__core_ex2mem__024D_IN[0U] 
-        = __Vtemp100[0U];
+        = __Vtemp104[0U];
     vlTOPp->mkTestBench__DOT__core_ex2mem__024D_IN[1U] 
-        = __Vtemp100[1U];
+        = __Vtemp104[1U];
     vlTOPp->mkTestBench__DOT__core_ex2mem__024D_IN[2U] 
-        = ((0xffffU & (vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143723 
+        = ((0xffffU & (vlTOPp->mkTestBench__DOT___theResult___05F___05F_5___05Fh143769 
                        >> 0x10U)) | (0xffff0000U & 
                                      ((IData)((((QData)((IData)(
-                                                                ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                                  << 0x18U) 
-                                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                    >> 8U)))) 
+                                                                ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                                  << 0x17U) 
+                                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                    >> 9U)))) 
                                                 << 0x20U) 
                                                | (QData)((IData)(
                                                                  ((0x73U 
                                                                    == 
                                                                    (0x7fU 
-                                                                    & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                        << 0x18U) 
-                                                                       | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                                          >> 8U))))
-                                                                   ? vlTOPp->mkTestBench__DOT__v___05Fh147777
+                                                                    & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                        << 0x17U) 
+                                                                       | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                                          >> 9U))))
+                                                                   ? vlTOPp->mkTestBench__DOT__v___05Fh147823
                                                                    : 
-                                                                  ((0x4000U 
-                                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+                                                                  ((0x8000U 
+                                                                    & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
                                                                     ? 
                                                                    ((IData)(4U) 
                                                                     + 
-                                                                    ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                                      << 0x18U) 
-                                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                        >> 8U)))
-                                                                    : vlTOPp->mkTestBench__DOT__alu_result___05Fh143727)))))) 
+                                                                    ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                                      << 0x17U) 
+                                                                     | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                        >> 9U)))
+                                                                    : vlTOPp->mkTestBench__DOT__alu_result___05Fh143773)))))) 
                                       << 0x10U)));
     vlTOPp->mkTestBench__DOT__core_ex2mem__024D_IN[3U] 
-        = __Vtemp100[3U];
+        = __Vtemp104[3U];
     vlTOPp->mkTestBench__DOT__core_ex2mem__024D_IN[4U] 
         = (0xffffU & ((IData)(((((QData)((IData)(((
-                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                   << 0x18U) 
-                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                     >> 8U)))) 
+                                                   vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                   << 0x17U) 
+                                                  | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                     >> 9U)))) 
                                  << 0x20U) | (QData)((IData)(
                                                              ((0x73U 
                                                                == 
                                                                (0x7fU 
-                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                    << 0x18U) 
-                                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                                                      >> 8U))))
-                                                               ? vlTOPp->mkTestBench__DOT__v___05Fh147777
+                                                                & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                    << 0x17U) 
+                                                                   | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                                                      >> 9U))))
+                                                               ? vlTOPp->mkTestBench__DOT__v___05Fh147823
                                                                : 
-                                                              ((0x4000U 
-                                                                & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+                                                              ((0x8000U 
+                                                                & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
                                                                 ? 
                                                                ((IData)(4U) 
                                                                 + 
-                                                                ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                                                  << 0x18U) 
-                                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                                                    >> 8U)))
-                                                                : vlTOPp->mkTestBench__DOT__alu_result___05Fh143727))))) 
+                                                                ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                                                  << 0x17U) 
+                                                                 | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                                                    >> 9U)))
+                                                                : vlTOPp->mkTestBench__DOT__alu_result___05Fh143773))))) 
                                >> 0x20U)) >> 0x10U));
     vlTOPp->mkTestBench__DOT__core_pcReg__024D_IN = 
         ((((IData)(vlTOPp->mkTestBench__DOT__WILL_FIRE_RL_core_fetchStage) 
            & (~ (IData)(vlTOPp->mkTestBench__DOT__core_branch_flush_done))) 
           & (~ (IData)(vlTOPp->mkTestBench__DOT__core_no_pc_update)))
-          ? ((IData)(vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_2_BIT_0_3_core_btb_ETC___05F_d290)
-              ? vlTOPp->mkTestBench__DOT__prediction_target___05Fh103977
+          ? ((IData)(vlTOPp->mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_058_BIT_0_059_core_ETC___05F_d1325)
+              ? vlTOPp->mkTestBench__DOT__prediction_target___05Fh103981
               : ((IData)(4U) + vlTOPp->mkTestBench__DOT__core_pcReg))
-          : ((0x100U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[2U])
+          : ((0x200U & vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U])
               ? (0xfffffffcU & vlTOPp->mkTestBench__DOT__core_csrs_mtvec)
-              : ((((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                        << 0x18U) | 
-                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                        >> 8U)))) & 
-                   (0U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                  << 0xcU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[6U] 
-                                              >> 0x14U))))) 
-                  & (0x18U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
-                                         << 0x1fU) 
-                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
-                                           >> 1U)))))
+              : ((((0x73U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                        << 0x17U) | 
+                                       (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                        >> 9U)))) & 
+                   (0U == (7U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                  << 0xbU) | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[7U] 
+                                              >> 0x15U))))) 
+                  & (0x18U == (0x7fU & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                         << 0x1eU) 
+                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                           >> 2U)))))
                   ? vlTOPp->mkTestBench__DOT__core_csrs_mepc
-                  : vlTOPp->mkTestBench__DOT__actual_target___05Fh143734)));
+                  : ((1U & ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                             >> 0xfU) | ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[3U] 
+                                          >> 0x10U) 
+                                         & (IData)(vlTOPp->mkTestBench__DOT__IF_core_id2ex_first___05F408_BITS_117_TO_115_724_E_ETC___05F_d2023))))
+                      ? vlTOPp->mkTestBench__DOT__actual_target___05Fh143780
+                      : ((IData)(4U) + ((vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[9U] 
+                                         << 0x17U) 
+                                        | (vlTOPp->mkTestBench__DOT__core_id2ex__DOT__data0_reg[8U] 
+                                           >> 9U)))))));
 }

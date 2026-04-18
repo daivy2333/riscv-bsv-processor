@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     top->RST_N = 1;
     std::cout << "Phase 2: Running simulation...\n" << std::endl;
 
-    uint64_t max_cycles = 1000;
+    uint64_t max_cycles = 100;
     uint64_t cycle = 0;
     bool done = false;
 
@@ -38,7 +38,14 @@ int main(int argc, char** argv) {
         top->eval();
         cycle++;
 
-        if (top->done) {
+        bool stall = top->mkTestBench__DOT__core_stall_load_use;
+
+        if (cycle % 2 == 0 || stall) {
+            std::cout << "C" << cycle << ": PC=" << std::hex << top->mkTestBench__DOT__core_pcReg
+                      << ", stall=" << (int)stall << std::dec << std::endl;
+        }
+
+        if (top->mkTestBench__DOT__dumpDone) {
             std::cout << "\nTestBench done at cycle " << cycle << std::endl;
             done = true;
         }
