@@ -169,23 +169,22 @@ module mkCore#(String firmwareFile)(Core);
     // EX阶段
     // ============================================================
 
-    rule executeStage;
+    rule executeStage (id2ex.notEmpty && ex2mem.notFull);
         ID_EX_Packet pkt = id2ex.first;
-        id2ex.deq;
 
         // 前递逻辑（直接从 FIFO 读取，绕过规则顺序限制）
         Word op1 = pkt.rs1_val;
         Word op2 = pkt.rs2_val;
 
-        // WB→EX 前递（从 mem2wb FIFO 读取当前 WB 阶段的数据）
-        // 注意：mem2wb.first 是当前 WB 阶段正在处理的指令
-        if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs1 && pkt.rs1 != 0)
-            op1 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
-        if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs2 && pkt.rs2 != 0)
-            op2 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
+        // 前递优先级：MEM→EX > WB→EX（MEM 更近）
+        // WB→EX 前递（使用 wb_forward_data Reg，上一周期 WB 写入）
+        if (wb_forward_valid && wb_forward_rd == pkt.rs1 && pkt.rs1 != 0)
+            op1 = wb_forward_data;
+        if (wb_forward_valid && wb_forward_rd == pkt.rs2 && pkt.rs2 != 0)
+            op2 = wb_forward_data;
 
-        // MEM→EX 前递（从 ex2mem FIFO 读取当前 MEM 阶段的数据）
-        // 注意：ex2mem.first 是当前 MEM 阶段正在处理的指令，Load 数据不可用
+        // MEM→EX 前递（从 ex2mem FIFO 读取上一周期 EX 的输出）
+        // 覆盖 WB→EX（优先级更高）
         if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs1 && pkt.rs1 != 0)
             op1 = ex2mem.first.alu_result;
         if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs2 && pkt.rs2 != 0)
@@ -241,8 +240,14 @@ module mkCore#(String firmwareFile)(Core);
 
         Bool is_load = (pkt.mem_op == MEM_READ);
 
-        // 分支/跳转执行：在 EX 阶段计算，但延迟到 MEM 阶段执行 PC 更新
-        // 注意：需要在 MEM 阶段执行冲刷，避免与 id2ex.deq 冲突
+        // 分支/跳转执行：在 EX 阶段直接更新 PC 并冲刷流水线
+        if (branch_taken) begin
+            pcReg <= actual_target;
+            if2id.clear;
+            id2ex.clear;
+        end else begin
+            id2ex.deq;  // 只有非分支时才 deq
+        end
 
         ex2mem.enq(EX_MEM_Packet {
             pc: pkt.pc,
@@ -271,14 +276,6 @@ module mkCore#(String firmwareFile)(Core);
         ex2mem.deq;
 
         Word mem_data = 0;
-
-        // 分支/跳转执行：在 MEM 阶段更新 PC 并冲刷流水线
-        // 这避免了 EX 阶段的 deq/clear 冲突
-        if (pkt.is_jump || pkt.branch_taken) begin
-            pcReg <= pkt.actual_target;
-            if2id.clear;
-            id2ex.clear;
-        end
 
         // 对齐检查（阶段1仅打印警告）
         if (pkt.mem_op != MEM_NONE && !checkAlignment(pkt.alu_result, pkt.mem_width)) begin

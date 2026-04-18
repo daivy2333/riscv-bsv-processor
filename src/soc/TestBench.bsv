@@ -31,6 +31,11 @@ module mkTestBench(TestBench);
     endrule
 
     rule checkDone (programLoaded && !programDone);
+        // 调试：每周期输出状态
+        if (cycleCount < 30) begin
+            $display("Cycle %0d: PC=%h, t0=%0d, t1=%0d, t2=%0d, testDone=%b",
+                     cycleCount, core.pc, core.readReg(5), core.readReg(6), core.readReg(7), core.testDone);
+        end
         // tohost 写入检测（标准 riscv-tests）
         if (core.testDone) begin
             programDone <= True;
