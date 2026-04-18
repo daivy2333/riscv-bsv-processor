@@ -28,12 +28,10 @@ module mkTestBench(TestBench);
     endrule
 
     rule checkDone (programLoaded && !programDone);
-        if (soc.testDone()) begin
-            programDone <= True;
-        end
-        // 超时检测
-        if (cycleCount >= 100000) begin
-            $display("WARNING: Timeout at cycle %0d", cycleCount);
+        Bool done = soc.testDone() || (cycleCount >= 100000);
+        if (done) begin
+            if (cycleCount >= 100000)
+                $display("WARNING: Timeout at cycle %0d", cycleCount);
             programDone <= True;
         end
     endrule

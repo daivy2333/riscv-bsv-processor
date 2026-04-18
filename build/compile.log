@@ -1,0 +1,26 @@
+mkdir -p build
+bsc -verilog -p src:src/common:src/core:src/memory:src/soc:src/branch:src/peripheral:%/Libraries -no-warn-action-shadowing -bdir build -vdir build -u -g mkTestBench src/soc/TestBench.bsv +RTS -K64M -RTS
+checking package dependencies
+compiling src/common/Types.bsv
+compiling src/soc/TestProgram.bsv
+compiling src/peripheral/CLINT.bsv
+compiling src/peripheral/UART.bsv
+compiling src/peripheral/PLIC.bsv
+compiling src/memory/DMem.bsv
+compiling src/core/PrivilegedTypes.bsv
+compiling src/core/CSR.bsv
+compiling src/core/ALU.bsv
+compiling src/core/RegFile.bsv
+compiling src/core/Decoder.bsv
+compiling src/branch/BHT.bsv
+compiling src/branch/BTB.bsv
+compiling src/core/HazardUnit.bsv
+compiling src/core/Core.bsv
+Warning: "src/core/Core.bsv", line 6, column 8: (S0089)
+  Multiple copies of a file were found in the path. Using:
+    build/RegFile.bo
+  Ignoring:
+    /opt/bsc/lib/Libraries/RegFile.bo
+compiling src/soc/SOC.bsv
+compiling src/soc/TestBench.bsv
+code generation for mkTestBench starts

@@ -12,10 +12,10 @@ interface DMem;
     method Word tohostValue();     // tohost 写入值
 endinterface
 
-// 数据内存（64KB, 支持tohost监控）
+// 数据内存（2KB, 支持tohost监控）
 module mkDMem(DMem);
-    // 64KB内存 (16K words)
-    Vector#(16384, Reg#(Word)) memory <- replicateM(mkReg(0));
+    // 2KB内存 (512 words) - 保持原大小避免编译内存问题
+    Vector#(512, Reg#(Word)) memory <- replicateM(mkReg(0));
 
     // tohost 监控
     Reg#(Bool) tohost_written <- mkReg(False);
@@ -23,12 +23,12 @@ module mkDMem(DMem);
     function Addr tohostAddr(); return 32'h80001000; endfunction
 
     method Word read(Addr addr);
-        Bit#(14) index = addr[15:2];  // 14位索引 (64KB)
+        Bit#(9) index = addr[10:2];  // 9位索引 (2KB)
         return memory[index];
     endmethod
 
     method Action write(Addr addr, Word data);
-        Bit#(14) index = addr[15:2];
+        Bit#(9) index = addr[10:2];
         memory[index] <= data;
 
         // tohost 监控
