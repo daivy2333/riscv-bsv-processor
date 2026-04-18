@@ -26,6 +26,7 @@ VM_CLASSES_FAST += \
 	VmkTestBench \
 	VmkTestBench__1 \
 	VmkTestBench__2 \
+	VmkTestBench__3 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \

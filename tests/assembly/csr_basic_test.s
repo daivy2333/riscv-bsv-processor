@@ -22,7 +22,7 @@ _start:
 
     # 写入 tohost 表示测试完成
     li t0, 0x80001000
-    li t4, 2  # PASS
+    li t4, 1  # PASS
     sw t4, 0(t0)
 
 _inf_loop:
