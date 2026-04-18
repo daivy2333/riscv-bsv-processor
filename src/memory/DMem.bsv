@@ -8,21 +8,42 @@ import Vector::*;
 interface DMem;
     method Word read(Addr addr);
     method Action write(Addr addr, Word data);
+    method Bool tohostWritten();   // tohost 写入检测
+    method Word tohostValue();     // tohost 写入值
 endinterface
 
-// 简化版数据内存（用于测试，无延迟）
+// 数据内存（64KB, 支持tohost监控）
 module mkDMem(DMem);
-    // 使用Reg数组模拟内存（2KB）
-    Vector#(512, Reg#(Word)) memory <- replicateM(mkReg(0));
+    // 64KB内存 (16K words)
+    Vector#(16384, Reg#(Word)) memory <- replicateM(mkReg(0));
+
+    // tohost 监控
+    Reg#(Bool) tohost_written <- mkReg(False);
+    Reg#(Word) tohost_value <- mkReg(0);
+    function Addr tohostAddr(); return 32'h80001000; endfunction
 
     method Word read(Addr addr);
-        Bit#(9) index = addr[10:2];  // 字地址对齐
+        Bit#(14) index = addr[15:2];  // 14位索引 (64KB)
         return memory[index];
     endmethod
 
     method Action write(Addr addr, Word data);
-        Bit#(9) index = addr[10:2];
+        Bit#(14) index = addr[15:2];
         memory[index] <= data;
+
+        // tohost 监控
+        if (addr == tohostAddr()) begin
+            tohost_written <= True;
+            tohost_value <= data;
+        end
+    endmethod
+
+    method Bool tohostWritten();
+        return tohost_written;
+    endmethod
+
+    method Word tohostValue();
+        return tohost_value;
     endmethod
 endmodule
 
