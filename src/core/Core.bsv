@@ -8,6 +8,8 @@ import Decoder::*;
 import BHT::*;
 import BTB::*;
 import HazardUnit::*;
+import CSR::*;
+import PrivilegedTypes::*;
 import FIFO::*;
 import FIFOF::*;
 import Vector::*;
@@ -29,6 +31,7 @@ module mkCore#(String firmwareFile)(Core);
     BHT bht <- mkBHT;
     BTB btb <- mkBTB;
     HazardUnit hazardUnit <- mkHazardUnit;
+    CSRs csrs <- mkCSR;
 
     // 流水线寄存器（使用 FIFOF 深度2）
     FIFOF#(IF_ID_Packet) if2id <- mkFIFOF;
@@ -69,6 +72,10 @@ module mkCore#(String firmwareFile)(Core);
     Reg#(Word) tohost_value <- mkReg(0);
     Addr tohost_addr = 32'h80001000;  // riscv-tests 标准地址
 
+    // 陷阱控制
+    Reg#(Bool) in_trap <- mkReg(False);
+    Reg#(Bool) wfi_waiting <- mkReg(False);
+
     // ============================================================
     // IF阶段
     // ============================================================
@@ -94,7 +101,8 @@ module mkCore#(String firmwareFile)(Core);
             pc: fetchPC,
             instruction: instr,
             predicted_pc: prediction_target,
-            predicted_taken: take_prediction
+            predicted_taken: take_prediction,
+            priv_mode: pack(csrs.currentMode())
         });
 
         currentInstr <= instr;
@@ -162,6 +170,46 @@ module mkCore#(String firmwareFile)(Core);
             else if (wb_forward_valid1 && wb_forward_rd1 == dec.rs2 && dec.rs2 != 0)
                 rs2_val = wb_forward_data1;
 
+            // 检测 ECALL/EBREAK (opcode = 7'b1110011, funct3 = 3'b000)
+            Bit#(7) opcode = getOpcode(pkt.instruction);
+            Bit#(3) funct3 = getFunct3(pkt.instruction);
+            Bit#(7) funct7 = getFunct7(pkt.instruction);
+
+            Bool is_ecall = (opcode == 7'b1110011) && (funct3 == 3'b000) && (funct7 == 7'b0000000);
+            Bool is_ebreak = (opcode == 7'b1110011) && (funct3 == 3'b000) && (funct7 == 7'b0000001);
+
+            // 陷阱信息
+            Bool has_trap = False;
+            Addr trap_epc = 0;
+            Bit#(5) trap_cause = 0;
+            Bool trap_is_interrupt = False;
+            Addr trap_tval = 0;
+            Bit#(2) trap_mode = 0;
+
+            if (is_ecall) begin
+                has_trap = True;
+                trap_epc = pkt.pc;
+                trap_is_interrupt = False;
+                trap_tval = 0;
+                trap_mode = pkt.priv_mode;
+                // 根据当前模式选择异常码
+                case (pkt.priv_mode)
+                    2'b11: trap_cause = 5'd11;  // EXC_ECALL_M
+                    2'b01: trap_cause = 5'd9;   // EXC_ECALL_S
+                    2'b00: trap_cause = 5'd8;   // EXC_ECALL_U
+                    default: trap_cause = 5'd11;
+                endcase
+            end
+
+            if (is_ebreak) begin
+                has_trap = True;
+                trap_epc = pkt.pc;
+                trap_cause = 5'd3;  // EXC_BREAKPOINT
+                trap_is_interrupt = False;
+                trap_tval = 0;
+                trap_mode = pkt.priv_mode;
+            end
+
             id2ex.enq(ID_EX_Packet {
                 pc: pkt.pc,
                 instruction: pkt.instruction,
@@ -176,7 +224,13 @@ module mkCore#(String firmwareFile)(Core);
                 write_reg: dec.write_reg,
                 use_imm: dec.use_imm,
                 mem_width: dec.mem_width,
-                mem_unsigned: dec.mem_unsigned
+                mem_unsigned: dec.mem_unsigned,
+                has_trap: has_trap,
+                trap_epc: trap_epc,
+                trap_cause: trap_cause,
+                trap_is_interrupt: trap_is_interrupt,
+                trap_tval: trap_tval,
+                trap_mode: trap_mode
             });
         end
     endrule
@@ -273,36 +327,99 @@ module mkCore#(String firmwareFile)(Core);
         if (pkt.is_branch)
             bht.update(pkt.pc, branch_taken);
 
+        // ========== 主控制流：陷阱 -> CSR -> MRET -> 正常分支 ==========
+        Bool is_mret = (getOpcode(pkt.instruction) == 7'b1110011) && (getFunct3(pkt.instruction) == 3'b000) && (getFunct7(pkt.instruction) == 7'b0011000);
         Bool is_load = (pkt.mem_op == MEM_READ);
 
-        // 分支/跳转执行
-        if (branch_taken) begin
-            pcReg <= actual_target;
-            branch_flush <= True;  // 设置冲刷标志，阻止下一周期 IF
-            no_pc_update <= True;  // 阻止 IF 更新 PC（直到非跳转指令）
+        // 陷阱处理 (最高优先级)
+        if (pkt.has_trap) begin
+            csrs.writeCSR(12'h341, pack(pkt.trap_epc));  // mepc
+            csrs.writeCSR(12'h342, zeroExtend(pkt.trap_cause));  // mcause
+            csrs.writeCSR(12'h343, pack(pkt.trap_tval));  // mtval
+
+            MStatus ms = unpackMStatus(csrs.readCSR(12'h300));
+            MStatus new_ms = ms;
+            new_ms.mpie = ms.mie;
+            new_ms.mpp = pkt.trap_mode;
+            new_ms.mie = 0;
+            csrs.writeCSR(12'h300, packMStatus(new_ms));
+
+            csrs.setMode(M_MODE);
+
+            Addr trap_base = csrs.readCSR(12'h305) & ~32'h3;
+            pcReg <= trap_base;
+            branch_flush <= True;
+            no_pc_update <= True;
             if2id.clear;
             id2ex.clear;
         end else begin
-            id2ex.deq;  // 只有非分支时才 deq
-            no_pc_update <= False;  // 非跳转指令，允许 IF 更新 PC
-        end
+            // 非陷阱路径：处理 CSR 指令或正常分支
+            DecodedInstr dec = decoder.decode(pkt.instruction);
+            if (dec.is_csr) begin
+                // CSR 读-修改-写 (软件原子性)
+                Word old_csr = csrs.readCSR(dec.csr_addr);
+                Word csr_result = old_csr;
+                Word new_csr = case (dec.csr_op)
+                    CSR_OP_WRITE: dec.is_csr_imm ? { 27'b0, dec.csr_zimm } : op1;
+                    CSR_OP_SET:   old_csr | (dec.is_csr_imm ? { 27'b0, dec.csr_zimm } : op1);
+                    CSR_OP_CLR:   old_csr & ~(dec.is_csr_imm ? { 27'b0, dec.csr_zimm } : op1);
+                    CSR_OP_READ:  old_csr;
+                    default:      old_csr;
+                endcase;
+                if (dec.csr_op != CSR_OP_READ) begin
+                    csrs.writeCSR(dec.csr_addr, new_csr);
+                end
+                alu_result = csr_result;
+            end
 
-        ex2mem.enq(EX_MEM_Packet {
-            pc: pkt.pc,
-            alu_result: alu_result,
-            rs2_val: op2,
-            rd: pkt.rd,
-            mem_op: pkt.mem_op,
-            is_branch: pkt.is_branch,
-            is_jump: pkt.is_jump,
-            branch_taken: branch_taken,
-            actual_target: actual_target,
-            predicted_taken: False,
-            write_reg: pkt.write_reg,
-            is_load: is_load,
-            mem_width: pkt.mem_width,
-            mem_unsigned: pkt.mem_unsigned
-        });
+            // MRET 处理
+            if (is_mret) begin
+                MStatus ms = unpackMStatus(csrs.readCSR(12'h300));
+                MStatus new_ms = ms;
+                new_ms.mie = ms.mpie;
+                new_ms.mpie = 1;
+                csrs.writeCSR(12'h300, packMStatus(new_ms));
+
+                PrivilegeMode prev = unpack(ms.mpp);
+                csrs.setMode(prev);
+
+                pcReg <= csrs.readCSR(12'h341);
+                no_pc_update <= True;
+                branch_flush <= True;
+                if2id.clear;
+                id2ex.clear;
+            end else begin
+                // 正常分支/跳转执行
+                if (branch_taken) begin
+                    pcReg <= actual_target;
+                    branch_flush <= True;
+                    no_pc_update <= True;
+                    if2id.clear;
+                    id2ex.clear;
+                end else begin
+                    id2ex.deq;
+                    no_pc_update <= False;
+                end
+
+                // enq 到 ex2mem
+                ex2mem.enq(EX_MEM_Packet {
+                    pc: pkt.pc,
+                    alu_result: alu_result,
+                    rs2_val: op2,
+                    rd: pkt.rd,
+                    mem_op: pkt.mem_op,
+                    is_branch: pkt.is_branch,
+                    is_jump: pkt.is_jump,
+                    branch_taken: branch_taken,
+                    actual_target: actual_target,
+                    predicted_taken: False,
+                    write_reg: pkt.write_reg,
+                    is_load: is_load,
+                    mem_width: pkt.mem_width,
+                    mem_unsigned: pkt.mem_unsigned
+                });
+            end
+        end
     endrule
 
     // ============================================================
@@ -425,6 +542,9 @@ module mkCore#(String firmwareFile)(Core);
         wb_forward_data0 <= wb_data;
         wb_forward_rd0 <= pkt.rd;
         wb_forward_valid0 <= pkt.write_reg;
+
+        // CSR 指令在 EX 阶段已处理，这里只更新计数器
+        csrs.incrementMinstret;
     endrule
 
     // ============================================================
@@ -486,7 +606,13 @@ function ID_EX_Packet nopPacket();
         write_reg: False,
         use_imm: False,
         mem_width: MEM_WORD,
-        mem_unsigned: False
+        mem_unsigned: False,
+        has_trap: False,
+        trap_epc: 0,
+        trap_cause: 0,
+        trap_is_interrupt: False,
+        trap_tval: 0,
+        trap_mode: 0
     };
 endfunction
 

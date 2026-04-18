@@ -112,6 +112,7 @@ typedef struct {
     Word    instruction;    // 取到的指令
     Addr    predicted_pc;  // 预测的PC（顺序执行的PC）
     Bool    predicted_taken;// 是否预测分支命中
+    Bit#(2) priv_mode;     // 特权模式 (0=U, 1=S, 3=M)
 } IF_ID_Packet deriving (Bits, Eq, FShow);
 
 // ID → EX 阶段数据包
@@ -133,6 +134,12 @@ typedef struct {
     Bool        use_imm;        // 是否使用立即数作为ALU第二个操作数
     MemWidth    mem_width;      // 内存访问宽度
     Bool        mem_unsigned;   // 是否无符号扩展(LBU/LHU)
+    Bool        has_trap;       // 是否有陷阱
+    Addr        trap_epc;       // 陷阱 PC
+    Bit#(5)     trap_cause;     // 异常/中断代码
+    Bool        trap_is_interrupt; // 是否是中断
+    Addr        trap_tval;      // 陷阱值
+    Bit#(2)     trap_mode;      // 特权模式
 } ID_EX_Packet deriving (Bits, Eq, FShow);
 
 // EX → MEM 阶段数据包
