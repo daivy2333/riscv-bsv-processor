@@ -16,4 +16,6 @@ firmware/*.dump
 
 # 其他
 a.out
-a.out.so.worktrees/
+a.out.so
+*.o
+.worktrees/
