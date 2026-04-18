@@ -7,14 +7,15 @@ OBJCOPY = riscv64-unknown-elf-objcopy
 OBJDUMP = riscv64-unknown-elf-objdump
 
 # Bluespec include paths
-BSC_PATHS = -p src:src/common:src/core:src/memory:src/soc:src/branch:%/Libraries
+BSC_PATHS = -p src:src/common:src/core:src/memory:src/soc:src/branch:src/peripheral:%/Libraries
 
 BSV_SOURCES = $(wildcard src/*.bsv) \
               $(wildcard src/common/*.bsv) \
               $(wildcard src/core/*.bsv) \
               $(wildcard src/memory/*.bsv) \
               $(wildcard src/soc/*.bsv) \
-              $(wildcard src/branch/*.bsv)
+              $(wildcard src/branch/*.bsv) \
+              $(wildcard src/peripheral/*.bsv)
 
 ASM_TESTS = $(wildcard tests/assembly/*.s)
 
