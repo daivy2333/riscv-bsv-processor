@@ -1,6 +1,6 @@
 PROJECT = riscv-bsv-processor
 BSC = bsc
-BSC_FLAGS = -show-schedule -aggressive-conditions -no-warn-action-shadowing
+BSC_FLAGS = -no-warn-action-shadowing
 VERILATOR = verilator
 CC = riscv64-unknown-elf-gcc
 OBJCOPY = riscv64-unknown-elf-objcopy
@@ -23,7 +23,7 @@ all: compile
 
 compile: $(BSV_SOURCES)
 	mkdir -p build
-	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) -bdir build -vdir build -u -g mkTestBench src/soc/TestBench.bsv +RTS -K128M -RTS
+	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) -bdir build -vdir build -u -g mkTestBench src/soc/TestBench.bsv +RTS -K32M -RTS
 
 # 编译汇编测试为二进制（禁用压缩指令，启用zicsr）
 firmware/%.elf: tests/assembly/%.s scripts/link.ld
