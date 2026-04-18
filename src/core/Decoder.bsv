@@ -231,20 +231,20 @@ module mkDecoder(Decoder);
 
                 case (funct3)
                     3'b001: csr_op = CSR_OP_WRITE;              // CSRRW
-                    3'b010: begin                               // CSRRWI
+                    3'b010: begin                               // CSRRS
                         csr_op = CSR_OP_WRITE;
                         is_csr_imm = True;
                         use_rs1 = False;
                     end
-                    3'b011: begin                               // CSRRS
+                    3'b011: begin                               // CSRRC
                         csr_op = (rs1_addr == 0) ? CSR_OP_READ : CSR_OP_SET;
                     end
-                    3'b101: begin                              // CSRRSI
+                    3'b101: begin                              // CSRRWI
                         csr_op = (instruction[19:15] == 0) ? CSR_OP_READ : CSR_OP_SET;
                         is_csr_imm = True;
                         use_rs1 = False;
                     end
-                    3'b110: begin                               // CSRRC
+                    3'b110: begin                               // CSRRSI
                         csr_op = (rs1_addr == 0) ? CSR_OP_READ : CSR_OP_CLR;
                     end
                     3'b111: begin                               // CSRRCI
