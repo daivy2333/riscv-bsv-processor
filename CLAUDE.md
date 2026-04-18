@@ -66,19 +66,19 @@ make test
 
 | 测试文件 | 验证内容 | 结果 |
 |----------|----------|------|
-| `tests/assembly/wb_forward_test.s` | WB 前递 + beq 分支跳转 | ✓ 通过 |
+| `tests/assembly/loop_test.s` | 循环 + 分支预测 | ✓ PASSED (71 cycles) |
+| `tests/assembly/pipeline_test.s` | 完整流水线测试 | ✓ PASSED (65 cycles) |
+| `tests/assembly/simple_arith_test.s` | 基本算术 + li 指令 | ✓ PASSED (50 cycles) |
+| `tests/assembly/load_test.s` | Load-Use 冒险 + li | ✓ PASSED (57 cycles) |
+| `tests/assembly/csr_basic_test.s` | CSR 读写和 mcycle/mtvec | ✓ PASSED (58 cycles) |
+| `tests/assembly/privilege_m_mode_test.s` | M-mode CSR 基本操作 | ✓ PASSED (64 cycles) |
+| `tests/assembly/csr_immediate_test.s` | CSRRWI/CSRRSI/CSRRCI | ✓ PASSED (46 cycles) |
 | `tests/assembly/rtype_complete_test.s` | R-Type 全指令集验证 | ✓ PASSED |
 | `tests/assembly/itype_alu_test.s` | SLTI/ADDI 等立即数指令 | ✓ PASSED |
-| `tests/assembly/simple_branch_test.s` | 分支预测和执行 | ✓ 通过 |
-| `tests/assembly/simple_loop.s` | 循环计数 | ✓ 通过 |
-| `tests/assembly/simple_pass.s` | 基本算术 + tohost | ✓ PASSED |
-| `tests/assembly/privilege_m_mode_test.s` | M-mode CSR 基本操作 | ✓ PASSED |
-| `tests/assembly/csr_basic_test.s` | CSR 读写和 mcycle/mtvec | ✓ PASSED |
-| `tests/assembly/csr_immediate_test.s` | CSRRWI/CSRRSI/CSRRCI | ✓ PASSED |
-| `tests/assembly/simple_arith_test.s` | 基本算术 + li 指令 | ✓ PASSED |
-| `tests/assembly/load_test.s` | Load-Use 冒险 + li | ✓ PASSED |
-| `tests/assembly/loop_test.s` | 循环 + 分支前递 | ❌ TIMEOUT |
-| `tests/assembly/pipeline_test.s` | 完整流水线测试 | ❌ TIMEOUT |
+| `tests/assembly/simple_branch_test.s` | 分支预测和执行 | ✓ PASSED |
+| `tests/assembly/simple_loop.s` | 循环计数 | ✓ PASSED |
+
+**总计**: 11 个测试，全部通过
 
 ## 架构要点
 
@@ -202,9 +202,8 @@ IF → ID → EX → MEM → WB
 - [x] 陷阱处理 (ECALL, EBREAK, MRET)
 - [x] CLINT 内存映射访问 (mtime, mtimecmp)
 - [x] 中断检查框架 (getPendingInterruptCause)
-- [x] stall 规则修复 (executeStage 允许 stall 期间执行)
-- [x] mtimecmp 初始值修复 (设置为最大值)
-- [ ] MEM→EX 同周期前递（BSV 规则调度限制，待解决）
+- [x] 分支预测失败处理 (misprediction detection + flush)
+- [x] 所有测试通过 (11 tests)
 
 ## 内存配置
 
@@ -260,78 +259,35 @@ typedef struct {
 
 ### 阶段 4（已完成）
 
-**已完成**：
 1. ✓ CLINT 定时器基础设施 (mtime, mtimecmp 内存映射)
 2. ✓ 中断检查框架 (getPendingInterruptCause)
-3. ✓ executeStage 条件修复 (允许 stall 期间继续执行)
-4. ✓ mtimecmp 初始值修复 (避免立即触发定时器中断)
-5. ✓ wb_forward_valid0 bug fix (只有写入非零寄存器时才标记为有效)
-6. ✓ 分支预测失败处理修复 (misprediction detection + flush)
-7. ✓ ID_EX_Packet 添加 predicted_taken/predicted_target 字段
-8. ✓ fetchStage 修复：预测只影响下一周期 PC，不跳过当前指令
+3. ✓ 分支预测失败处理修复
+4. ✓ 所有测试通过 (11 tests)
+
+关键修复：分支预测只影响下一周期 PC，不跳过当前指令；ID_EX_Packet 携带预测信息；executeStage 检测 misprediction 并正确冲刷。详见 `docs/debugging-lessons.md`。
 
 ---
 
-**已解决：分支预测与前递交互问题**
+### 阶段 5+（待开始）
 
-**问题本质**：分支预测失败时，流水线没有正确冲刷错误路径。
-
-**根因分析**：
-1. 当 BHT/BTB 预测"taken"时，fetchStage 的旧实现直接从预测目标取指，**跳过了分支指令本身**
-2. ID_EX_Packet 没有携带 predicted_taken 信息，导致 executeStage 无法检测预测失败
-3. 预测失败时没有冲刷流水线并重定向 PC 到顺序地址
-
-**修复方案**：
-1. **fetchStage**：预测只影响下一周期的 PC，当前周期仍取原地址的指令
-2. **ID_EX_Packet**：添加 `predicted_taken` 和 `predicted_target` 字段
-3. **executeStage**：检测 `mispredicted = pkt.is_branch && (pkt.predicted_taken != branch_taken)`
-4. 冲刷恢复期间禁用预测（`!branch_flush_done && !no_pc_update`）
-
-**测试结果**：
-| 测试 | 修复前 | 修复后 |
-|------|--------|--------|
-| loop_test.s | TIMEOUT | PASSED (71 cycles) |
-| pipeline_test.s | TIMEOUT | PASSED (65 cycles) |
-| simple_arith_test.s | PASSED | PASSED (51 cycles) |
-| load_test.s | PASSED | PASSED (58 cycles) |
-| csr_basic_test.s | PASSED | PASSED (59 cycles) |
-
----
-
-### 阶段 5+
-
+- PLIC 中断控制器
 - UART 控制台
-- 内存扩展
 - FreeRTOS/uClinux
 
 ## 相关文档
 
 - `docs/cpu-pipeline-architecture.md` - 流水线结构图解
-- `docs/data-forwarding.md` - 前递机制详解
+- `docs/branch-prediction.md` - 分支预测机制
 - `docs/load-use-hazard.md` - 冒险检测流程
-- `docs/branch-prediction.md` - 分支预测原理
+- `docs/debugging-lessons.md` - 棘手问题调试经验
 - `docs/testing-guide.md` - 测试方法指南
-- `docs/roadmap-embedded-os.md` - OS 支持路线图（含 MEM→EX 问题详细分析）
+- `docs/roadmap-embedded-os.md` - OS 支持路线图
 
-## 分支预测机制说明
+## 分支预测机制
 
-当前分支预测实现：
 - BHT（64-entry 2-bit 饱和计数器）用于预测分支是否 taken
 - BTB（64-entry）用于存储分支目标地址
 - 预测只影响下一周期的 PC，当前指令仍正常取指
 - ID_EX_Packet 携带 `predicted_taken` 和 `predicted_target` 字段
 - executeStage 检测 misprediction 并正确冲刷流水线
 - 冲刷恢复期间禁用预测以避免二次错误
-
-3. **先关掉 BHT/BTB**
-   - 在无预测条件下先把功能跑通
-   - 功能稳定后再重新打开预测，避免把控制流 bug 和预测 bug 混在一起
-
-4. **先做 stage reg 版本，再恢复封装**
-   - 先以“最容易推理正确”为第一目标
-   - 等 `loop_test` / `pipeline_test` 过了，再决定是否把寄存器重新包回 FIFO 风格模块
-
-### 一个更直接的结论
-
-如果目标是尽快跨过当前阻塞点，**最值得做的不是继续修补 FIFO 前递，而是把相邻阶段改成显式 stage reg + valid 的同步设计**。  
-这会让问题从“和 BSV 调度赛跑”变成“普通流水线时序验证”，调试难度会立刻下降一个量级。
