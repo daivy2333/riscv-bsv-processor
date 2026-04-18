@@ -40,16 +40,25 @@ module mkCore#(String firmwareFile)(Core);
     Reg#(Bool) stall_load_use <- mkReg(False);    // Load-Use 停顿标志
     Reg#(Bit#(2)) stall_count <- mkReg(0);        // 停顿剩余周期数
 
+    // 分支冲刷控制
+    Reg#(Bool) branch_flush <- mkReg(False);      // 分支冲刷标志
+    Reg#(Bool) branch_flush_done <- mkReg(False); // 分支冲刷完成标志（阻止 IF 更新 PC）
+    Reg#(Bool) no_pc_update <- mkReg(False);      // 阻止 IF 更新 PC（用于 JAL 循环）
+
     // PC和状态
     Reg#(Addr) pcReg <- mkReg(32'h80000000);
     Reg#(Word) currentInstr <- mkReg(0);
     Reg#(ProcessorState) state <- mkReg(RUNNING);
     Reg#(Bool) programLoaded <- mkReg(False);
 
-    // 前递数据（MEM 用双缓冲：Reg + Reg，WB 用 Reg）
-    Reg#(Word) wb_forward_data <- mkReg(0);
-    Reg#(Bit#(5)) wb_forward_rd <- mkReg(0);
-    Reg#(Bool) wb_forward_valid <- mkReg(False);
+    // 前递数据（WB 前递使用双缓冲，保存最近两个 WB 写入）
+    Reg#(Word) wb_forward_data0 <- mkReg(0);  // 上一周期 WB 写入
+    Reg#(Bit#(5)) wb_forward_rd0 <- mkReg(0);
+    Reg#(Bool) wb_forward_valid0 <- mkReg(False);
+
+    Reg#(Word) wb_forward_data1 <- mkReg(0);  // 两周期前 WB 写入
+    Reg#(Bit#(5)) wb_forward_rd1 <- mkReg(0);
+    Reg#(Bool) wb_forward_valid1 <- mkReg(False);
 
     // 内存（保持原配置避免编译问题）
     Vector#(1024, Reg#(Word)) imem <- replicateM(mkReg(0));   // 4KB, 2^10 entries
@@ -64,7 +73,7 @@ module mkCore#(String firmwareFile)(Core);
     // IF阶段
     // ============================================================
 
-    rule fetchStage (programLoaded && state == RUNNING && !stall_load_use);
+    rule fetchStage (programLoaded && state == RUNNING && !stall_load_use && !branch_flush);
         Addr fetchPC = pcReg;
         Bool take_prediction = False;
         Addr prediction_target = 0;
@@ -90,10 +99,24 @@ module mkCore#(String firmwareFile)(Core);
 
         currentInstr <= instr;
         // 如果预测跳转，PC 更新为预测目标；否则顺序执行
-        if (take_prediction)
-            pcReg <= prediction_target;
-        else
-            pcReg <= pcReg + 4;
+        // 但如果刚完成分支冲刷或 no_pc_update，不更新 PC
+        if (!branch_flush_done && !no_pc_update) begin
+            if (take_prediction)
+                pcReg <= prediction_target;
+            else
+                pcReg <= pcReg + 4;
+        end
+    endrule
+
+    // 分支冲刷清除（branch_flush 持续一周期后自动清除）
+    rule clearBranchFlush (branch_flush);
+        branch_flush <= False;
+        branch_flush_done <= True;  // 设置完成标志，阻止 IF 更新 PC 一周期
+    endrule
+
+    // 分支冲刷完成标志清除
+    rule clearBranchFlushDone (branch_flush_done && !branch_flush);
+        branch_flush_done <= False;
     endrule
 
     // ============================================================
@@ -130,10 +153,14 @@ module mkCore#(String firmwareFile)(Core);
             Word rs2_val = regFile.read2(dec.rs2);
 
             // WB→ID 前递（WB 刚写入的数据同周期可用）
-            if (wb_forward_valid && wb_forward_rd == dec.rs1 && dec.rs1 != 0)
-                rs1_val = wb_forward_data;
-            if (wb_forward_valid && wb_forward_rd == dec.rs2 && dec.rs2 != 0)
-                rs2_val = wb_forward_data;
+            if (wb_forward_valid0 && wb_forward_rd0 == dec.rs1 && dec.rs1 != 0)
+                rs1_val = wb_forward_data0;
+            else if (wb_forward_valid1 && wb_forward_rd1 == dec.rs1 && dec.rs1 != 0)
+                rs1_val = wb_forward_data1;
+            if (wb_forward_valid0 && wb_forward_rd0 == dec.rs2 && dec.rs2 != 0)
+                rs2_val = wb_forward_data0;
+            else if (wb_forward_valid1 && wb_forward_rd1 == dec.rs2 && dec.rs2 != 0)
+                rs2_val = wb_forward_data1;
 
             id2ex.enq(ID_EX_Packet {
                 pc: pkt.pc,
@@ -169,22 +196,30 @@ module mkCore#(String firmwareFile)(Core);
     // EX阶段
     // ============================================================
 
-    rule executeStage (id2ex.notEmpty && ex2mem.notFull);
+    (* execution_order = "writebackStage, executeStage" *)
+    (* preempts = "executeStage, fetchStage" *)
+    rule executeStage (!stall_load_use && id2ex.notEmpty && ex2mem.notFull);
         ID_EX_Packet pkt = id2ex.first;
 
-        // 前递逻辑（直接从 FIFO 读取，绕过规则顺序限制）
+        // 前递逻辑
         Word op1 = pkt.rs1_val;
         Word op2 = pkt.rs2_val;
 
-        // 前递优先级：MEM→EX > WB→EX（MEM 更近）
-        // WB→EX 前递（使用 wb_forward_data Reg，上一周期 WB 写入）
-        if (wb_forward_valid && wb_forward_rd == pkt.rs1 && pkt.rs1 != 0)
-            op1 = wb_forward_data;
-        if (wb_forward_valid && wb_forward_rd == pkt.rs2 && pkt.rs2 != 0)
-            op2 = wb_forward_data;
+        // WB→EX 前递（直接读取 mem2wb.first，同周期可用）
+        if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs1 && pkt.rs1 != 0)
+            op1 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
+        else if (wb_forward_valid0 && wb_forward_rd0 == pkt.rs1 && pkt.rs1 != 0)
+            op1 = wb_forward_data0;
+        else if (wb_forward_valid1 && wb_forward_rd1 == pkt.rs1 && pkt.rs1 != 0)
+            op1 = wb_forward_data1;
+        if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs2 && pkt.rs2 != 0)
+            op2 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
+        else if (wb_forward_valid0 && wb_forward_rd0 == pkt.rs2 && pkt.rs2 != 0)
+            op2 = wb_forward_data0;
+        else if (wb_forward_valid1 && wb_forward_rd1 == pkt.rs2 && pkt.rs2 != 0)
+            op2 = wb_forward_data1;
 
-        // MEM→EX 前递（从 ex2mem FIFO 读取上一周期 EX 的输出）
-        // 覆盖 WB→EX（优先级更高）
+        // MEM→EX 前递（从 ex2mem FIFO 读取上一周期 EX 输出）
         if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs1 && pkt.rs1 != 0)
             op1 = ex2mem.first.alu_result;
         if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs2 && pkt.rs2 != 0)
@@ -199,7 +234,7 @@ module mkCore#(String firmwareFile)(Core);
             ALU_SUB:  begin alu_in1 = op1; alu_in2 = op2; end
             default:  begin
                 alu_in1 = op1;
-                alu_in2 = op2;
+                alu_in2 = pkt.use_imm ? pkt.imm : op2;  // I-Type 也需要使用立即数
             end
         endcase
 
@@ -240,13 +275,16 @@ module mkCore#(String firmwareFile)(Core);
 
         Bool is_load = (pkt.mem_op == MEM_READ);
 
-        // 分支/跳转执行：在 EX 阶段直接更新 PC 并冲刷流水线
+        // 分支/跳转执行
         if (branch_taken) begin
             pcReg <= actual_target;
+            branch_flush <= True;  // 设置冲刷标志，阻止下一周期 IF
+            no_pc_update <= True;  // 阻止 IF 更新 PC（直到非跳转指令）
             if2id.clear;
             id2ex.clear;
         end else begin
             id2ex.deq;  // 只有非分支时才 deq
+            no_pc_update <= False;  // 非跳转指令，允许 IF 更新 PC
         end
 
         ex2mem.enq(EX_MEM_Packet {
@@ -379,9 +417,14 @@ module mkCore#(String firmwareFile)(Core);
         end
 
         // WB 前递设置（Load 数据在此阶段可用）
-        wb_forward_data <= wb_data;
-        wb_forward_rd <= pkt.rd;
-        wb_forward_valid <= pkt.write_reg;
+        // 双缓冲更新：wb_forward_data1 ← wb_forward_data0 ← wb_data
+        wb_forward_data1 <= wb_forward_data0;
+        wb_forward_rd1 <= wb_forward_rd0;
+        wb_forward_valid1 <= wb_forward_valid0;
+
+        wb_forward_data0 <= wb_data;
+        wb_forward_rd0 <= pkt.rd;
+        wb_forward_valid0 <= pkt.write_reg;
     endrule
 
     // ============================================================
