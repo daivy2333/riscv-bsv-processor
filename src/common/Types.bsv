@@ -143,7 +143,9 @@ typedef struct {
     Bit#(5)     rd;
     MemOp       mem_op;
     Bool        is_branch;
+    Bool        is_jump;        // 是否是跳转指令(JAL/JALR)
     Bool        branch_taken;   // 分支是否命中（实际判断结果）
+    Addr        actual_target;  // 实际分支目标地址
     Bool        predicted_taken;// 分支预测结果
     Bool        write_reg;
     Bool        is_load;        // 是否是Load指令

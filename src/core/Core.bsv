@@ -46,16 +46,8 @@ module mkCore#(String firmwareFile)(Core);
     Reg#(ProcessorState) state <- mkReg(RUNNING);
     Reg#(Bool) programLoaded <- mkReg(False);
 
-    // 前递数据
-    Reg#(Word) ex_forward <- mkReg(0);
-    Reg#(Bit#(5)) ex_forward_rd <- mkReg(0);
-    Reg#(Bool) ex_forward_valid <- mkReg(False);
-
-    Reg#(Word) mem_forward <- mkReg(0);
-    Reg#(Bit#(5)) mem_forward_rd <- mkReg(0);
-    Reg#(Bool) mem_forward_valid <- mkReg(False);
-
-    Reg#(Word) wb_forward <- mkReg(0);
+    // 前递数据（MEM 用双缓冲：Reg + Reg，WB 用 Reg）
+    Reg#(Word) wb_forward_data <- mkReg(0);
     Reg#(Bit#(5)) wb_forward_rd <- mkReg(0);
     Reg#(Bool) wb_forward_valid <- mkReg(False);
 
@@ -137,6 +129,12 @@ module mkCore#(String firmwareFile)(Core);
             Word rs1_val = regFile.read1(dec.rs1);
             Word rs2_val = regFile.read2(dec.rs2);
 
+            // WB→ID 前递（WB 刚写入的数据同周期可用）
+            if (wb_forward_valid && wb_forward_rd == dec.rs1 && dec.rs1 != 0)
+                rs1_val = wb_forward_data;
+            if (wb_forward_valid && wb_forward_rd == dec.rs2 && dec.rs2 != 0)
+                rs2_val = wb_forward_data;
+
             id2ex.enq(ID_EX_Packet {
                 pc: pkt.pc,
                 instruction: pkt.instruction,
@@ -173,29 +171,25 @@ module mkCore#(String firmwareFile)(Core);
 
     rule executeStage;
         ID_EX_Packet pkt = id2ex.first;
+        id2ex.deq;
 
-        // 前递逻辑
+        // 前递逻辑（直接从 FIFO 读取，绕过规则顺序限制）
         Word op1 = pkt.rs1_val;
         Word op2 = pkt.rs2_val;
 
-        // EX→EX前递
-        if (ex_forward_valid && ex_forward_rd == pkt.rs1 && pkt.rs1 != 0)
-            op1 = ex_forward;
-        if (ex_forward_valid && ex_forward_rd == pkt.rs2 && pkt.rs2 != 0)
-            op2 = ex_forward;
+        // WB→EX 前递（从 mem2wb FIFO 读取当前 WB 阶段的数据）
+        // 注意：mem2wb.first 是当前 WB 阶段正在处理的指令
+        if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs1 && pkt.rs1 != 0)
+            op1 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
+        if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs2 && pkt.rs2 != 0)
+            op2 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
 
-        // MEM→EX 前递（注意：MEM 阶段的 Load 数据还未可用，不前递 Load 的 mem_data）
-        if (mem_forward_valid && mem_forward_rd == pkt.rs1 && pkt.rs1 != 0 && !ex2mem.first.is_load)
-            op1 = mem_forward;
-        if (mem_forward_valid && mem_forward_rd == pkt.rs2 && pkt.rs2 != 0 && !ex2mem.first.is_load)
-            op2 = mem_forward;
-
-        // WB→EX前递
-        // 注意：wb_forward 在 WB 阶段结束时更新，下一周期可用
-        if (wb_forward_valid && wb_forward_rd == pkt.rs1 && pkt.rs1 != 0)
-            op1 = wb_forward;
-        if (wb_forward_valid && wb_forward_rd == pkt.rs2 && pkt.rs2 != 0)
-            op2 = wb_forward;
+        // MEM→EX 前递（从 ex2mem FIFO 读取当前 MEM 阶段的数据）
+        // 注意：ex2mem.first 是当前 MEM 阶段正在处理的指令，Load 数据不可用
+        if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs1 && pkt.rs1 != 0)
+            op1 = ex2mem.first.alu_result;
+        if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs2 && pkt.rs2 != 0)
+            op2 = ex2mem.first.alu_result;
 
         // ALU输入选择
         Word alu_in1, alu_in2;
@@ -245,18 +239,11 @@ module mkCore#(String firmwareFile)(Core);
         if (pkt.is_branch)
             bht.update(pkt.pc, branch_taken);
 
-        // 跳转/分支实际执行：更新 PC 并冲刷流水线
-        if (branch_taken) begin
-            pcReg <= actual_target;
-            // 冲刷 IF 和 ID 阶段（清空 FIFO）
-            if2id.clear;
-            id2ex.clear;
-        end else begin
-            // 正常执行：取出指令
-            id2ex.deq;
-        end
-
         Bool is_load = (pkt.mem_op == MEM_READ);
+
+        // 分支/跳转执行：在 EX 阶段计算，但延迟到 MEM 阶段执行 PC 更新
+        // 注意：需要在 MEM 阶段执行冲刷，避免与 id2ex.deq 冲突
+
         ex2mem.enq(EX_MEM_Packet {
             pc: pkt.pc,
             alu_result: alu_result,
@@ -264,18 +251,15 @@ module mkCore#(String firmwareFile)(Core);
             rd: pkt.rd,
             mem_op: pkt.mem_op,
             is_branch: pkt.is_branch,
+            is_jump: pkt.is_jump,
             branch_taken: branch_taken,
+            actual_target: actual_target,
             predicted_taken: False,
             write_reg: pkt.write_reg,
             is_load: is_load,
             mem_width: pkt.mem_width,
             mem_unsigned: pkt.mem_unsigned
         });
-
-        // 前递设置
-        ex_forward <= alu_result;
-        ex_forward_rd <= pkt.rd;
-        ex_forward_valid <= pkt.write_reg;
     endrule
 
     // ============================================================
@@ -287,6 +271,14 @@ module mkCore#(String firmwareFile)(Core);
         ex2mem.deq;
 
         Word mem_data = 0;
+
+        // 分支/跳转执行：在 MEM 阶段更新 PC 并冲刷流水线
+        // 这避免了 EX 阶段的 deq/clear 冲突
+        if (pkt.is_jump || pkt.branch_taken) begin
+            pcReg <= pkt.actual_target;
+            if2id.clear;
+            id2ex.clear;
+        end
 
         // 对齐检查（阶段1仅打印警告）
         if (pkt.mem_op != MEM_NONE && !checkAlignment(pkt.alu_result, pkt.mem_width)) begin
@@ -373,11 +365,6 @@ module mkCore#(String firmwareFile)(Core);
             write_reg: pkt.write_reg,
             is_load: pkt.is_load
         });
-
-        // MEM 前递设置（Load 不在 MEM 前递，数据需要等 WB 阶段）
-        mem_forward <= pkt.alu_result;
-        mem_forward_rd <= pkt.rd;
-        mem_forward_valid <= pkt.write_reg && !pkt.is_load;
     endrule
 
     // ============================================================
@@ -395,7 +382,7 @@ module mkCore#(String firmwareFile)(Core);
         end
 
         // WB 前递设置（Load 数据在此阶段可用）
-        wb_forward <= wb_data;
+        wb_forward_data <= wb_data;
         wb_forward_rd <= pkt.rd;
         wb_forward_valid <= pkt.write_reg;
     endrule
