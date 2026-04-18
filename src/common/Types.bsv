@@ -278,4 +278,34 @@ function BHTState bhtUpdate(BHTState state, Bool taken);
     endcase
 endfunction
 
+// ============================================================
+// 内存请求/响应接口（用于 Core <-> SOC）
+// ============================================================
+
+typedef struct {
+    Bool        valid;
+    Addr        addr;
+    Word        wdata;      // 写数据
+    MemOp       op;         // READ/WRITE/NONE
+    MemWidth    width;      // BYTE/HALF/WORD
+    Bool        is_unsigned;   // 无符号扩展
+} MemReq deriving (Bits, Eq, FShow);
+
+typedef struct {
+    Bool        valid;
+    Word        rdata;      // 读数据（已按 width 扩展）
+} MemResp deriving (Bits, Eq, FShow);
+
+// nopMemReq: 生成空内存请求（用于无内存操作的指令）
+function MemReq nopMemReq();
+    return MemReq {
+        valid: False,
+        addr: 0,
+        wdata: 0,
+        op: MEM_NONE,
+        width: MEM_WORD,
+        is_unsigned: False
+    };
+endfunction
+
 endpackage
