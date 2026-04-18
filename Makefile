@@ -24,10 +24,10 @@ compile: $(BSV_SOURCES)
 	mkdir -p build
 	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) -bdir build -vdir build -u -g mkTestBench src/soc/TestBench.bsv +RTS -K128M -RTS
 
-# 编译汇编测试为二进制（禁用压缩指令）
+# 编译汇编测试为二进制（禁用压缩指令，启用zicsr）
 firmware/%.elf: tests/assembly/%.s scripts/link.ld
 	mkdir -p firmware
-	$(CC) -march=rv32i -mabi=ilp32 -nostdlib -T scripts/link.ld $< -o $@
+	$(CC) -march=rv32i_zicsr -mabi=ilp32 -nostdlib -T scripts/link.ld $< -o $@
 
 firmware/%.hex: firmware/%.elf
 	$(OBJCOPY) -O verilog $< $@
@@ -42,6 +42,7 @@ firmware/%.mem: firmware/%.elf
 verilate: compile
 	$(VERILATOR) --cc --exe --build -o VmkTestBench \
 		build/mkTestBench.v \
+		/opt/bsc/lib/Verilog/FIFO2.v \
 		tests/c/test_bench.cpp \
 		-Wno-STMTDLY -Wno-WIDTH
 

@@ -19,7 +19,7 @@ _start:
 
     # 写入 tohost
     li t0, 0x80001000
-    li t4, 4
+    li t4, 1
     sw t4, 0(t0)
 
 _inf_loop:
