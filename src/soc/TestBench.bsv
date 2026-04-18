@@ -33,8 +33,12 @@ module mkTestBench(TestBench);
     rule checkDone (programLoaded && !programDone);
         // 调试：每周期输出状态
         if (cycleCount < 30) begin
-            $display("Cycle %0d: PC=%h, t0=%0d, t1=%0d, t2=%0d, testDone=%b",
-                     cycleCount, core.pc, core.readReg(5), core.readReg(6), core.readReg(7), core.testDone);
+            $display("Cycle %0d: PC=%h, x10=%0d, wb_fwd0=%h(rd=%d,v=%b), wb_fwd1=%h(rd=%d,v=%b), testDone=%b",
+                     cycleCount, core.pc, core.readReg(10),
+                     core.readReg(31),  // 用 readReg 读取 wb_forward 值不准确，只作参考
+                     0, False,
+                     0, 0, False,
+                     core.testDone);
         end
         // tohost 写入检测（标准 riscv-tests）
         if (core.testDone) begin

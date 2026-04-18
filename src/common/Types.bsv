@@ -140,6 +140,8 @@ typedef struct {
     Bool        trap_is_interrupt; // 是否是中断
     Addr        trap_tval;      // 陷阱值
     Bit#(2)     trap_mode;      // 特权模式
+    Bool        predicted_taken; // 分支预测结果（从 IF_ID 传递）
+    Addr        predicted_target; // 预测目标地址（从 IF_ID 传递）
 } ID_EX_Packet deriving (Bits, Eq, FShow);
 
 // EX → MEM 阶段数据包

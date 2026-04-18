@@ -85,13 +85,16 @@ module mkCore#(String firmwareFile)(Core);
         Bool take_prediction = False;
         Addr prediction_target = 0;
 
-        Maybe#(Addr) btb_hit = btb.lookup(fetchPC);
-        Bool bht_predict = bht.predict(fetchPC);
+        // 只有在非冲刷恢复期间才应用分支预测
+        // 预测只影响下一周期的 PC，不影响当前取指地址
+        if (!branch_flush_done && !no_pc_update) begin
+            Maybe#(Addr) btb_hit = btb.lookup(fetchPC);
+            Bool bht_predict = bht.predict(fetchPC);
 
-        if (btb_hit matches tagged Valid .target &&& bht_predict) begin
-            take_prediction = True;
-            prediction_target = target;
-            fetchPC = target;
+            if (btb_hit matches tagged Valid .target &&& bht_predict) begin
+                take_prediction = True;
+                prediction_target = target;
+            end
         end
 
         Bit#(10) idx = fetchPC[11:2];  // 10 位索引
@@ -106,8 +109,7 @@ module mkCore#(String firmwareFile)(Core);
         });
 
         currentInstr <= instr;
-        // 如果预测跳转，PC 更新为预测目标；否则顺序执行
-        // 但如果刚完成分支冲刷或 no_pc_update，不更新 PC
+        // PC 更新：如果预测跳转，下一周期从预测目标取指；否则顺序执行
         if (!branch_flush_done && !no_pc_update) begin
             if (take_prediction)
                 pcReg <= prediction_target;
@@ -230,7 +232,9 @@ module mkCore#(String firmwareFile)(Core);
                 trap_cause: trap_cause,
                 trap_is_interrupt: trap_is_interrupt,
                 trap_tval: trap_tval,
-                trap_mode: trap_mode
+                trap_mode: trap_mode,
+                predicted_taken: pkt.predicted_taken,
+                predicted_target: pkt.predicted_pc
             });
         end
     endrule
@@ -255,29 +259,28 @@ module mkCore#(String firmwareFile)(Core);
     rule executeStage (!stall_load_use && id2ex.notEmpty && ex2mem.notFull);
         ID_EX_Packet pkt = id2ex.first;
 
-        // 前递逻辑
+        // 前递逻辑 - 按优先级顺序检查
         Word op1 = pkt.rs1_val;
         Word op2 = pkt.rs2_val;
 
-        // WB→EX 前递（直接读取 mem2wb.first，同周期可用）
-        if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs1 && pkt.rs1 != 0)
+        // MEM→EX 前递（最高优先级）
+        if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs1 && pkt.rs1 != 0)
+            op1 = ex2mem.first.alu_result;
+        else if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs1 && pkt.rs1 != 0)
             op1 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
         else if (wb_forward_valid0 && wb_forward_rd0 == pkt.rs1 && pkt.rs1 != 0)
             op1 = wb_forward_data0;
         else if (wb_forward_valid1 && wb_forward_rd1 == pkt.rs1 && pkt.rs1 != 0)
             op1 = wb_forward_data1;
-        if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs2 && pkt.rs2 != 0)
+
+        if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs2 && pkt.rs2 != 0)
+            op2 = ex2mem.first.alu_result;
+        else if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs2 && pkt.rs2 != 0)
             op2 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
         else if (wb_forward_valid0 && wb_forward_rd0 == pkt.rs2 && pkt.rs2 != 0)
             op2 = wb_forward_data0;
         else if (wb_forward_valid1 && wb_forward_rd1 == pkt.rs2 && pkt.rs2 != 0)
             op2 = wb_forward_data1;
-
-        // MEM→EX 前递（从 ex2mem FIFO 读取上一周期 EX 输出）
-        if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs1 && pkt.rs1 != 0)
-            op1 = ex2mem.first.alu_result;
-        if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs2 && pkt.rs2 != 0)
-            op2 = ex2mem.first.alu_result;
 
         // ALU输入选择
         Word alu_in1, alu_in2;
@@ -390,13 +393,24 @@ module mkCore#(String firmwareFile)(Core);
                 id2ex.clear;
             end else begin
                 // 正常分支/跳转执行
+                Bool mispredicted = pkt.is_branch && (pkt.predicted_taken != branch_taken);
+
                 if (branch_taken) begin
+                    // Branch/jump taken - go to target
                     pcReg <= actual_target;
                     branch_flush <= True;
                     no_pc_update <= True;
                     if2id.clear;
                     id2ex.clear;
+                end else if (mispredicted) begin
+                    // Prediction said taken but branch is not taken - redirect to sequential
+                    pcReg <= pkt.pc + 4;
+                    branch_flush <= True;
+                    no_pc_update <= True;
+                    if2id.clear;
+                    id2ex.clear;
                 end else begin
+                    // Normal execution, no misprediction
                     id2ex.deq;
                     no_pc_update <= False;
                 end
@@ -412,7 +426,7 @@ module mkCore#(String firmwareFile)(Core);
                     is_jump: pkt.is_jump,
                     branch_taken: branch_taken,
                     actual_target: actual_target,
-                    predicted_taken: False,
+                    predicted_taken: pkt.predicted_taken,
                     write_reg: pkt.write_reg,
                     is_load: is_load,
                     mem_width: pkt.mem_width,
@@ -612,7 +626,9 @@ function ID_EX_Packet nopPacket();
         trap_cause: 0,
         trap_is_interrupt: False,
         trap_tval: 0,
-        trap_mode: 0
+        trap_mode: 0,
+        predicted_taken: False,
+        predicted_target: 0
     };
 endfunction
 
