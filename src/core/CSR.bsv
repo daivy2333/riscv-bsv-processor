@@ -21,6 +21,7 @@ interface CSRs;
     method Action setMSIP(Bool v);
     method Action setMTIP(Bool v);
     method Action incrementCycle;
+    method Action incrementMinstret;
 endinterface
 
 // Helper function: check if CSR is read-only
@@ -262,6 +263,10 @@ module mkCSR(CSRs);
 
     method Action incrementCycle;
         mcycle <= mcycle + 1;
+    endmethod
+
+    method Action incrementMinstret;
+        minstret <= minstret + 1;
     endmethod
 endmodule
 
