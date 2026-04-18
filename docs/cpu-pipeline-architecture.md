@@ -82,6 +82,8 @@ classDiagram
         +Bool is_jump
         +Bool write_reg
         +Bool use_imm
+        +MemWidth mem_width
+        +Bool mem_unsigned
     }
 
     class EX_MEM_Packet {
@@ -91,10 +93,14 @@ classDiagram
         +Bit5 rd
         +MemOp mem_op
         +Bool is_branch
+        +Bool is_jump
         +Bool branch_taken
         +Bool predicted_taken
+        +Addr actual_target
         +Bool write_reg
         +Bool is_load
+        +MemWidth mem_width
+        +Bool mem_unsigned
     }
 
     class MEM_WB_Packet {
@@ -110,6 +116,10 @@ classDiagram
     ID_EX_Packet --> EX_MEM_Packet : EX阶段转换
     EX_MEM_Packet --> MEM_WB_Packet : MEM阶段转换
 ```
+
+**更新说明**：
+- EX_MEM_Packet 新增 `is_jump` 和 `actual_target` 字段
+- ID_EX_Packet 新增 `mem_width` 和 `mem_unsigned` 字段
 
 ## 3. 指令类型与解码结果
 

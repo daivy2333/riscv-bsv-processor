@@ -6,24 +6,26 @@
 
 ```mermaid
 flowchart TB
-    subgraph Rules["五大调度规则"]
+    subgraph Rules["七大调度规则"]
         R1["fetchStage<br/>IF 阶段"]
         R2["decodeStage<br/>ID 阶段"]
-        R3["insertBubble<br/>气泡插入"]
+        R3["decrementStall<br/>stall 计数递减"]
         R4["executeStage<br/>EX 阶段"]
         R5["memoryStage<br/>MEM 阶段"]
         R6["writebackStage<br/>WB 阶段"]
-        R7["clearLoadUseStall<br/>清除停顿"]
+        R7["clearBranchFlush<br/>清除分支冲刷"]
+        R8["clearBranchFlushDone"]
     end
 
     subgraph Conditions["执行条件"]
-        C1["programLoaded && RUNNING<br/>&& !stall_load_use"]
-        C2["!stall_load_use && !bubble_pending"]
-        C3["bubble_pending && !stall_load_use"]
-        C4["!stall_load_use"]
+        C1["!stall && !branch_flush"]
+        C2["!stall"]
+        C3["stall && count > 0"]
+        C4["!stall && id2ex.notEmpty"]
         C5["无条件"]
         C6["无条件"]
-        C7["stall_load_use"]
+        C7["branch_flush"]
+        C8["branch_flush_done && !branch_flush"]
     end
 
     R1 --> C1
@@ -33,360 +35,276 @@ flowchart TB
     R5 --> C5
     R6 --> C6
     R7 --> C7
+    R8 --> C8
 ```
 
 ## 2. 规则执行顺序
 
-BSV 编译器会自动分析规则之间的依赖关系并确定执行顺序：
+BSV 编译器使用 `execution_order` 和 `preempts` 注解控制规则执行顺序：
 
 ```mermaid
 flowchart LR
-    subgraph NormalFlow["正常流水线流动"]
-        Fetch[fetchStage] --> Decode[decodeStage] --> Execute[executeStage] --> Memory[memoryStage] --> Writeback[writebackStage]
+    subgraph Annotations["BSV 调度注解"]
+        ExecOrder["execution_order:<br/>writebackStage, executeStage"]
+        Preempts["preempts:<br/>executeStage, fetchStage"]
     end
 
-    subgraph StallFlow["停顿时的执行"]
-        Clear[clearLoadUseStall] -->|"清除 stall"| NextCycle[下个周期]
-        Bubble[insertBubble] -->|"插入 NOP"| Execute
+    subgraph Order["执行顺序"]
+        WB["writebackStage (最先)"]
+        EX["executeStage"]
+        MEM["memoryStage"]
+        ID["decodeStage"]
+        IF["fetchStage (最后)"]
+        Flush["clearBranchFlush"]
     end
 
-    subgraph Conflict["规则冲突"]
-        Note["decodeStage 和 insertBubble<br/>可能同时触发"]
-        Resolve["条件互斥：<br/>decode: !bubble_pending<br/>insert: bubble_pending"]
-    end
+    WB --> EX
+    EX --> MEM
+    MEM --> ID
+    ID --> IF
+    IF -.-> Flush
 ```
 
-### 规则优先级（由 BSC 编译器确定）
-
-```mermaid
-flowchart TB
-    Level1["Level 1: 最高优先级"]
-    Level2["Level 2: 第二优先级"]
-    Level3["Level 3: 第三优先级"]
-    Level4["Level 4: 第四优先级"]
-
-    writebackStage --> Level1
-    memoryStage --> Level2
-    executeStage --> Level3
-    decodeStage --> Level4
-    insertBubble --> Level4
-    fetchStage --> Level4
-
-    note right of Level1
-        WB 优先：释放 mem2wb FIFO
-        为 MEM 阶段腾出空间
-    end note
-
-    note right of Level2
-        MEM 优先：释放 ex2mem FIFO
-        为 EX 阶段腾出空间
-    end note
-
-    note right of Level3
-        EX 优先：释放 id2ex FIFO
-        为 ID 阶段腾出空间
-    end note
-
-    note right of Level4
-        IF/ID 最后执行
-        insertBubble 与 decodeStage
-        条件互斥
-    end note
-```
+**关键设计**：
+- `execution_order`：writebackStage 先于 executeStage
+- `preempts`：executeStage 抢占 fetchStage，防止同时更新 PC
+- `clearBranchFlush`：在 fetchStage 之后执行
 
 ## 3. FIFO 流动图
 
 ```mermaid
 flowchart LR
-    subgraph FIFOs["流水线 FIFO"]
-        IF_ID["if2id<br/>FIFO#IF_ID_Packet"]
-        ID_EX["id2ex<br/>FIFO#ID_EX_Packet"]
-        EX_MEM["ex2mem<br/>FIFO#EX_MEM_Packet"]
-        MEM_WB["mem2wb<br/>FIFO#MEM_WB_Packet"]
+    subgraph FIFOs["流水线 FIFOF"]
+        IF_ID["if2id<br/>FIFOF#IF_ID_Packet"]
+        ID_EX["id2ex<br/>FIFOF#ID_EX_Packet"]
+        EX_MEM["ex2mem<br/>FIFOF#EX_MEM_Packet"]
+        MEM_WB["mem2wb<br/>FIFOF#MEM_WB_Packet"]
     end
 
     subgraph Operations["操作"]
         Enq["enq (入队)"]
         Deq["deq (出队)"]
         First["first (读取)"]
+        Clear["clear (清空)"]
     end
 
     fetchStage -->|"enq"| IF_ID
     decodeStage -->|"first, deq"| IF_ID
     decodeStage -->|"enq"| ID_EX
-    executeStage -->|"first, deq"| ID_EX
+    executeStage -->|"first, deq/clear"| ID_EX
     executeStage -->|"enq"| EX_MEM
     memoryStage -->|"first, deq"| EX_MEM
     memoryStage -->|"enq"| MEM_WB
     writebackStage -->|"first, deq"| MEM_WB
 
-    insertBubble -->|"enq"| ID_EX
+    decrementStall -->|"enq"| ID_EX
 ```
 
-## 4. 冒险处理时序详解
+## 4. 分支冲刷控制
+
+分支跳转时需要冲刷流水线中的错误指令：
+
+```mermaid
+flowchart TB
+    subgraph BranchFlush["分支冲刷流程"]
+        Detect["executeStage 检测到 branch_taken"]
+        SetFlags["设置标志"]
+        Clear["清空 FIFO"]
+        Update["更新 PC"]
+    end
+
+    subgraph Flags["控制标志"]
+        BF["branch_flush<br/>阻止 IF 执行一周期"]
+        BFD["branch_flush_done<br/>阻止 IF 更新 PC"]
+        NPU["no_pc_update<br/>阻止 IF PC+4"]
+    end
+
+    Detect --> SetFlags
+    SetFlags -->|"branch_flush=True"| Clear
+    SetFlags -->|"branch_flush_done=True"| Update
+    SetFlags -->|"no_pc_update=True"| Update
+    Clear -->|"if2id.clear"| FlushIF
+    Clear -->|"id2ex.clear"| FlushID
+```
+
+### 分支冲刷时序
 
 ```mermaid
 sequenceDiagram
     participant IF as fetchStage
     participant ID as decodeStage
-    participant Bubble as insertBubble
     participant EX as executeStage
-    participant Clear as clearLoadUseStall
+    participant Flush as clearBranchFlush
+
+    Note over EX: 周期 N: 分支跳转执行
+    EX->>EX: branch_taken = True
+    EX->>EX: pcReg <= actual_target
+    EX->>EX: branch_flush <= True
+    EX->>EX: no_pc_update <= True
+    EX->>IF: if2id.clear
+    EX->>ID: id2ex.clear
+
+    Note over IF: 周期 N: fetchStage 不执行
+    Note over Flush: 周期 N: clearBranchFlush 执行
+    Flush->>Flush: branch_flush <= False
+    Flush->>Flush: branch_flush_done <= True
+
+    Note over IF: 周期 N+1: fetchStage 不更新 PC
+    Note over Flush: 周期 N+1: clearBranchFlushDone 执行
+    Flush->>Flush: branch_flush_done <= False
+```
+
+## 5. Load-Use 停顿时序
+
+```mermaid
+sequenceDiagram
+    participant IF as fetchStage
+    participant ID as decodeStage
+    participant EX as executeStage
+    participant Stall as decrementStall
     participant MEM as memoryStage
     participant WB as writebackStage
 
-    Note over IF, ID: 周期 N: 检测到 Load-Use 冒险
-    ID->>ID: load_use_hazard = True
+    Note over ID: 周期 N: 检测到 Load-Use
     ID->>ID: stall_load_use = True
-    ID->>ID: bubble_pending = True
-    Note over ID: decodeStage 不执行 (条件 !stall)
+    ID->>ID: stall_count = 2
+    ID->>EX: 插入 NOP
 
-    Note over IF: fetchStage 不执行 (条件 !stall)
-    Note over EX, MEM, WB: 后续阶段正常执行
+    Note over IF: fetchStage 不执行
+    Note over Stall: 周期 N: stall_count = 2
 
-    Note over Clear: 周期 N 结束时执行
-    Clear->>Clear: stall_load_use = False
+    Note over Stall: 周期 N+1: stall_count = 1
+    Stall->>Stall: stall_count--
+    Stall->>EX: 插入 NOP
 
-    Note over IF, ID: 周期 N+1: 停顿解除
-    Note over IF: fetchStage 仍暂停 (刚清除)
-    Note over Bubble: insertBubble 执行
-    Bubble->>EX: enq NOP 到 id2ex
-    Bubble->>Bubble: bubble_pending = False
+    Note over Stall: 周期 N+2: stall_count = 0
+    Stall->>Stall: stall_count--
+    Stall->>Stall: stall_load_use = False
 
-    Note over ID: decodeStage 可执行
-    ID->>ID: 正常解码，enq 到 id2ex
-
-    Note over EX: 周期 N+2
-    Note over EX: NOP 在 EX 阶段执行
-    Note over EX: 依赖指令进入 EX
+    Note over WB: Load 数据写回
+    WB->>EX: WB→EX 前递可用
 ```
 
-## 5. 规则冲突与解决
+## 6. 规则调度矩阵
 
-### decodeStage vs insertBubble
+| 规则 | 执行条件 | 操作的 FIFOF | 关键功能 |
+|------|----------|--------------|----------|
+| writebackStage | 无条件 | mem2wb (deq) | 释放 WB，更新双缓冲 |
+| memoryStage | 无条件 | ex2mem (deq), mem2wb (enq) | 内存访问 |
+| executeStage | !stall && id2ex.notEmpty | id2ex (deq/clear), ex2mem (enq) | 执行分支/ALU，前递 |
+| decodeStage | !stall | if2id (deq), id2ex (enq) | 解码，冒险检测 |
+| decrementStall | stall && count > 0 | id2ex (enq) | stall 递减，插入 NOP |
+| clearBranchFlush | branch_flush | - | 清除 branch_flush |
+| fetchStage | !stall && !branch_flush | if2id (enq) | 取指，预测 |
+
+## 7. preempts 机制
 
 ```mermaid
 flowchart TB
     subgraph Conflict["潜在冲突"]
-        Decode["decodeStage<br/>条件: !stall && !bubble_pending"]
-        Bubble["insertBubble<br/>条件: bubble_pending && !stall"]
-        Shared["共享资源: id2ex FIFO"]
+        Execute["executeStage<br/>更新 PC"]
+        Fetch["fetchStage<br/>更新 PC+4"]
+        Shared["共享资源: pcReg"]
     end
 
-    Decode -->|"需要 enq"| Shared
-    Bubble -->|"需要 enq"| Shared
+    Execute -.-> Shared
+    Fetch -.-> Shared
 
-    subgraph Resolution["BSV 解决方案"]
-        Mutual["条件互斥"]
-        Note["同一周期内只有一个规则执行"]
-
-        Decode -->|"条件设置"| Mutual
-        Bubble -->|"条件设置"| Mutual
+    subgraph Resolution["preempts 解决"]
+        Preempt["preempts = executeStage, fetchStage"]
+        Result["executeStage 抢占<br/>fetchStage 不执行"]
     end
 
-    Mutual -->|"保证"| Safe["无冲突执行"]
+    Preempt --> Result
 ```
 
-**关键设计**：
-- `decodeStage` 条件：`!stall_load_use && !bubble_pending`
-- `insertBubble` 条件：`bubble_pending && !stall_load_use`
-- 两个条件互斥，BSV 编译器能正确调度
+**关键点**：
+- `executeStage` 抢占 `fetchStage`
+- 当 `executeStage` 执行时，`fetchStage` 不会同时执行
+- 防止 PC 被两个规则同时更新
 
-### fetchStage 停顿机制
+## 8. 代码实现对照
 
-```mermaid
-flowchart TB
-    subgraph Normal["正常执行"]
-        Fetch1[fetchStage 执行]
-        Fetch1 -->|"enq"| IF_ID_FIFO[if2id FIFO]
-    end
-
-    subgraph Stalled["停顿状态"]
-        Stall[stall_load_use = True]
-        Fetch2[fetchStage 不执行]
-        Note1[IF_ID FIFO 保留旧数据]
-
-        Stall -->|"条件 !stall"| Fetch2
-        Fetch2 --> Note1
-    end
-
-    subgraph AfterStall["停顿后"]
-        Clear[stall_load_use = False]
-        Fetch3[fetchStage 恢复执行]
-        Note2[正常取指继续]
-
-        Clear --> Fetch3
-        Fetch3 --> Note2
-    end
-```
-
-## 6. 完整周期执行流程
-
-```mermaid
-flowchart TB
-    Start[时钟周期开始] --> CheckWB{mem2wb<br/>notEmpty?}
-    CheckWB -->|是| WB_Execute[writebackStage 执行]
-    CheckWB -->|否| CheckMEM
-
-    WB_Execute --> CheckMEM
-
-    CheckMEM{ex2mem<br/>notEmpty?}
-    CheckMEM -->|是| MEM_Execute[memoryStage 执行]
-    CheckMEM -->|否| CheckEX
-
-    MEM_Execute --> CheckEX
-
-    CheckEX{id2ex<br/>notEmpty?}
-    CheckEX -->|是| EX_Execute[executeStage 执行]
-    CheckEX -->|否| CheckID
-
-    EX_Execute --> CheckID
-
-    CheckID{条件判断}
-    CheckID -->|"!stall && !bubble"| Decode_Execute[decodeStage 执行]
-    CheckID -->|"bubble && !stall"| Bubble_Execute[insertBubble 执行]
-    CheckID -->|"stall"| Skip_ID[ID 阶段跳过]
-
-    Decode_Execute --> CheckIF
-    Bubble_Execute --> CheckIF
-    Skip_ID --> CheckIF
-
-    CheckIF{条件判断}
-    CheckIF -->|"!stall"| IF_Execute[fetchStage 执行]
-    CheckIF -->|"stall"| Skip_IF[IF 阶段跳过]
-
-    IF_Execute --> ClearCheck
-    Skip_IF --> ClearCheck
-
-    ClearCheck{stall_load_use?}
-    ClearCheck -->|是| Clear_Execute[clearLoadUseStall 执行]
-    ClearCheck -->|否| End
-
-    Clear_Execute --> End[时钟周期结束]
-```
-
-## 7. 规则调度矩阵
-
-| 规则 | 执行条件 | 操作的 FIFO | 前置依赖 | 后续影响 |
-|------|----------|--------------|----------|----------|
-| writebackStage | 无条件 | mem2wb (deq) | memoryStage | 释放 WB→前递 |
-| memoryStage | 无条件 | ex2mem (deq), mem2wb (enq) | executeStage | 为 WB 准备数据 |
-| executeStage | !stall | id2ex (deq), ex2mem (enq) | decodeStage | 为 MEM 准备数据 |
-| decodeStage | !stall && !bubble | if2id (deq), id2ex (enq) | fetchStage | 为 EX 准备数据 |
-| insertBubble | bubble && !stall | id2ex (enq) | - | 插入 NOP |
-| fetchStage | !stall | if2id (enq) | - | 为 ID 准备数据 |
-| clearLoadUseStall | stall | - | - | 清除停顿标志 |
-
-## 8. BSV 调度保证
-
-```mermaid
-flowchart TB
-    subgraph BSV_Scheduler["BSV 编译器调度"]
-        Analysis["规则依赖分析"]
-        Ordering["确定执行顺序"]
-        Atomic["原子性保证"]
-        Conflict["冲突检测"]
-    end
-
-    subgraph Guarantees["调度保证"]
-        G1["同一周期内<br/>规则按顺序执行"]
-        G2["FIFO 操作<br/>不会阻塞"]
-        G3["条件互斥<br/>防止冲突"]
-        G4["状态更新<br/>在周期结束时生效"]
-    end
-
-    Analysis --> Ordering
-    Ordering --> G1
-    Analysis --> Atomic
-    Atomic --> G2
-    Analysis --> Conflict
-    Conflict --> G3
-    Ordering --> G4
-
-    note right of Guarantees
-        BSV 的调度器确保：
-        1. 无死锁
-        2. 无竞争条件
-        3. 确定性执行
-        4. 高效硬件实现
-    end note
-```
-
-## 9. 关键代码片段
-
-### fetchStage 规则
+### fetchStage
 
 ```bsv
-rule fetchStage (programLoaded && state == RUNNING && !stall_load_use);
-    // 条件: 程序已加载、处理器运行、无停顿
-    // ...
+(* preempts = "executeStage, fetchStage" *)
+rule fetchStage (programLoaded && state == RUNNING && !stall_load_use && !branch_flush);
+    Addr fetchPC = pcReg;
+    // ... BTB/BHT 预测 ...
+
     if2id.enq(IF_ID_Packet { ... });
-    pcReg <= pcReg + 4;
-endrule
-```
 
-### decodeStage 规则
-
-```bsv
-rule decodeStage (!stall_load_use && !bubble_pending);
-    // 条件: 无停顿、无待插入气泡
-    // 与 insertBubble 条件互斥
-    // ...
-    if (load_use_hazard) begin
-        stall_load_use <= True;
-        bubble_pending <= True;
-        // 不 deq if2id
-    end else begin
-        if2id.deq;
-        id2ex.enq(ID_EX_Packet { ... });
+    // 只在 branch_flush_done 和 no_pc_update 为 False 时更新 PC
+    if (!branch_flush_done && !no_pc_update) begin
+        if (take_prediction)
+            pcReg <= prediction_target;
+        else
+            pcReg <= pcReg + 4;
     end
 endrule
 ```
 
-### insertBubble 规则
+### executeStage
 
 ```bsv
-rule insertBubble (bubble_pending && !stall_load_use);
-    // 条件: 有待插入气泡、无停顿
-    // 与 decodeStage 条件互斥
+(* execution_order = "writebackStage, executeStage" *)
+(* preempts = "executeStage, fetchStage" *)
+rule executeStage (!stall_load_use && id2ex.notEmpty && ex2mem.notFull);
+    // ... 前递逻辑 ...
+
+    if (branch_taken) begin
+        pcReg <= actual_target;
+        branch_flush <= True;
+        no_pc_update <= True;
+        if2id.clear;
+        id2ex.clear;
+    end else begin
+        id2ex.deq;
+        no_pc_update <= False;
+    end
+endrule
+```
+
+### decrementStall
+
+```bsv
+rule decrementStall (stall_load_use && stall_count > 0);
+    Bit#(2) new_count = stall_count - 1;
+    stall_count <= new_count;
+    if (new_count == 0) begin
+        stall_load_use <= False;
+    end
     id2ex.enq(nopPacket());
-    bubble_pending <= False;
 endrule
 ```
 
-### clearLoadUseStall 规则
-
-```bsv
-rule clearLoadUseStall (stall_load_use);
-    // 条件: 处于停顿状态
-    // 在周期结束时执行，清除标志
-    stall_load_use <= False;
-endrule
-```
-
-## 10. 设计要点总结
+## 9. 设计要点总结
 
 ```mermaid
 mindmap
   root((流水线调度))
     规则设计
+      preempts 注解
+        executeStage 抢占 fetchStage
+      execution_order 注解
+        writebackStage 先于 executeStage
       条件互斥
-        decodeStage vs insertBubble
-        fetchStage 停顿条件
-      FIFO 流动
-        顺序 enq/deq
-        first 用于读取
+        branch_flush 控制 IF
+        no_pc_update 控制 PC+4
+    FIFO 流动
+      FIFOF 深度2
+      支持 stall 时 enq
+      clear vs deq
     冒险处理
       Load-Use 停顿
-        stall_load_use 标志
-        bubble_pending 标志
-        两周期恢复
+        stall_count 递减
+        2周期延迟
+      分支冲刷
+        branch_flush 标志
+        no_pc_update 标志
     BSV 保证
       原子性
       确定性
       无死锁
-    性能考虑
-      规则优先级
-      FIFO 深度
-      资源利用率
 ```

@@ -336,8 +336,8 @@ flowchart TB
 ### IF 阶段预测查询
 
 ```bsv
-// Core.bsv:69-80
-rule fetchStage (programLoaded && state == RUNNING && !stall_load_use);
+// Core.bsv:75-103
+rule fetchStage (programLoaded && state == RUNNING && !stall_load_use && !branch_flush);
     Addr fetchPC = pcReg;
     Bool take_prediction = False;
     Addr prediction_target = 0;
@@ -357,15 +357,28 @@ endrule
 ### EX 阶段更新
 
 ```bsv
-// Core.bsv:239-243
+// Core.bsv:251-268
 // 更新BHT和BTB
 Bool btb_update_valid = (pkt.is_jump) || (pkt.is_branch && branch_taken);
 btb.update(pkt.pc, actual_target, btb_update_valid);
 if (pkt.is_branch)
     bht.update(pkt.pc, branch_taken);
+
+// 分支/跳转执行
+if (branch_taken) begin
+    pcReg <= actual_target;
+    branch_flush <= True;
+    no_pc_update <= True;
+    if2id.clear;
+    id2ex.clear;
+end
 ```
 
 **更新策略**：
 - JAL/JALR：总是跳转，更新 BTB
 - 条件分支：仅在实际跳转时更新 BTB
 - BHT 仅对条件分支更新（JAL 不需要历史预测）
+
+**分支冲刷**：
+- 分支跳转时设置 `branch_flush` 和 `no_pc_update` 标志
+- 阻止 IF 阶段在跳转后继续取指

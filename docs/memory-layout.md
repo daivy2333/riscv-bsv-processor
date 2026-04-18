@@ -374,23 +374,22 @@ stateDiagram-v2
 timeline
     title RISC-V 处理器扩展路线
 
-    section 阶段1 (当前)
-        五级流水线 : 基本指令集
-        数据前递 : 分支预测
-        Load-Use 冒险处理
+    section 阶段2 (已完成)
+        五级流水线 : 完成
+        数据前递 : 双缓冲完成
+        分支预测 : branch_flush 控制
+        R-Type 指令 : 全部验证
+        I-Type ALU : 全部验证
 
-    section 阶段2 (近期)
-        LB/LH/LBU/LHU : SB/SH
-        内存扩展 64KB : RISC-V 官方测试
-
-    section 阶段3-4 (中期)
+    section 阶段3-4 (近期)
         特权级 M/S/U : CSR 寄存器
         异常/中断 : Timer 中断
+        RISC-V 官方测试
 
-    section 阶段5-8 (长期)
+    section 阶段5+ (长期)
         CLINT 定时器 : PLIC 中断控制器
-        UART 控制台 : 内存扩展 16MB
-        FreeRTOS/uClinux : 首次启动 OS
+        UART 控制台 : 内存扩展
+        FreeRTOS/uClinux : OS 支持
 ```
 
 ## 10. 目录结构

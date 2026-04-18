@@ -9,19 +9,18 @@ flowchart TB
     subgraph Pipeline["五级流水线"]
         IF[IF 阶段]
         ID[ID 阶段<br/>⚠️ 冒险检测点]
-        EX[EX 阶段]
+        EX[EX 阶段<br/>Load 进入]
         MEM[MEM 阶段<br/>Load 数据读取]
         WB[WB 阶段<br/>Load 数据可用]
         IF --> ID --> EX --> MEM --> WB
     end
 
     subgraph HazardDetection["冒险检测逻辑"]
-        CheckLoad{EX/MEM 阶段<br/>有 Load 指令?}
+        CheckLoad{EX 阶段<br/>id2ex 有 Load?}
         CheckRs1{ID 阶段<br/>使用 Load 的 rd?}
         CheckRs2{ID 阶段<br/>使用 Load 的 rd?}
 
-        EX -->|"ex2mem.first"| CheckLoad
-        MEM -->|"ex2mem.first"| CheckLoad
+        EX -->|"id2ex.first"| CheckLoad
         ID -->|"if2id.first"| CheckRs1
         ID -->|"if2id.first"| CheckRs2
 
@@ -33,9 +32,11 @@ flowchart TB
     end
 
     Hazard --> Stall[停顿 ID 阶段]
-    Hazard --> Bubble[插入气泡到 EX]
+    Hazard --> Bubble[插入气泡到 id2ex]
     NoHazard --> Normal[正常执行]
 ```
+
+**注意**：当前实现只检查 EX 阶段 (id2ex) 的 Load，因为 Load 在 EX 阶段刚进入流水线时就需要检测。
 
 ## 2. 冒险检测详细逻辑
 
@@ -45,30 +46,16 @@ flowchart TB
     GetPkt --> Decode["解码得到 DecodedInstr"]
     Decode --> CheckEX{"检查 id2ex<br/>是否有 Load?"}
 
-    CheckEX -->|"mem_op == MEM_READ<br/>& rd != 0"| CheckEXRs1
-    CheckEX -->|否| CheckMEM
+    CheckEX -->|"mem_op == MEM_READ<br/>& rd != 0"| CheckRs1
+    CheckEX -->|否| NoHazard["无冒险"]
 
-    CheckEXRs1{"use_rs1 &&<br/>rs1 == ex_rd?"}
-    CheckEXRs1 -->|是| SetHazard1["load_use_hazard = True"]
-    CheckEXRs1 -->|否| CheckEXRs2{"use_rs2 &&<br/>rs2 == ex_rd?"}
-    CheckEXRs2 -->|是| SetHazard1
-    CheckEXRs2 -->|否| CheckMEM
+    CheckRs1{"use_rs1 &&<br/>rs1 == ex_rd?"}
+    CheckRs1 -->|是| SetHazard["load_use_hazard = True"]
+    CheckRs1 -->|否| CheckRs2{"use_rs2 &&<br/>rs2 == ex_rd?"}
+    CheckRs2 -->|是| SetHazard
+    CheckRs2 -->|否| NoHazard
 
-    CheckMEM{"检查 ex2mem<br/>是否有 Load?"}
-    CheckMEM -->|"is_load && rd != 0"| CheckMEMRs1
-    CheckMEM -->|否| NoHazard["无冒险"]
-
-    CheckMEMRs1{"use_rs1 &&<br/>rs1 == mem_rd?"}
-    CheckMEMRs1 -->|是| SetHazard2["load_use_hazard = True"]
-    CheckMEMRs1 -->|否| CheckMEMRs2{"use_rs2 &&<br/>rs2 == mem_rd?"}
-    CheckMEMRs2 -->|是| SetHazard2
-    CheckMEMRs2 -->|否| NoHazard
-
-    SetHazard1 --> Stall
-    SetHazard2 --> Stall
-
-    Stall["设置 stall_load_use = True<br/>设置 bubble_pending = True<br/>不 deq if2id"]
-    NoHazard --> Normal["正常执行<br/>deq if2id<br/>enq id2ex"]
+    SetHazard --> Stall
 ```
 
 ## 3. 停顿与气泡插入时序
@@ -90,23 +77,22 @@ gantt
     IF          :2, 2
     ID (检测冒险) :3, 3
     ID (停顿)    :crit, 4, 4
-    EX (气泡)   :crit, 5, 5
+    ID (停顿)    :crit, 5, 5
     EX          :6, 6
 
-    section sub x5, x1, x6
-    IF (暂停)   :crit, 3, 3
-    IF (暂停)   :crit, 4, 4
-    IF          :5, 5
-    ID          :6, 6
+    section decrementStall
+    count=2    :crit, 3, 3
+    count=1    :crit, 4, 4
+    count=0    :5, 5
 ```
 
 **关键时间点**：
-- 周期 3：`add` 在 ID 阶段检测到冒险，停顿
-- 周期 4：ID 阶段继续停顿，等待 Load 数据
-- 周期 5：Load 在 WB 写回数据，WB→EX 前递可用
-- 周期 6：`add` 进入 EX 阶段，使用前递数据
+- 周期 3：`add` 在 ID 阶段检测到冒险，设置 `stall_load_use = True`，`stall_count = 2`
+- 周期 4：ID 阶段停顿，decrementStall 执行，`count = 1`，插入 NOP
+- 周期 5：ID 阶段继续停顿，decrementStall 执行，`count = 0`，`stall_load_use = False`
+- 周期 6：`add` 进入 EX 阶段，Load 数据通过 WB→EX 前递可用
 
-## 4. 控制信号状态转换
+## 4. 控制信号
 
 ```mermaid
 stateDiagram-v2
@@ -116,100 +102,62 @@ stateDiagram-v2
     DetectingHazard --> Normal: 无冒险
     DetectingHazard --> Stalling: 检测到 Load-Use
 
-    Stalling --> InsertingBubble: 下个周期
-    InsertingBubble --> Normal: 气泡插入完成
+    Stalling --> Decrementing: decrementStall 执行
+    Decrementing --> Checking: count == 0?
+    Checking -->|是| Normal: stall 清除
+    Checking -->|否| Decrementing: 继续停顿
 
     note right of Normal
         stall_load_use = False
-        bubble_pending = False
         IF/ID 正常运行
     end note
 
     note right of Stalling
         stall_load_use = True
-        bubble_pending = True
+        stall_count = 2
         IF/ID 阶段暂停
         if2id 保留数据
+        插入 NOP 到 id2ex
     end note
 
-    note right of InsertingBubble
-        stall_load_use = False
-        bubble_pending = True
-        EX 阶段接收 NOP
-        ID 阶段恢复
+    note right of Decrementing
+        stall_count 递减
+        继续插入 NOP
     end note
 ```
 
 ## 5. 气泡包内容
 
-```mermaid
-classDiagram
-    class NOP_Packet {
-        +Addr pc = 0
-        +Word instruction = 0
-        +Word rs1_val = 0
-        +Word rs2_val = 0
-        +Word imm = 0
-        +Bit5 rs1 = 0
-        +Bit5 rs2 = 0
-        +Bit5 rd = 0
-        +ALUOp alu_op = ALU_ADD
-        +BranchCond branch_cond = BR_NONE
-        +MemOp mem_op = MEM_NONE
-        +Bool is_branch = False
-        +Bool is_jump = False
-        +Bool write_reg = False
-        +Bool use_imm = False
-    }
-
-    note for NOP_Packet "气泡包不产生任何副作用：<br/>- 不写寄存器<br/>- 不访问内存<br/>- 不执行分支"
+```bsv
+function ID_EX_Packet nopPacket();
+    return ID_EX_Packet {
+        pc: 0,
+        instruction: 0,
+        rs1_val: 0, rs2_val: 0,
+        imm: 0,
+        rs1: 0, rs2: 0, rd: 0,
+        alu_op: ALU_ADD,
+        branch_cond: BR_NONE,
+        mem_op: MEM_NONE,
+        is_branch: False,
+        is_jump: False,
+        write_reg: False,
+        use_imm: False,
+        mem_width: MEM_WORD,
+        mem_unsigned: False
+    };
+endfunction
 ```
 
-## 6. 检测条件详解
+**气泡包不产生任何副作用**：
+- 不写寄存器
+- 不访问内存
+- 不执行分支
 
-### use_rs1 / use_rs2 字段含义
-
-```mermaid
-flowchart LR
-    subgraph Instructions["指令类型"]
-        R["R-Type<br/>ADD, SUB...<br/>use_rs1 ✓ use_rs2 ✓"]
-        I["I-Type<br/>ADDI, ANDI...<br/>use_rs1 ✓ use_rs2 ✗"]
-        L["Load<br/>LW, LH...<br/>use_rs1 ✓ use_rs2 ✗"]
-        S["Store<br/>SW, SH...<br/>use_rs1 ✓ use_rs2 ✓"]
-        B["Branch<br/>BEQ, BNE...<br/>use_rs1 ✓ use_rs2 ✓"]
-        U["U-Type<br/>LUI, AUIPC<br/>use_rs1 ✗ use_rs2 ✗"]
-        J["Jump<br/>JAL, JALR<br/>JALR: use_rs1 ✓"]
-    end
-```
-
-### 冒险检测示例
-
-```asm
-# 场景1: Load 后紧跟使用 rs1
-lw x1, 0(x2)       # Load 到 x1
-add x3, x1, x4     # 使用 x1 作为 rs1 → Load-Use 冒险!
-                    # use_rs1=True, rs1=1, ex_rd=1 → 匹配
-
-# 场景2: Load 后紧跟使用 rs2
-lw x1, 0(x2)
-add x3, x4, x1     # 使用 x1 作为 rs2 → Load-Use 冒险!
-                    # use_rs2=True, rs2=1, ex_rd=1 → 匹配
-
-# 场景3: Load 后紧跟不依赖的指令
-lw x1, 0(x2)
-add x3, x4, x5     # 不使用 x1 → 无冒险
-                    # rs1=4, rs2=5, ex_rd=1 → 不匹配
-
-# 场景4: Load x0 (特殊情况)
-lw x0, 0(x2)       # Load 到 x0 (永远为0)
-add x3, x0, x4     # 使用 x0 → 无冒险 (x0 不参与检测)
-                    # ex_rd=0 → 不检测
-```
-
-## 7. 实现代码对照
+## 6. 实现代码对照
 
 ```bsv
-// Core.bsv 冒险检测逻辑 (行 104-123)
+// Core.bsv 冒险检测逻辑 (行 112-127)
 Bool load_use_hazard = False;
 
 // 检查 EX 阶段 (id2ex) - Load 指令刚从 EX 进入 MEM
@@ -220,27 +168,29 @@ if (id2ex.notEmpty && id2ex.first.mem_op == MEM_READ && id2ex.first.rd != 0) beg
         load_use_hazard = True;
 end
 
-// 检查 MEM 阶段 (ex2mem) - Load 指令在 MEM 执行内存读取
-if (ex2mem.notEmpty && ex2mem.first.is_load && ex2mem.first.rd != 0 && !load_use_hazard) begin
-    if (dec.use_rs1 && dec.rs1 == ex2mem.first.rd)
-        load_use_hazard = True;
-    if (dec.use_rs2 && dec.rs2 == ex2mem.first.rd)
-        load_use_hazard = True;
-end
-
-// 冒险处理 (行 125-151)
 if (load_use_hazard) begin
-    stall_load_use <= True;     // 停顿 ID 阶段
-    bubble_pending <= True;     // 标记需要插入气泡
-    // 不 deq if2id，保留指令供下个周期使用
+    stall_load_use <= True;
+    stall_count <= 2;  // Load 需要 2 周期从 EX→MEM→WB
+    id2ex.enq(nopPacket());  // 立即插入气泡
 end else begin
-    // 正常解码并发送到 EX
     if2id.deq;
-    id2ex.enq(packet);
+    // 正常发送到 EX...
 end
 ```
 
-## 8. 为什么需要停顿？
+```bsv
+// Core.bsv stall 计数递减 (行 166-174)
+rule decrementStall (stall_load_use && stall_count > 0);
+    Bit#(2) new_count = stall_count - 1;
+    stall_count <= new_count;
+    if (new_count == 0) begin
+        stall_load_use <= False;
+    end
+    id2ex.enq(nopPacket());
+endrule
+```
+
+## 7. 为什么需要停顿？
 
 ```mermaid
 flowchart TB
@@ -254,7 +204,7 @@ flowchart TB
     Answer1 --> Answer2
     Answer2 --> Answer3
 
-    Answer3 --> Solution[解决方案：<br/>停顿 1 周期 + 插入 1 气泡<br/>使数据在 WB 阶段可用时<br/>再进入 EX 阶段]
+    Answer3 --> Solution[解决方案：<br/>停顿 2 周期<br/>使数据在 WB 阶段可用时<br/>再进入 EX 阶段]
 ```
 
 **与其他冒险的区别**：
