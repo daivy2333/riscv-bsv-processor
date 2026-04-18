@@ -98,52 +98,59 @@ VL_MODULE(VmkTestBench) {
     };
     struct {
         CData/*1:0*/ mkTestBench__DOT__core_bht_bhtTable_9;
-        CData/*4:0*/ mkTestBench__DOT__core_ex_forward_rd;
-        CData/*0:0*/ mkTestBench__DOT__core_ex_forward_valid;
-        CData/*4:0*/ mkTestBench__DOT__core_mem_forward_rd;
-        CData/*0:0*/ mkTestBench__DOT__core_mem_forward_valid;
+        CData/*0:0*/ mkTestBench__DOT__core_branch_flush;
+        CData/*0:0*/ mkTestBench__DOT__core_branch_flush__024EN;
+        CData/*0:0*/ mkTestBench__DOT__core_branch_flush_done;
+        CData/*0:0*/ mkTestBench__DOT__core_no_pc_update;
         CData/*0:0*/ mkTestBench__DOT__core_programLoaded;
         CData/*1:0*/ mkTestBench__DOT__core_stall_count;
         CData/*1:0*/ mkTestBench__DOT__core_stall_count__024D_IN;
         CData/*0:0*/ mkTestBench__DOT__core_stall_load_use;
         CData/*1:0*/ mkTestBench__DOT__core_state;
-        CData/*4:0*/ mkTestBench__DOT__core_wb_forward_rd;
-        CData/*0:0*/ mkTestBench__DOT__core_wb_forward_valid;
+        CData/*0:0*/ mkTestBench__DOT__core_test_done;
+        CData/*4:0*/ mkTestBench__DOT__core_wb_forward_rd0;
+        CData/*4:0*/ mkTestBench__DOT__core_wb_forward_rd1;
+        CData/*0:0*/ mkTestBench__DOT__core_wb_forward_valid0;
+        CData/*0:0*/ mkTestBench__DOT__core_wb_forward_valid1;
         CData/*0:0*/ mkTestBench__DOT__dumpDone;
         CData/*0:0*/ mkTestBench__DOT__dumpDone__024EN;
         CData/*0:0*/ mkTestBench__DOT__programDone;
-        CData/*0:0*/ mkTestBench__DOT__programDone__024EN;
         CData/*0:0*/ mkTestBench__DOT__programLoaded;
         CData/*0:0*/ mkTestBench__DOT__programLoaded__024EN;
+        CData/*0:0*/ mkTestBench__DOT__core_id2ex__024DEQ;
         CData/*0:0*/ mkTestBench__DOT__core_id2ex__024ENQ;
         CData/*0:0*/ mkTestBench__DOT__core_if2id__024DEQ;
-        CData/*0:0*/ mkTestBench__DOT__core_if2id__024ENQ;
-        CData/*0:0*/ mkTestBench__DOT__core_mem2wb__024DEQ;
+        CData/*0:0*/ mkTestBench__DOT__WILL_FIRE_RL_checkDone;
+        CData/*0:0*/ mkTestBench__DOT__WILL_FIRE_RL_core_clearBranchFlushDone;
         CData/*0:0*/ mkTestBench__DOT__WILL_FIRE_RL_core_decodeStage;
         CData/*0:0*/ mkTestBench__DOT__WILL_FIRE_RL_core_decrementStall;
         CData/*0:0*/ mkTestBench__DOT__WILL_FIRE_RL_core_executeStage;
+        CData/*0:0*/ mkTestBench__DOT__WILL_FIRE_RL_core_fetchStage;
         CData/*0:0*/ mkTestBench__DOT__WILL_FIRE_RL_core_memoryStage;
+        CData/*0:0*/ mkTestBench__DOT__WILL_FIRE_RL_core_writebackStage;
+        CData/*0:0*/ mkTestBench__DOT__MUX_core_branch_flush__024write_1___05FSEL_1;
         CData/*0:0*/ mkTestBench__DOT__MUX_core_stall_count__024write_1___05FSEL_1;
-        CData/*7:0*/ mkTestBench__DOT__byte_val___05Fh328450;
-        CData/*1:0*/ mkTestBench__DOT__oldState___05Fh144577;
-        CData/*1:0*/ mkTestBench__DOT__state___05Fh105826;
-        CData/*0:0*/ mkTestBench__DOT__IF_core_id2ex_first___05F384_BITS_11_TO_9_623_EQ_0_ETC___05F_d1665;
-        CData/*0:0*/ mkTestBench__DOT__IF_core_id2ex_first___05F384_BITS_11_TO_9_623_EQ_0_ETC___05F_d1778;
-        CData/*0:0*/ mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_0_BIT_0_1_core_btb_ETC___05F_d141;
-        CData/*0:0*/ mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F381_AND_core_id2ex_f_ETC___05F_d1696;
-        CData/*0:0*/ mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F381_AND_core_id2ex_f_ETC___05F_d1704;
-        CData/*0:0*/ mkTestBench__DOT__IF_core_wb_forward_valid_633_AND_core_wb_forwa_ETC___05F_d1767;
-        CData/*0:0*/ mkTestBench__DOT__IF_core_wb_forward_valid_633_AND_core_wb_forwa_ETC___05F_d1769;
-        CData/*0:0*/ mkTestBench__DOT__IF_core_wb_forward_valid_633_AND_core_wb_forwa_ETC___05F_d1771;
-        CData/*0:0*/ mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_0_BIT_0_1_core_btb_ETC___05F_d278;
-        CData/*0:0*/ mkTestBench__DOT__core_id2ex_first___05F384_BIT_5_622_OR_core_id2ex___05FETC___05F_d1785;
-        CData/*0:0*/ mkTestBench__DOT__core_if2id_first___05F398_BITS_39_TO_33_399_EQ_0b1_ETC___05F_d1423;
-        CData/*0:0*/ mkTestBench__DOT__core_if2id_first___05F398_BITS_52_TO_48_420_EQ_cor_ETC___05F_d1421;
-        CData/*0:0*/ mkTestBench__DOT__core_if2id_first___05F398_BITS_57_TO_53_411_EQ_cor_ETC___05F_d1412;
-        CData/*0:0*/ mkTestBench__DOT__core_mem_forward_rd_640_EQ_core_id2ex_first___05F3_ETC___05F_d1641;
-        CData/*0:0*/ mkTestBench__DOT__core_mem_forward_rd_640_EQ_core_id2ex_first___05F3_ETC___05F_d1653;
-        CData/*0:0*/ mkTestBench__DOT__core_wb_forward_valid_633_AND_core_wb_forward___05FETC___05F_d1649;
-        CData/*0:0*/ mkTestBench__DOT__core_wb_forward_valid_633_AND_core_wb_forward___05FETC___05F_d1660;
+        CData/*7:0*/ mkTestBench__DOT__byte_val___05Fh328854;
+        CData/*1:0*/ mkTestBench__DOT__oldState___05Fh144822;
+        CData/*1:0*/ mkTestBench__DOT__state___05Fh105831;
+        CData/*0:0*/ mkTestBench__DOT__IF_core_id2ex_first___05F394_BITS_11_TO_9_657_EQ_0_ETC___05F_d1723;
+        CData/*0:0*/ mkTestBench__DOT__IF_core_id2ex_first___05F394_BITS_11_TO_9_657_EQ_0_ETC___05F_d1843;
+        CData/*0:0*/ mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_3_BIT_0_4_core_btb_ETC___05F_d144;
+        CData/*0:0*/ mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F669_AND_core_id2ex___05FETC___05F_d1702;
+        CData/*0:0*/ mkTestBench__DOT__IF_core_ex2mem_i_notEmpty___05F669_AND_core_id2ex___05FETC___05F_d1717;
+        CData/*0:0*/ mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F667_AND_core_ex2mem_f_ETC___05F_d1832;
+        CData/*0:0*/ mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F667_AND_core_ex2mem_f_ETC___05F_d1834;
+        CData/*0:0*/ mkTestBench__DOT__IF_core_ex2mem_notEmpty___05F667_AND_core_ex2mem_f_ETC___05F_d1836;
+        CData/*0:0*/ mkTestBench__DOT__IF_core_id2ex_i_notEmpty___05F391_AND_core_id2ex_f_ETC___05F_d1766;
+        CData/*0:0*/ mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_3_BIT_0_4_core_btb_ETC___05F_d281;
+        CData/*0:0*/ mkTestBench__DOT___0_OR_0_OR_NOT_core_ex2mem_notEmpty___05F667_668_OR_ETC___05F_d1761;
+        CData/*0:0*/ mkTestBench__DOT__core_ex2mem_notEmpty___05F667_AND_core_ex2mem_firs_ETC___05F_d1681;
+        CData/*0:0*/ mkTestBench__DOT__core_ex2mem_notEmpty___05F667_AND_core_ex2mem_firs_ETC___05F_d1705;
+        CData/*0:0*/ mkTestBench__DOT__core_id2ex_first___05F394_BIT_5_656_OR_core_id2ex___05FETC___05F_d1850;
+        CData/*0:0*/ mkTestBench__DOT__core_if2id_first___05F408_BITS_39_TO_33_409_EQ_0b1_ETC___05F_d1433;
+        CData/*0:0*/ mkTestBench__DOT__core_if2id_first___05F408_BITS_52_TO_48_430_EQ_cor_ETC___05F_d1431;
+        CData/*0:0*/ mkTestBench__DOT__core_if2id_first___05F408_BITS_57_TO_53_421_EQ_cor_ETC___05F_d1422;
+        CData/*0:0*/ mkTestBench__DOT__core_pcReg_42_EQ_lastPC_801___05F_d3802;
         CData/*0:0*/ mkTestBench__DOT__core_ex2mem__DOT__full_reg;
         CData/*0:0*/ mkTestBench__DOT__core_ex2mem__DOT__empty_reg;
         CData/*0:0*/ mkTestBench__DOT__core_id2ex__DOT__full_reg;
@@ -152,17 +159,17 @@ VL_MODULE(VmkTestBench) {
         CData/*0:0*/ mkTestBench__DOT__core_if2id__DOT__empty_reg;
         CData/*0:0*/ mkTestBench__DOT__core_mem2wb__DOT__full_reg;
         CData/*0:0*/ mkTestBench__DOT__core_mem2wb__DOT__empty_reg;
-        SData/*15:0*/ mkTestBench__DOT__half_val___05Fh328369;
-        SData/*12:0*/ mkTestBench__DOT__imm13___05Fh141475;
-        SData/*11:0*/ mkTestBench__DOT__imm12___05Fh141430;
+        SData/*15:0*/ mkTestBench__DOT__half_val___05Fh328773;
+        SData/*12:0*/ mkTestBench__DOT__imm13___05Fh141633;
+    };
+    struct {
+        SData/*11:0*/ mkTestBench__DOT__imm12___05Fh141588;
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_0[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_0__024D_IN[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_1[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_10[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_11[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_12[3];
-    };
-    struct {
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_13[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_14[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_15[3];
@@ -220,6 +227,8 @@ VL_MODULE(VmkTestBench) {
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_62[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_63[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_7[3];
+    };
+    struct {
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_8[3];
         WData/*64:0*/ mkTestBench__DOT__core_btb_btbTable_9[3];
         IData/*31:0*/ mkTestBench__DOT__core_dmem_0;
@@ -227,8 +236,6 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_1;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_10;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_100;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_101;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_102;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_103;
@@ -286,6 +293,8 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_150;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_151;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_152;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_153;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_154;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_155;
@@ -293,8 +302,6 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_157;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_158;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_159;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_16;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_160;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_161;
@@ -352,6 +359,8 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_208;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_209;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_21;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_210;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_211;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_212;
@@ -359,8 +368,6 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_214;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_215;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_216;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_217;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_218;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_219;
@@ -418,6 +425,8 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_266;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_267;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_268;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_269;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_27;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_270;
@@ -425,8 +434,6 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_272;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_273;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_274;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_275;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_276;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_277;
@@ -484,6 +491,8 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_323;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_324;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_325;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_326;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_327;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_328;
@@ -491,8 +500,6 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_33;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_330;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_331;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_332;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_333;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_334;
@@ -550,6 +557,8 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_381;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_382;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_383;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_384;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_385;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_386;
@@ -557,8 +566,6 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_388;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_389;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_39;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_390;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_391;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_392;
@@ -616,6 +623,8 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_439;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_44;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_440;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_441;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_442;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_443;
@@ -623,8 +632,6 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_445;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_446;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_447;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_448;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_449;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_45;
@@ -682,6 +689,8 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_497;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_498;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_499;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_5;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_50;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_500;
@@ -689,8 +698,6 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_502;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_503;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_504;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_505;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_506;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_507;
@@ -748,15 +755,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_94;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_95;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_96;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_dmem_97;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_98;
         IData/*31:0*/ mkTestBench__DOT__core_dmem_99;
-        IData/*31:0*/ mkTestBench__DOT__core_ex_forward;
         IData/*31:0*/ mkTestBench__DOT__core_imem_0;
         IData/*31:0*/ mkTestBench__DOT__core_imem_1;
         IData/*31:0*/ mkTestBench__DOT__core_imem_10;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_100;
         IData/*31:0*/ mkTestBench__DOT__core_imem_1000;
         IData/*31:0*/ mkTestBench__DOT__core_imem_1001;
@@ -815,14 +821,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_129;
         IData/*31:0*/ mkTestBench__DOT__core_imem_13;
         IData/*31:0*/ mkTestBench__DOT__core_imem_130;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_131;
         IData/*31:0*/ mkTestBench__DOT__core_imem_132;
         IData/*31:0*/ mkTestBench__DOT__core_imem_133;
         IData/*31:0*/ mkTestBench__DOT__core_imem_134;
         IData/*31:0*/ mkTestBench__DOT__core_imem_135;
         IData/*31:0*/ mkTestBench__DOT__core_imem_136;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_137;
         IData/*31:0*/ mkTestBench__DOT__core_imem_138;
         IData/*31:0*/ mkTestBench__DOT__core_imem_139;
@@ -881,14 +887,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_187;
         IData/*31:0*/ mkTestBench__DOT__core_imem_188;
         IData/*31:0*/ mkTestBench__DOT__core_imem_189;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_19;
         IData/*31:0*/ mkTestBench__DOT__core_imem_190;
         IData/*31:0*/ mkTestBench__DOT__core_imem_191;
         IData/*31:0*/ mkTestBench__DOT__core_imem_192;
         IData/*31:0*/ mkTestBench__DOT__core_imem_193;
         IData/*31:0*/ mkTestBench__DOT__core_imem_194;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_195;
         IData/*31:0*/ mkTestBench__DOT__core_imem_196;
         IData/*31:0*/ mkTestBench__DOT__core_imem_197;
@@ -947,14 +953,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_244;
         IData/*31:0*/ mkTestBench__DOT__core_imem_245;
         IData/*31:0*/ mkTestBench__DOT__core_imem_246;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_247;
         IData/*31:0*/ mkTestBench__DOT__core_imem_248;
         IData/*31:0*/ mkTestBench__DOT__core_imem_249;
         IData/*31:0*/ mkTestBench__DOT__core_imem_25;
         IData/*31:0*/ mkTestBench__DOT__core_imem_250;
         IData/*31:0*/ mkTestBench__DOT__core_imem_251;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_252;
         IData/*31:0*/ mkTestBench__DOT__core_imem_253;
         IData/*31:0*/ mkTestBench__DOT__core_imem_254;
@@ -1013,14 +1019,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_301;
         IData/*31:0*/ mkTestBench__DOT__core_imem_302;
         IData/*31:0*/ mkTestBench__DOT__core_imem_303;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_304;
         IData/*31:0*/ mkTestBench__DOT__core_imem_305;
         IData/*31:0*/ mkTestBench__DOT__core_imem_306;
         IData/*31:0*/ mkTestBench__DOT__core_imem_307;
         IData/*31:0*/ mkTestBench__DOT__core_imem_308;
         IData/*31:0*/ mkTestBench__DOT__core_imem_309;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_31;
         IData/*31:0*/ mkTestBench__DOT__core_imem_310;
         IData/*31:0*/ mkTestBench__DOT__core_imem_311;
@@ -1079,14 +1085,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_36;
         IData/*31:0*/ mkTestBench__DOT__core_imem_360;
         IData/*31:0*/ mkTestBench__DOT__core_imem_361;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_362;
         IData/*31:0*/ mkTestBench__DOT__core_imem_363;
         IData/*31:0*/ mkTestBench__DOT__core_imem_364;
         IData/*31:0*/ mkTestBench__DOT__core_imem_365;
         IData/*31:0*/ mkTestBench__DOT__core_imem_366;
         IData/*31:0*/ mkTestBench__DOT__core_imem_367;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_368;
         IData/*31:0*/ mkTestBench__DOT__core_imem_369;
         IData/*31:0*/ mkTestBench__DOT__core_imem_37;
@@ -1145,14 +1151,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_417;
         IData/*31:0*/ mkTestBench__DOT__core_imem_418;
         IData/*31:0*/ mkTestBench__DOT__core_imem_419;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_42;
         IData/*31:0*/ mkTestBench__DOT__core_imem_420;
         IData/*31:0*/ mkTestBench__DOT__core_imem_421;
         IData/*31:0*/ mkTestBench__DOT__core_imem_422;
         IData/*31:0*/ mkTestBench__DOT__core_imem_423;
         IData/*31:0*/ mkTestBench__DOT__core_imem_424;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_425;
         IData/*31:0*/ mkTestBench__DOT__core_imem_426;
         IData/*31:0*/ mkTestBench__DOT__core_imem_427;
@@ -1211,14 +1217,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_475;
         IData/*31:0*/ mkTestBench__DOT__core_imem_476;
         IData/*31:0*/ mkTestBench__DOT__core_imem_477;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_478;
         IData/*31:0*/ mkTestBench__DOT__core_imem_479;
         IData/*31:0*/ mkTestBench__DOT__core_imem_48;
         IData/*31:0*/ mkTestBench__DOT__core_imem_480;
         IData/*31:0*/ mkTestBench__DOT__core_imem_481;
         IData/*31:0*/ mkTestBench__DOT__core_imem_482;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_483;
         IData/*31:0*/ mkTestBench__DOT__core_imem_484;
         IData/*31:0*/ mkTestBench__DOT__core_imem_485;
@@ -1277,14 +1283,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_532;
         IData/*31:0*/ mkTestBench__DOT__core_imem_533;
         IData/*31:0*/ mkTestBench__DOT__core_imem_534;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_535;
         IData/*31:0*/ mkTestBench__DOT__core_imem_536;
         IData/*31:0*/ mkTestBench__DOT__core_imem_537;
         IData/*31:0*/ mkTestBench__DOT__core_imem_538;
         IData/*31:0*/ mkTestBench__DOT__core_imem_539;
         IData/*31:0*/ mkTestBench__DOT__core_imem_54;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_540;
         IData/*31:0*/ mkTestBench__DOT__core_imem_541;
         IData/*31:0*/ mkTestBench__DOT__core_imem_542;
@@ -1343,14 +1349,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_590;
         IData/*31:0*/ mkTestBench__DOT__core_imem_591;
         IData/*31:0*/ mkTestBench__DOT__core_imem_592;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_593;
         IData/*31:0*/ mkTestBench__DOT__core_imem_594;
         IData/*31:0*/ mkTestBench__DOT__core_imem_595;
         IData/*31:0*/ mkTestBench__DOT__core_imem_596;
         IData/*31:0*/ mkTestBench__DOT__core_imem_597;
         IData/*31:0*/ mkTestBench__DOT__core_imem_598;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_599;
         IData/*31:0*/ mkTestBench__DOT__core_imem_6;
         IData/*31:0*/ mkTestBench__DOT__core_imem_60;
@@ -1409,14 +1415,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_648;
         IData/*31:0*/ mkTestBench__DOT__core_imem_649;
         IData/*31:0*/ mkTestBench__DOT__core_imem_65;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_650;
         IData/*31:0*/ mkTestBench__DOT__core_imem_651;
         IData/*31:0*/ mkTestBench__DOT__core_imem_652;
         IData/*31:0*/ mkTestBench__DOT__core_imem_653;
         IData/*31:0*/ mkTestBench__DOT__core_imem_654;
         IData/*31:0*/ mkTestBench__DOT__core_imem_655;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_656;
         IData/*31:0*/ mkTestBench__DOT__core_imem_657;
         IData/*31:0*/ mkTestBench__DOT__core_imem_658;
@@ -1475,14 +1481,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_705;
         IData/*31:0*/ mkTestBench__DOT__core_imem_706;
         IData/*31:0*/ mkTestBench__DOT__core_imem_707;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_708;
         IData/*31:0*/ mkTestBench__DOT__core_imem_709;
         IData/*31:0*/ mkTestBench__DOT__core_imem_71;
         IData/*31:0*/ mkTestBench__DOT__core_imem_710;
         IData/*31:0*/ mkTestBench__DOT__core_imem_711;
         IData/*31:0*/ mkTestBench__DOT__core_imem_712;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_713;
         IData/*31:0*/ mkTestBench__DOT__core_imem_714;
         IData/*31:0*/ mkTestBench__DOT__core_imem_715;
@@ -1541,14 +1547,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_763;
         IData/*31:0*/ mkTestBench__DOT__core_imem_764;
         IData/*31:0*/ mkTestBench__DOT__core_imem_765;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_766;
         IData/*31:0*/ mkTestBench__DOT__core_imem_767;
         IData/*31:0*/ mkTestBench__DOT__core_imem_768;
         IData/*31:0*/ mkTestBench__DOT__core_imem_769;
         IData/*31:0*/ mkTestBench__DOT__core_imem_77;
         IData/*31:0*/ mkTestBench__DOT__core_imem_770;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_771;
         IData/*31:0*/ mkTestBench__DOT__core_imem_772;
         IData/*31:0*/ mkTestBench__DOT__core_imem_773;
@@ -1607,14 +1613,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_820;
         IData/*31:0*/ mkTestBench__DOT__core_imem_821;
         IData/*31:0*/ mkTestBench__DOT__core_imem_822;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_823;
         IData/*31:0*/ mkTestBench__DOT__core_imem_824;
         IData/*31:0*/ mkTestBench__DOT__core_imem_825;
         IData/*31:0*/ mkTestBench__DOT__core_imem_826;
         IData/*31:0*/ mkTestBench__DOT__core_imem_827;
         IData/*31:0*/ mkTestBench__DOT__core_imem_828;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_829;
         IData/*31:0*/ mkTestBench__DOT__core_imem_83;
         IData/*31:0*/ mkTestBench__DOT__core_imem_830;
@@ -1673,14 +1679,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_879;
         IData/*31:0*/ mkTestBench__DOT__core_imem_88;
         IData/*31:0*/ mkTestBench__DOT__core_imem_880;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_881;
         IData/*31:0*/ mkTestBench__DOT__core_imem_882;
         IData/*31:0*/ mkTestBench__DOT__core_imem_883;
         IData/*31:0*/ mkTestBench__DOT__core_imem_884;
         IData/*31:0*/ mkTestBench__DOT__core_imem_885;
         IData/*31:0*/ mkTestBench__DOT__core_imem_886;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_887;
         IData/*31:0*/ mkTestBench__DOT__core_imem_888;
         IData/*31:0*/ mkTestBench__DOT__core_imem_889;
@@ -1739,14 +1745,14 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_936;
         IData/*31:0*/ mkTestBench__DOT__core_imem_937;
         IData/*31:0*/ mkTestBench__DOT__core_imem_938;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_939;
         IData/*31:0*/ mkTestBench__DOT__core_imem_94;
         IData/*31:0*/ mkTestBench__DOT__core_imem_940;
         IData/*31:0*/ mkTestBench__DOT__core_imem_941;
         IData/*31:0*/ mkTestBench__DOT__core_imem_942;
         IData/*31:0*/ mkTestBench__DOT__core_imem_943;
-    };
-    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_944;
         IData/*31:0*/ mkTestBench__DOT__core_imem_945;
         IData/*31:0*/ mkTestBench__DOT__core_imem_946;
@@ -1805,15 +1811,13 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_imem_994;
         IData/*31:0*/ mkTestBench__DOT__core_imem_995;
         IData/*31:0*/ mkTestBench__DOT__core_imem_996;
+    };
+    struct {
         IData/*31:0*/ mkTestBench__DOT__core_imem_997;
         IData/*31:0*/ mkTestBench__DOT__core_imem_998;
         IData/*31:0*/ mkTestBench__DOT__core_imem_999;
-        IData/*31:0*/ mkTestBench__DOT__core_mem_forward;
         IData/*31:0*/ mkTestBench__DOT__core_pcReg;
         IData/*31:0*/ mkTestBench__DOT__core_pcReg__024D_IN;
-    };
-    struct {
-        IData/*31:0*/ mkTestBench__DOT__core_regFile_registers_0__024D_IN;
         IData/*31:0*/ mkTestBench__DOT__core_regFile_registers_1;
         IData/*31:0*/ mkTestBench__DOT__core_regFile_registers_10;
         IData/*31:0*/ mkTestBench__DOT__core_regFile_registers_11;
@@ -1845,40 +1849,48 @@ VL_MODULE(VmkTestBench) {
         IData/*31:0*/ mkTestBench__DOT__core_regFile_registers_7;
         IData/*31:0*/ mkTestBench__DOT__core_regFile_registers_8;
         IData/*31:0*/ mkTestBench__DOT__core_regFile_registers_9;
-        IData/*31:0*/ mkTestBench__DOT__core_wb_forward;
+        IData/*31:0*/ mkTestBench__DOT__core_tohost_value;
+        IData/*31:0*/ mkTestBench__DOT__core_wb_forward_data0;
+        IData/*31:0*/ mkTestBench__DOT__core_wb_forward_data1;
         IData/*31:0*/ mkTestBench__DOT__cycleCount;
         IData/*31:0*/ mkTestBench__DOT__cycleCount__024D_IN;
+        IData/*31:0*/ mkTestBench__DOT__lastPC;
+        IData/*31:0*/ mkTestBench__DOT__stallCycles;
+        IData/*31:0*/ mkTestBench__DOT__stallCycles__024D_IN;
         IData/*31:0*/ mkTestBench__DOT__waitCount;
         IData/*31:0*/ mkTestBench__DOT__waitCount__024D_IN;
-        WData/*110:0*/ mkTestBench__DOT__core_ex2mem__024D_IN[4];
+        WData/*143:0*/ mkTestBench__DOT__core_ex2mem__024D_IN[5];
         WData/*190:0*/ mkTestBench__DOT__core_id2ex__024D_IN[6];
         WData/*96:0*/ mkTestBench__DOT__core_if2id__024D_IN[4];
         WData/*102:0*/ mkTestBench__DOT__core_mem2wb__024D_IN[4];
         WData/*190:0*/ mkTestBench__DOT__MUX_core_id2ex__024enq_1___05FVAL_1[6];
-        IData/*31:0*/ mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_0_BITS_64_TO_33_42_ETC___05F_d1782;
-        IData/*31:0*/ mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_0_BITS_64_TO_33_42_ETC___05F_d207;
-        IData/*31:0*/ mkTestBench__DOT__alu_result___05Fh142326;
-        IData/*31:0*/ mkTestBench__DOT__instr___05Fh103113;
-        IData/*31:0*/ mkTestBench__DOT__old_word___05Fh146349;
-        IData/*31:0*/ mkTestBench__DOT__operand1___05Fh144004;
-        IData/*31:0*/ mkTestBench__DOT__operand2___05Fh144005;
-        IData/*31:0*/ mkTestBench__DOT__target___05Fh107860;
-        IData/*31:0*/ mkTestBench__DOT__x___05Fh140317;
-        IData/*31:0*/ mkTestBench__DOT__x___05Fh141338;
-        IData/*31:0*/ mkTestBench__DOT__x___05Fh141383;
-        IData/*31:0*/ mkTestBench__DOT___theResult___05F___05F_4___05Fh142322;
-        IData/*31:0*/ mkTestBench__DOT___theResult___05F___05F_5___05Fh142321;
-        IData/*31:0*/ mkTestBench__DOT__actual_target___05F_1___05Fh143987;
-        IData/*31:0*/ mkTestBench__DOT__alu_result___05Fh142331;
-        IData/*31:0*/ mkTestBench__DOT__imm___05Fh140013;
-        IData/*31:0*/ mkTestBench__DOT__result___05Fh144016;
-        IData/*31:0*/ mkTestBench__DOT__x___05Fh103143;
-        IData/*20:0*/ mkTestBench__DOT__imm21___05Fh141601;
-        WData/*110:0*/ mkTestBench__DOT__core_ex2mem__DOT__data0_reg[4];
-        WData/*110:0*/ mkTestBench__DOT__core_ex2mem__DOT__data1_reg[4];
-        WData/*190:0*/ mkTestBench__DOT__core_id2ex__DOT__data0_reg[6];
+        IData/*31:0*/ mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_3_BITS_64_TO_33_45_ETC___05F_d1847;
+        IData/*31:0*/ mkTestBench__DOT__SEL_ARR_core_btb_btbTable_0_3_BITS_64_TO_33_45_ETC___05F_d210;
+        IData/*31:0*/ mkTestBench__DOT__alu_result___05Fh142479;
+        IData/*31:0*/ mkTestBench__DOT__instr___05Fh103120;
+        IData/*31:0*/ mkTestBench__DOT__old_word___05Fh146765;
+        IData/*31:0*/ mkTestBench__DOT__operand1___05Fh144242;
+        IData/*31:0*/ mkTestBench__DOT__operand2___05Fh144243;
+        IData/*31:0*/ mkTestBench__DOT__rs1_val___05Fh140371;
+        IData/*31:0*/ mkTestBench__DOT__rs2_val___05Fh140372;
+        IData/*31:0*/ mkTestBench__DOT__target___05Fh107865;
+        IData/*31:0*/ mkTestBench__DOT__x___05Fh141541;
+        IData/*31:0*/ mkTestBench__DOT___theResult___05F___05F_4___05Fh142475;
+        IData/*31:0*/ mkTestBench__DOT___theResult___05F___05F_5___05Fh142474;
     };
     struct {
+        IData/*31:0*/ mkTestBench__DOT__actual_target___05F_1___05Fh144225;
+        IData/*31:0*/ mkTestBench__DOT__actual_target___05Fh142486;
+        IData/*31:0*/ mkTestBench__DOT__alu_in2___05Fh144298;
+        IData/*31:0*/ mkTestBench__DOT__imm___05Fh140091;
+        IData/*31:0*/ mkTestBench__DOT__op1___05F_1___05Fh142680;
+        IData/*31:0*/ mkTestBench__DOT__prediction_target___05Fh103118;
+        IData/*31:0*/ mkTestBench__DOT__result___05Fh144254;
+        IData/*31:0*/ mkTestBench__DOT__x___05Fh103150;
+        IData/*20:0*/ mkTestBench__DOT__imm21___05Fh141759;
+        WData/*143:0*/ mkTestBench__DOT__core_ex2mem__DOT__data0_reg[5];
+        WData/*143:0*/ mkTestBench__DOT__core_ex2mem__DOT__data1_reg[5];
+        WData/*190:0*/ mkTestBench__DOT__core_id2ex__DOT__data0_reg[6];
         WData/*190:0*/ mkTestBench__DOT__core_id2ex__DOT__data1_reg[6];
         WData/*96:0*/ mkTestBench__DOT__core_if2id__DOT__data0_reg[4];
         WData/*96:0*/ mkTestBench__DOT__core_if2id__DOT__data1_reg[4];
@@ -1893,6 +1905,7 @@ VL_MODULE(VmkTestBench) {
     CData/*0:0*/ __Vdly__mkTestBench__DOT__core_if2id__DOT__empty_reg;
     CData/*0:0*/ __Vdly__mkTestBench__DOT__core_mem2wb__DOT__empty_reg;
     CData/*0:0*/ __Vclklast__TOP__CLK;
+    WData/*143:0*/ __Vdly__mkTestBench__DOT__core_ex2mem__DOT__data0_reg[5];
     WData/*190:0*/ __Vdly__mkTestBench__DOT__core_id2ex__DOT__data0_reg[6];
     WData/*102:0*/ __Vdly__mkTestBench__DOT__core_mem2wb__DOT__data0_reg[4];
     
