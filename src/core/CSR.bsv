@@ -134,9 +134,9 @@ module mkCSR(CSRs);
     // Update mip register based on interrupt signals
     rule update_mip;
         Bit#(32) new_mip = 0;
-        new_mip[11] = meip ? 1 : 0;  // MEIP
-        new_mip[7] = (mtime >= mtimecmp) ? 1 : 0;  // MTIP - timer comparison
-        new_mip[3] = msip ? 1 : 0;   // MSIP
+        new_mip[11] = meip ? 1 : 0;  // MEIP (外部中断)
+        new_mip[7] = mtip ? 1 : 0;   // MTIP (定时器中断，来自CLINT)
+        new_mip[3] = msip ? 1 : 0;   // MSIP (软件中断)
         mip <= new_mip;
     endrule
 
