@@ -11,8 +11,6 @@ import PrivilegedTypes::*;
 interface CSRs;
     method Word readCSR(Bit#(12) addr);
     method Action writeCSR(Bit#(12) addr, Word data);
-    method Word atomicOp(Bit#(12) addr, Word rs1_val, CSROp op);
-    method Word atomicOpImm(Bit#(12) addr, Bit#(5) zimm, CSROp op);
     method PrivilegeMode currentMode();
     method Action setMode(PrivilegeMode mode);
     method Addr getTrapVector(TrapInfo trap);
@@ -38,10 +36,30 @@ endfunction
 
 // Helper function: pack MStatus struct to Word
 function Word packMStatus(MStatus s);
-    return { s.sd, s._reserved23, s.tsr, s.tw, s.tvm,
-             s.mxr, s.sum, s.mprv, s.xs, s.fs, s.mpp, s._reserved10,
-             s._reserved9, s.spp, s.mpie, s._reserved6, s.spie,
-             s.upie, s.mie, s._reserved2, s.sie, s.uie };
+    Bit#(32) result = 0;
+    result[0] = s.uie;
+    result[1] = s.sie;
+    result[2] = s._reserved2;
+    result[3] = s.mie;
+    result[4] = s.upie;
+    result[5] = s.spie;
+    result[6] = s._reserved6;
+    result[7] = s.mpie;
+    result[8] = s.spp;
+    result[9] = s._reserved9;
+    result[10] = s._reserved10;
+    result[12:11] = s.mpp;
+    result[14:12] = s.fs;
+    result[16:15] = s.xs;
+    result[17] = s.mprv;
+    result[18] = s.sum;
+    result[19] = s.mxr;
+    result[20] = s.tvm;
+    result[21] = s.tw;
+    result[22] = s.tsr;
+    result[30:23] = s._reserved23;
+    result[31] = s.sd;
+    return result;
 endfunction
 
 // Helper function: unpack Word to MStatus struct
@@ -85,7 +103,7 @@ module mkCSR(CSRs);
         _reserved6: 0, mpie: 0, spp: 0, _reserved9: 0, _reserved10: 0,
         mpp: 0, fs: 0, xs: 0, mprv: 0, sum: 0, mxr: 0, tvm: 0, tw: 0, tsr: 0,
         _reserved23: 0, sd: 0
-    }));
+    });
     Reg#(Word) misa <- mkReg(32'h40001100);  // RV32I + M-mode
     Reg#(Word) mie <- mkReg(0);               // Machine Interrupt Enable
     Reg#(Word) mtvec <- mkReg(0);             // Trap Vector Base
@@ -190,31 +208,6 @@ module mkCSR(CSRs);
         end
     endmethod
 
-    // Atomic operation: read-modify-write on CSR (register version)
-    method Word atomicOp(Bit#(12) addr, Word rs1_val, CSROp op);
-        Word old_val = readCSR(addr);
-        Word new_val = case (op)
-            CSR_OP_WRITE: rs1_val;
-            CSR_OP_SET:   old_val | rs1_val;
-            CSR_OP_CLR:   old_val & ~rs1_val;
-            CSR_OP_READ:  old_val;
-            default:      old_val;
-        endcase;
-
-        // Update CSR if not read-only and not READ op
-        if (op != CSR_OP_READ && !isReadOnlyCSR(addr)) begin
-            writeCSR(addr, new_val);
-        end
-
-        return old_val;
-    endmethod
-
-    // Atomic operation with immediate (zimm is zero-extended to Word)
-    method Word atomicOpImm(Bit#(12) addr, Bit#(5) zimm, CSROp op);
-        Word rs1_val = { 27'b0, zimm };
-        return atomicOp(addr, rs1_val, op);
-    endmethod
-
     method PrivilegeMode currentMode();
         return priv_mode;
     endmethod
@@ -234,7 +227,7 @@ module mkCSR(CSRs);
         // Check if vectored mode and is an interrupt
         if (mode == 2'b01 && trap.is_interrupt) begin
             // Vectored mode: base + 4 * cause
-            return base + (zeroExtend(trap.cause) << 2);
+            return base + (zeroExtend(pack(trap.cause)) << 2);
         end else begin
             // Direct mode: just base
             return base;
