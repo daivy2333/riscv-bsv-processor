@@ -2,7 +2,6 @@
 package PLIC;
 
 import Types::*;
-import RegFile::*;
 import Vector::*;
 
 interface PLIC;

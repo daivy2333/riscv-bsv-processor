@@ -2,7 +2,6 @@
 package UART;
 
 import Types::*;
-import RegFile::*;
 
 interface UART;
     method Word read(Addr addr);

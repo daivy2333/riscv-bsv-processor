@@ -2,7 +2,6 @@
 package CLINT;
 
 import Types::*;
-import RegFile::*;
 import Vector::*;
 
 interface CLINT;
