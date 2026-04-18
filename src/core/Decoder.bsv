@@ -2,6 +2,7 @@
 package Decoder;
 
 import Types::*;
+import PrivilegedTypes::*;
 
 // 解码结果
 typedef struct {
@@ -21,6 +22,12 @@ typedef struct {
     Bool        use_rs2;    // 新增：是否使用 rs2
     MemWidth    mem_width;      // 内存访问宽度
     Bool        mem_unsigned;   // 是否无符号扩展
+    // CSR 指令字段
+    Bool        is_csr;         // 是否 CSR 指令
+    Bool        is_csr_imm;     // 是否是立即数版本 (CSRRWI等)
+    Bit#(12)    csr_addr;       // CSR 地址
+    CSROp       csr_op;         // CSR 操作类型
+    Bit#(5)     csr_zimm;      // 立即数版本的 zimm
 } DecodedInstr deriving (Bits, Eq, FShow);
 
 interface Decoder;
@@ -49,6 +56,12 @@ module mkDecoder(Decoder);
         Bool use_rs2 = False;
         MemWidth mem_width = MEM_WORD;     // 新增：默认值
         Bool mem_unsigned = False;         // 新增：默认值
+        // CSR 指令字段默认值
+        Bool is_csr = False;
+        Bool is_csr_imm = False;
+        Bit#(12) csr_addr = 0;
+        CSROp csr_op = CSR_OP_READ;
+        Bit#(5) csr_zimm = 0;
 
         case (opcode)
             // R-Type
@@ -205,6 +218,49 @@ module mkDecoder(Decoder);
                 alu_op = ALU_ADD;
             end
 
+            // CSR 指令 (SYSTEM) - opcode = 7'b1110011
+            7'b1110011: begin
+                write_reg = True;
+                use_rs1 = True;
+                use_rs2 = False;
+                use_imm = False;
+                is_csr = True;
+                is_csr_imm = False;
+                csr_addr = instruction[31:20];
+                csr_op = CSR_OP_READ;
+
+                case (funct3)
+                    3'b001: csr_op = CSR_OP_WRITE;              // CSRRW
+                    3'b010: begin                               // CSRRWI
+                        csr_op = CSR_OP_WRITE;
+                        is_csr_imm = True;
+                        use_rs1 = False;
+                    end
+                    3'b011: begin                               // CSRRS
+                        csr_op = (rs1_addr == 0) ? CSR_OP_READ : CSR_OP_SET;
+                    end
+                    3'b101: begin                              // CSRRSI
+                        csr_op = (instruction[19:15] == 0) ? CSR_OP_READ : CSR_OP_SET;
+                        is_csr_imm = True;
+                        use_rs1 = False;
+                    end
+                    3'b110: begin                               // CSRRC
+                        csr_op = (rs1_addr == 0) ? CSR_OP_READ : CSR_OP_CLR;
+                    end
+                    3'b111: begin                               // CSRRCI
+                        csr_op = (instruction[19:15] == 0) ? CSR_OP_READ : CSR_OP_CLR;
+                        is_csr_imm = True;
+                        use_rs1 = False;
+                    end
+                    default: begin
+                        // ECALL/EBREAK/MRET/SFENCE.VMA 等在 Core 处理
+                    end
+                endcase
+
+                if (is_csr_imm)
+                    csr_zimm = instruction[19:15];  // zimm = rs1 字段
+            end
+
             default: begin
                 // 未实现指令
             end
@@ -225,8 +281,13 @@ module mkDecoder(Decoder);
             use_imm: use_imm,
             use_rs1: use_rs1,
             use_rs2: use_rs2,
-            mem_width: mem_width,       // 新增
-            mem_unsigned: mem_unsigned  // 新增
+            mem_width: mem_width,
+            mem_unsigned: mem_unsigned,
+            is_csr: is_csr,
+            is_csr_imm: is_csr_imm,
+            csr_addr: csr_addr,
+            csr_op: csr_op,
+            csr_zimm: csr_zimm
         };
     endmethod
 endmodule
