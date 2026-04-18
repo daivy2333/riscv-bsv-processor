@@ -5,7 +5,6 @@
 | 文档 | 内容 |
 |------|------|
 | [cpu-pipeline-architecture.md](cpu-pipeline-architecture.md) | 流水线架构设计、数据包结构、前递网络 |
-| [pipeline-refactor-design.md](pipeline-refactor-design.md) | 流水线架构重构设计规格 |
 | [roadmap-embedded-os.md](roadmap-embedded-os.md) | 开发阶段、里程碑、测试状态 |
 
 ## 参考文档
@@ -23,10 +22,15 @@
 |------|------|
 | [debugging-lessons.md](debugging-lessons.md) | 棘手问题记录、调试方法论 |
 
+## 设计规格
+
+| 文档 | 内容 |
+|------|------|
+| [superpowers/specs/2026-04-18-stage5-interrupt-framework-design.md](superpowers/specs/2026-04-18-stage5-interrupt-framework-design.md) | 阶段 5 中断框架设计 |
+
 ## 快速导航
 
 - **想了解整体架构？** → [cpu-pipeline-architecture.md](cpu-pipeline-architecture.md)
-- **想了解重构方案？** → [pipeline-refactor-design.md](pipeline-refactor-design.md)
 - **想了解开发进度？** → [roadmap-embedded-os.md](roadmap-embedded-os.md)
 - **想了解分支预测？** → [branch-prediction.md](branch-prediction.md)
 - **想添加测试？** → [testing-guide.md](testing-guide.md)
