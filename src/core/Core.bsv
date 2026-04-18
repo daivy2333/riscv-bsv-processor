@@ -22,6 +22,11 @@ interface Core;
     method Word tohostValue;      // tohost 写入值
     method Action loadProgram(Vector#(1024, Word) prog);
     method Word readReg(Bit#(5) addr);
+    // 新增：内存请求接口（请求/响应式）
+    method MemReq memReq();
+    method Action memResp(MemResp resp);
+    // 新增：CSR 模块接口（用于 SOC 连接中断信号）
+    method CSRs csrModule();
 endinterface
 
 module mkCore#(String firmwareFile)(Core);
@@ -65,12 +70,16 @@ module mkCore#(String firmwareFile)(Core);
 
     // 内存（保持原配置避免编译问题）
     Vector#(1024, Reg#(Word)) imem <- replicateM(mkReg(0));   // 4KB, 2^10 entries
-    Vector#(512, Reg#(Word)) dmem <- replicateM(mkReg(0));    // 2KB, 2^9 entries
+    // dmem 移至外部模块 DMem.bsv
 
-    // tohost 检测（riscv-tests 完成信号）
+    // 内存请求/响应寄存器
+    Reg#(MemReq) current_mem_req <- mkReg(nopMemReq());
+    Reg#(MemResp) pending_mem_resp <- mkReg(MemResp {valid: False, rdata: 0});
+    Reg#(Bool) mem_resp_pending <- mkReg(False);
+
+    // tohost 检测（移至外部模块 DMem.bsv）
     Reg#(Bool) test_done <- mkReg(False);
     Reg#(Word) tohost_value <- mkReg(0);
-    Addr tohost_addr = 32'h80001000;  // riscv-tests 标准地址
 
     // 陷阱控制
     Reg#(Bool) in_trap <- mkReg(False);
@@ -444,88 +453,36 @@ module mkCore#(String firmwareFile)(Core);
         EX_MEM_Packet pkt = ex2mem.first;
         ex2mem.deq;
 
-        Word mem_data = 0;
-
         // 对齐检查（阶段1仅打印警告）
         if (pkt.mem_op != MEM_NONE && !checkAlignment(pkt.alu_result, pkt.mem_width)) begin
             $display("WARNING: Misaligned access at PC=%h, addr=%h, width=%s",
                      pkt.pc, pkt.alu_result, pkt.mem_width);
         end
 
-        // 内存读取
+        // 生成内存请求发送给 SOC
+        MemReq req = nopMemReq();
+        if (pkt.mem_op != MEM_NONE) begin
+            req = MemReq {
+                valid: True,
+                addr: pkt.alu_result,
+                wdata: pkt.rs2_val,
+                op: pkt.mem_op,
+                width: pkt.mem_width,
+                is_unsigned: pkt.mem_unsigned
+            };
+        end
+        current_mem_req <= req;
+
+        // 如果是读操作，标记等待响应
         if (pkt.mem_op == MEM_READ) begin
-            Bit#(9) word_idx = pkt.alu_result[10:2];  // 9 位索引
-            Word word_val = dmem[word_idx];
-
-            case (pkt.mem_width)
-                MEM_WORD: mem_data = word_val;
-
-                MEM_HALF: begin
-                    Bit#(1) half_offset = pkt.alu_result[1];
-                    Bit#(16) half_val = half_offset == 0
-                        ? word_val[15:0]
-                        : word_val[31:16];
-                    mem_data = pkt.mem_unsigned
-                        ? zeroExtend(half_val)
-                        : signExtend(half_val);
-                end
-
-                MEM_BYTE: begin
-                    Bit#(2) byte_offset = pkt.alu_result[1:0];
-                    Bit#(8) byte_val = case (byte_offset)
-                        0: word_val[7:0];
-                        1: word_val[15:8];
-                        2: word_val[23:16];
-                        3: word_val[31:24];
-                    endcase;
-                    mem_data = pkt.mem_unsigned
-                        ? zeroExtend(byte_val)
-                        : signExtend(byte_val);
-                end
-            endcase
+            mem_resp_pending <= True;
         end
 
-        // 内存写入
-        if (pkt.mem_op == MEM_WRITE) begin
-            Bit#(9) word_idx = pkt.alu_result[10:2];  // 9 位索引
-            Word old_word = dmem[word_idx];
-            Word new_word = old_word;
-
-            case (pkt.mem_width)
-                MEM_WORD: new_word = pkt.rs2_val;
-
-                MEM_HALF: begin
-                    Bit#(16) half_val = pkt.rs2_val[15:0];
-                    Bit#(1) half_offset = pkt.alu_result[1];
-                    new_word = half_offset == 0
-                        ? {old_word[31:16], half_val}
-                        : {half_val, old_word[15:0]};
-                end
-
-                MEM_BYTE: begin
-                    Bit#(8) byte_val = pkt.rs2_val[7:0];
-                    Bit#(2) byte_offset = pkt.alu_result[1:0];
-                    case (byte_offset)
-                        0: new_word = {old_word[31:8], byte_val};
-                        1: new_word = {old_word[31:16], byte_val, old_word[7:0]};
-                        2: new_word = {old_word[31:24], byte_val, old_word[15:0]};
-                        3: new_word = {byte_val, old_word[23:0]};
-                    endcase
-                end
-            endcase
-
-            dmem[word_idx] <= new_word;
-
-            // tohost 写入检测
-            if (pkt.alu_result == tohost_addr) begin
-                test_done <= True;
-                tohost_value <= pkt.rs2_val;
-            end
-        end
+        // 内存写入由 SOC 处理，tohost 检测移至 DMem 模块
 
         mem2wb.enq(MEM_WB_Packet {
             pc: pkt.pc,
-            mem_data: mem_data,
+            mem_data: 0,  // 等待响应填充
             alu_result: pkt.alu_result,
             rd: pkt.rd,
             write_reg: pkt.write_reg,
@@ -541,7 +498,13 @@ module mkCore#(String firmwareFile)(Core);
         MEM_WB_Packet pkt = mem2wb.first;
         mem2wb.deq;
 
-        Word wb_data = pkt.is_load ? pkt.mem_data : pkt.alu_result;
+        Word wb_data = pkt.alu_result;
+
+        // 如果是 Load，等待响应
+        if (pkt.is_load && mem_resp_pending) begin
+            wb_data = pending_mem_resp.rdata;
+            mem_resp_pending <= False;
+        end
 
         if (pkt.write_reg && pkt.rd != 0) begin
             regFile.write(pkt.rd, wb_data);
@@ -555,10 +518,41 @@ module mkCore#(String firmwareFile)(Core);
 
         wb_forward_data0 <= wb_data;
         wb_forward_rd0 <= pkt.rd;
-        wb_forward_valid0 <= pkt.write_reg;
+        wb_forward_valid0 <= pkt.write_reg && pkt.rd != 0;  // 只有写入非零寄存器才标记为有效
 
         // CSR 指令在 EX 阶段已处理，这里只更新计数器
         csrs.incrementMinstret;
+
+        // 提交边界检查中断（并入 writebackStage 尾部）
+        if (csrs.hasPendingInterrupt()) begin
+            MStatus ms = unpackMStatus(csrs.readCSR(12'h300));
+            if (ms.mie == 1'b1) begin
+                // 保存 trap 信息
+                Maybe#(Bit#(5)) cause_opt = csrs.getPendingInterruptCause();
+                if (cause_opt matches tagged Valid .cause) begin
+                    csrs.writeCSR(12'h341, pack(pkt.pc));  // mepc
+                    csrs.writeCSR(12'h342, {1'b1, 26'b0, cause});  // mcause (最高位=1表示中断)
+                    csrs.writeCSR(12'h343, 0);  // mtval
+
+                    MStatus new_ms = ms;
+                    new_ms.mpie = ms.mie;
+                    new_ms.mpp = 2'b11;  // M-mode
+                    new_ms.mie = 1'b0;
+                    csrs.writeCSR(12'h300, packMStatus(new_ms));
+
+                    // flush 流水线
+                    if2id.clear;
+                    id2ex.clear;
+                    ex2mem.clear;
+
+                    // 跳转到 mtvec
+                    Addr trap_vec = csrs.readCSR(12'h305) & ~32'h3;
+                    pcReg <= trap_vec;
+                    branch_flush <= True;
+                    no_pc_update <= True;
+                end
+            end
+        end
     endrule
 
     // ============================================================
@@ -579,6 +573,18 @@ module mkCore#(String firmwareFile)(Core);
 
     method Word readReg(Bit#(5) addr);
         return regFile.readReg(addr);
+    endmethod
+
+    method MemReq memReq();
+        return current_mem_req;
+    endmethod
+
+    method Action memResp(MemResp resp);
+        pending_mem_resp <= resp;
+    endmethod
+
+    method CSRs csrModule();
+        return csrs;
     endmethod
 endmodule
 
