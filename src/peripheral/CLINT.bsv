@@ -10,7 +10,6 @@ interface CLINT;
     method Bool timerIRQ();             // MTIP: mtime >= mtimecmp
     method Bool softwareIRQStatus();   // MSIP 读状态
     method Action softwareIRQ(Bool v); // MSIP 写入
-    method Action increment_mtime();   // 外部调用递增 mtime
 endinterface
 
 module mkCLINT(CLINT);
@@ -30,11 +29,10 @@ module mkCLINT(CLINT);
     function Addr addrMTIMECMP(); return 32'h02004000; endfunction
     function Addr addrMTIMECMP_H(); return 32'h02004004; endfunction
 
-    // 每 cycle 自动递增 mtime (通过外部调用)
-    // 移除规则，使用方法替代
-    method Action increment_mtime();
+    // mtime 自动递增规则（每周期递增）
+    rule auto_increment_mtime;
         mtime <= mtime + 1;
-    endmethod
+    endrule
 
     method Word read(Addr addr);
         Word result = 0;
@@ -53,17 +51,15 @@ module mkCLINT(CLINT);
     endmethod
 
     method Action write(Addr addr, Word data);
+        // 只允许写 msip 和 mtimecmp，mtime 设为只读
         if (addr == addrMSIP()) begin
             msip <= (data[0] == 1);
-        end else if (addr == addrMTIME()) begin
-            mtime <= {mtime[63:32], data};  // 写低 32-bit
-        end else if (addr == addrMTIME_H()) begin
-            mtime <= {data, mtime[31:0]};   // 写高 32-bit
         end else if (addr == addrMTIMECMP()) begin
-            mtimecmp <= {mtimecmp[63:32], data};
+            mtimecmp <= {mtimecmp[63:32], data};  // 写低 32-bit
         end else if (addr == addrMTIMECMP_H()) begin
-            mtimecmp <= {data, mtimecmp[31:0]};
+            mtimecmp <= {data, mtimecmp[31:0]};   // 写高 32-bit
         end
+        // mtime/mtime_hi 设为只读，忽略写入
     endmethod
 
     method Bool timerIRQ();

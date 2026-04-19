@@ -5,8 +5,8 @@
 .global _start
 
 _start:
-    # 设置数据地址
-    li x6, 0x1000
+    # 设置数据地址（使用 RAM 基址）
+    li x6, 0x80000100
 
     # Store 数据
     li x5, 70

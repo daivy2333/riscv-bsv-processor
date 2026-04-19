@@ -17,7 +17,6 @@ interface SOC;
     method Word tohostValue();
     method Action loadProgram(Vector#(1024, Word) prog);
     method Word readReg(Bit#(5) addr);
-    method Action sync_mtime();  // 同步 mtime 递增
 endinterface
 
 module mkSOC(SOC);
@@ -104,10 +103,6 @@ module mkSOC(SOC);
 
     method Word readReg(Bit#(5) addr);
         return core.readReg(addr);
-    endmethod
-
-    method Action sync_mtime();
-        clint.increment_mtime();
     endmethod
 endmodule
 
