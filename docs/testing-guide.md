@@ -70,8 +70,13 @@ end:
 | csr_immediate_test.s | ✓ PASSED | CSR 立即数 (46 cycles) |
 | loop_test.s | ✓ PASSED | 循环分支 (71 cycles) |
 | pipeline_test.s | ✓ PASSED | 完整流水线 (65 cycles) |
+| uart_putchar_test.s | ✓ PASSED | UART TX 输出 (62 cycles) |
+| mtime_test.s | ✓ PASSED | mtime 读取 (62 cycles) |
+| mtime_increment_verify.s | ✓ PASSED | mtime 递增验证 (62 cycles) |
+| mtimecmp_mtip_test.s | ✓ PASSED | MTIP 触发 (62 cycles) |
+| trap_mret_test.s | ✓ PASSED | Trap + mret (62 cycles) |
 
-**总计**: 11 个测试，全部通过
+**总计**: 16 个测试，全部通过
 
 ## 阶段状态
 
@@ -81,7 +86,7 @@ end:
 | 阶段 3 | CSR + 陷阱处理 | ✓ 完成 |
 | 阶段 4 | 分支预测修复 | ✓ 完成 |
 | 阶段 5 | SOC + 中断框架 | ✓ 完成 |
-| 阶段 6 | FreeRTOS | ⏳ 待开始 |
+| 阶段 6 | FreeRTOS 基础 | ✓ 完成 |
 
 ## 调试技巧
 
