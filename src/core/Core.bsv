@@ -48,6 +48,23 @@ module mkCore#(String firmwareFile)(Core);
     Reg#(Bool) stall_load_use <- mkReg(False);    // Load-Use 停顿标志
     Reg#(Bit#(2)) stall_count <- mkReg(0);        // 停顿剩余周期数
 
+    // EX阶段信息缓存（用于ID阶段冒险检测，避免空FIFO访问）
+    Reg#(Bool) ex_is_load_cached <- mkReg(False);
+    Reg#(Bit#(5)) ex_rd_cached <- mkReg(0);
+
+    // MEM阶段信息缓存（用于EX阶段前递，避免空FIFO访问）
+    Reg#(Bool) mem_write_reg_cached <- mkReg(False);
+    Reg#(Bool) mem_is_load_cached <- mkReg(False);
+    Reg#(Bit#(5)) mem_rd_cached <- mkReg(0);
+    Reg#(Word) mem_alu_result_cached <- mkReg(0);
+
+    // WB阶段信息缓存（用于EX阶段前递，避免空FIFO访问）
+    Reg#(Bool) wb_write_reg_cached <- mkReg(False);
+    Reg#(Bool) wb_is_load_cached <- mkReg(False);
+    Reg#(Bit#(5)) wb_rd_cached <- mkReg(0);
+    Reg#(Word) wb_alu_result_cached <- mkReg(0);
+    Reg#(Word) wb_mem_data_cached <- mkReg(0);
+
     // 分支冲刷控制
     Reg#(Bool) branch_flush <- mkReg(False);      // 分支冲刷标志
     Reg#(Bool) branch_flush_done <- mkReg(False); // 分支冲刷完成标志（阻止 IF 更新 PC）
@@ -142,15 +159,15 @@ module mkCore#(String firmwareFile)(Core);
     // ID阶段
     // ============================================================
 
-    rule decodeStage (!stall_load_use);
+    rule decodeStage (!stall_load_use && if2id.notEmpty);
         IF_ID_Packet pkt = if2id.first;
         DecodedInstr dec = decoder.decode(pkt.instruction);
 
-        // 检测 Load-Use 冒险（只检查 EX 阶段的 Load）
+        // 检测 Load-Use 冒险（使用缓存的 EX 阶段信息，避免空 FIFO 访问）
         Bool load_use_hazard = False;
 
-        if (id2ex.notEmpty && id2ex.first.mem_op == MEM_READ && id2ex.first.rd != 0) begin
-            Bit#(5) ex_rd = id2ex.first.rd;
+        if (ex_is_load_cached && ex_rd_cached != 0) begin
+            Bit#(5) ex_rd = ex_rd_cached;
             if (dec.use_rs1 && dec.rs1 == ex_rd)
                 load_use_hazard = True;
             if (dec.use_rs2 && dec.rs2 == ex_rd)
@@ -163,6 +180,9 @@ module mkCore#(String firmwareFile)(Core);
             stall_count <= 2;  // Load 需要 2 周期从 EX→MEM→WB
             // 立即插入气泡到 id2ex（当前周期）
             id2ex.enq(nopPacket());
+            // 更新 EX 缓存（气泡不是 load）
+            ex_is_load_cached <= False;
+            ex_rd_cached <= 0;
             // 注意：不 deq if2id，保留指令供下个周期使用
         end else begin
             // 正常解码并发送到 EX
@@ -245,6 +265,9 @@ module mkCore#(String firmwareFile)(Core);
                 predicted_taken: pkt.predicted_taken,
                 predicted_target: pkt.predicted_pc
             });
+            // 更新 EX 缓存（用于下个周期的冒险检测）
+            ex_is_load_cached <= (dec.mem_op == MEM_READ);
+            ex_rd_cached <= dec.rd;
         end
     endrule
 
@@ -257,6 +280,9 @@ module mkCore#(String firmwareFile)(Core);
         end
         // 在 stall 周期插入气泡到 id2ex
         id2ex.enq(nopPacket());
+        // 更新 EX 缓存（气泡不是 load）
+        ex_is_load_cached <= False;
+        ex_rd_cached <= 0;
     endrule
 
     // ============================================================
@@ -265,27 +291,27 @@ module mkCore#(String firmwareFile)(Core);
 
     (* execution_order = "writebackStage, executeStage" *)
     (* preempts = "executeStage, fetchStage" *)
-    rule executeStage (!stall_load_use && id2ex.notEmpty && ex2mem.notFull);
+    rule executeStage (id2ex.notEmpty && ex2mem.notFull);
         ID_EX_Packet pkt = id2ex.first;
 
-        // 前递逻辑 - 按优先级顺序检查
+        // 前递逻辑 - 使用缓存避免空FIFO访问
         Word op1 = pkt.rs1_val;
         Word op2 = pkt.rs2_val;
 
-        // MEM→EX 前递（最高优先级）
-        if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs1 && pkt.rs1 != 0)
-            op1 = ex2mem.first.alu_result;
-        else if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs1 && pkt.rs1 != 0)
-            op1 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
+        // MEM→EX 前递（最高优先级，使用缓存）
+        if (mem_write_reg_cached && !mem_is_load_cached && mem_rd_cached == pkt.rs1 && pkt.rs1 != 0)
+            op1 = mem_alu_result_cached;
+        else if (wb_write_reg_cached && wb_rd_cached == pkt.rs1 && pkt.rs1 != 0)
+            op1 = wb_is_load_cached ? wb_mem_data_cached : wb_alu_result_cached;
         else if (wb_forward_valid0 && wb_forward_rd0 == pkt.rs1 && pkt.rs1 != 0)
             op1 = wb_forward_data0;
         else if (wb_forward_valid1 && wb_forward_rd1 == pkt.rs1 && pkt.rs1 != 0)
             op1 = wb_forward_data1;
 
-        if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load && ex2mem.first.rd == pkt.rs2 && pkt.rs2 != 0)
-            op2 = ex2mem.first.alu_result;
-        else if (mem2wb.notEmpty && mem2wb.first.write_reg && mem2wb.first.rd == pkt.rs2 && pkt.rs2 != 0)
-            op2 = mem2wb.first.is_load ? mem2wb.first.mem_data : mem2wb.first.alu_result;
+        if (mem_write_reg_cached && !mem_is_load_cached && mem_rd_cached == pkt.rs2 && pkt.rs2 != 0)
+            op2 = mem_alu_result_cached;
+        else if (wb_write_reg_cached && wb_rd_cached == pkt.rs2 && pkt.rs2 != 0)
+            op2 = wb_is_load_cached ? wb_mem_data_cached : wb_alu_result_cached;
         else if (wb_forward_valid0 && wb_forward_rd0 == pkt.rs2 && pkt.rs2 != 0)
             op2 = wb_forward_data0;
         else if (wb_forward_valid1 && wb_forward_rd1 == pkt.rs2 && pkt.rs2 != 0)
@@ -449,9 +475,15 @@ module mkCore#(String firmwareFile)(Core);
     // MEM阶段
     // ============================================================
 
-    rule memoryStage;
+    rule memoryStage (ex2mem.notEmpty);
         EX_MEM_Packet pkt = ex2mem.first;
         ex2mem.deq;
+
+        // 更新 MEM 缓存（供下一周期 executeStage 前递使用）
+        mem_write_reg_cached <= pkt.write_reg;
+        mem_is_load_cached <= pkt.is_load;
+        mem_rd_cached <= pkt.rd;
+        mem_alu_result_cached <= pkt.alu_result;
 
         // 对齐检查（阶段1仅打印警告）
         if (pkt.mem_op != MEM_NONE && !checkAlignment(pkt.alu_result, pkt.mem_width)) begin
@@ -494,7 +526,7 @@ module mkCore#(String firmwareFile)(Core);
     // WB阶段
     // ============================================================
 
-    rule writebackStage;
+    rule writebackStage (mem2wb.notEmpty);
         MEM_WB_Packet pkt = mem2wb.first;
         mem2wb.deq;
 
@@ -505,6 +537,13 @@ module mkCore#(String firmwareFile)(Core);
             wb_data = pending_mem_resp.rdata;
             mem_resp_pending <= False;
         end
+
+        // 更新 WB 缓存（供下一周期 executeStage 前递使用）
+        wb_write_reg_cached <= pkt.write_reg;
+        wb_is_load_cached <= pkt.is_load;
+        wb_rd_cached <= pkt.rd;
+        wb_alu_result_cached <= pkt.alu_result;
+        wb_mem_data_cached <= wb_data;  // 使用实际数据（可能是 load 结果）
 
         if (pkt.write_reg && pkt.rd != 0) begin
             regFile.write(pkt.rd, wb_data);
@@ -568,6 +607,11 @@ module mkCore#(String firmwareFile)(Core);
     method Action loadProgram(Vector#(1024, Word) prog);
         for (Integer i = 0; i < 1024; i = i + 1)
             imem[i] <= prog[i];
+        // 清除所有 FIFO，确保流水线从空状态开始
+        if2id.clear;
+        id2ex.clear;
+        ex2mem.clear;
+        mem2wb.clear;
         programLoaded <= True;
     endmethod
 
