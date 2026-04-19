@@ -27,6 +27,7 @@ module mkTestBench(TestBench);
     (* descending_urgency = "checkCompletion, countCycles" *)
     rule countCycles (programLoaded && !dumpDone);
         cycleCount <= cycleCount + 1;
+        soc.sync_mtime();  // 同步 mtime 递增
 
         // 超时检查
         if (cycleCount >= 100000) begin

@@ -10,6 +10,7 @@ interface CLINT;
     method Bool timerIRQ();             // MTIP: mtime >= mtimecmp
     method Bool softwareIRQStatus();   // MSIP 读状态
     method Action softwareIRQ(Bool v); // MSIP 写入
+    method Action increment_mtime();   // 外部调用递增 mtime
 endinterface
 
 module mkCLINT(CLINT);
@@ -29,10 +30,11 @@ module mkCLINT(CLINT);
     function Addr addrMTIMECMP(); return 32'h02004000; endfunction
     function Addr addrMTIMECMP_H(); return 32'h02004004; endfunction
 
-    // 每 cycle 自动递增 mtime
-    rule increment_mtime;
+    // 每 cycle 自动递增 mtime (通过外部调用)
+    // 移除规则，使用方法替代
+    method Action increment_mtime();
         mtime <= mtime + 1;
-    endrule
+    endmethod
 
     method Word read(Addr addr);
         Word result = 0;
