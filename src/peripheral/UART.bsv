@@ -49,8 +49,11 @@ module mkUART(UART);
     method Action write(Addr addr, Word data);
         Addr offset = addr & 32'hFF;
         if (offset == 0) begin  // TXDATA
+            // 立即输出字符（无 backpressure）
+            $display("%c", data[7:0]);
             txdata <= data[7:0];
-            tx_full <= True;
+            tx_full <= False;  // 始终为空（无阻塞）
+            ip[0] <= 1;        // TX 完成 interrupt
         end else if (offset == 8) begin  // TXCTRL
             tx_enable <= (data[0] == 1'b1);
         end else if (offset == 12) begin  // RXCTRL
