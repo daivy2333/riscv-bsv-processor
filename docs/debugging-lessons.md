@@ -212,6 +212,99 @@ wb_forward_valid0 <= pkt.write_reg && pkt.rd != 0;
 
 ---
 
+## 问题 5：BSV 规则调度死锁（TestBench 与 SOC 冲突）
+
+**日期**：2026-04-19
+
+**现象**：仿真超时，`done` 信号始终为 0，`tohost_value=1` 已写入但 TestBench 检测不到。
+
+**调试时长**：约 2 小时
+
+### 根因分析
+
+BSV 规则调度冲突导致死锁：
+
+1. **stepSimulation 规则阻止 handle_mem_req**
+   - TestBench 的 `stepSimulation` 规则读取 `soc.tohostValue()`
+   - SOC 的 `handle_mem_req` 规则写入 `soc_dmem_tohost_value_reg`
+   - BSC 生成 `!WILL_FIRE_RL_stepSimulation` 作为 handle_mem_req 的条件
+   - 导致内存操作被阻止，tohost 永远无法写入
+
+2. **checkDone 规则 never fire**
+   - `checkDone` 读取 `soc.testDone()`（调用 `tohost_written_reg`）
+   - `countCycles` 也读取 `dumpDone` 并写入 `cycleCount`
+   - 规则间读写冲突，BSC 优化掉 checkDone 的 enable 信号
+   - Verilog 生成 `programDone$EN = 1'b0 && ...`
+
+### 调试方法
+
+1. **Verilator 信号追踪**
+   - 检查 `WILL_FIRE_RL_stepSimulation` 和 `tohost_written_reg`
+   - 发现 stepSimulation 周期执行，但 tohost_written_reg 始终为 0
+   - 内存写入被阻止
+
+2. **Verilog 代码分析**
+   ```verilog
+   // handle_mem_req 条件中有 !WILL_FIRE_RL_stepSimulation
+   assign MUX_soc_dmem_tohost_value$write_1__SEL_1 =
+          !WILL_FIRE_RL_stepSimulation && soc_core_current_mem_req[69] ...
+   
+   // checkDone enable 被优化为 0
+   assign programDone$EN = 1'b0 && (soc_dmem_tohost_written || ...)
+   ```
+
+### 解决方案
+
+使用 `descending_urgency` 属性调整规则优先级：
+
+```bsv
+(* descending_urgency = "checkCompletion, countCycles" *)
+rule countCycles (programLoaded && !dumpDone);
+    cycleCount <= cycleCount + 1;
+    if (cycleCount >= 100000) begin
+        $display("WARNING: Timeout at cycle %0d", cycleCount);
+        dumpDone <= True;
+    end
+endrule
+
+(* descending_urgency = "checkCompletion, countCycles" *)
+rule checkCompletion (programLoaded && !dumpDone && soc.tohostValue() != 0);
+    $display("\n====================================");
+    if (soc.tohostValue() == 1) begin
+        $display("  Test Results: PASSED");
+    end else begin
+        $display("  Test Results: FAILED (tohost=0x%x)", soc.tohostValue());
+    end
+    $display("====================================");
+    $display("Cycles: %0d", cycleCount);
+    dumpDone <= True;
+endrule
+```
+
+同时简化 DMem，只使用寄存器而非 Wire：
+
+```bsv
+// 移除 Wire，避免读写冲突
+Reg#(Bool) tohost_written_reg <- mkReg(False);
+Reg#(Word) tohost_value_reg <- mkReg(0);
+```
+
+### 经验教训
+
+1. **Wire 信号会引发规则冲突**
+   - Wire 在同周期可读写，BSC 无法确定执行顺序
+   - 对跨模块的状态信号，应使用 Reg
+
+2. **descending_urgency 是关键**
+   - BSV 默认按规则定义顺序调度，可能导致死锁
+   - 使用属性显式指定优先级
+
+3. **检查 Verilog 输出**
+   - 当规则"never fire"时，检查生成的 enable 信号
+   - `1'b0 &&` 表示规则条件被优化掉
+
+---
+
 ## 总结：调试方法论
 
 ### 1. 周期级 trace 是最强大的工具
@@ -238,6 +331,12 @@ $display("Cycle %0d: PC=%h, op1=%h, op2=%h, taken=%b, predicted=%b",
 - 决策点和执行点之间要传递完整信息
 - pipeline packet 结构要仔细设计
 
+### 5. BSV 规则调度
+
+- Wire 信号会引发跨规则冲突，优先使用 Reg
+- 使用 `descending_urgency` 属性解决死锁
+- 检查 Verilog 输出中的 enable 信号
+
 ---
 
-*更新日期: 2026-04-18*
+*更新日期: 2026-04-19*

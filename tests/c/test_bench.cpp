@@ -1,5 +1,5 @@
 // tests/c/test_bench.cpp
-// Verilator 仿真测试驱动（简化版）
+// Verilator 仿真测试驱动
 
 #include "VmkTestBench.h"
 #include "verilated.h"
@@ -24,10 +24,11 @@ int main(int argc, char** argv) {
         top->eval();
     }
     top->RST_N = 1;
+    top->eval();
 
     std::cout << "Running simulation...\n" << std::endl;
 
-    uint64_t max_cycles = 100000;
+    uint64_t max_cycles = 2000;
     uint64_t cycle = 0;
     bool done = false;
 
@@ -38,8 +39,8 @@ int main(int argc, char** argv) {
         top->eval();
         cycle++;
 
-        // 检查模块完成信号
-        if (top->mkTestBench__DOT__dumpDone) {
+        // 检查完成信号
+        if (top->done) {
             std::cout << "\nTestBench done at cycle " << cycle << std::endl;
             done = true;
         }

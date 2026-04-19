@@ -101,12 +101,19 @@ IF → ID → EX → MEM → WB
 | 文件 | 作用 |
 |------|------|
 | `src/core/Core.bsv` | 流水线核心，规则调度，陷阱处理 |
-| `src/common/Types.bsv` | 数据包定义 |
+| `src/soc/SOC.bsv` | SOC 集成，外设连接，内存路由 |
+| `src/soc/TestBench.bsv` | 仿真测试台，完成检测 |
+| `src/common/Types.bsv` | 数据包定义，MemReq/MemResp |
 | `src/core/Decoder.bsv` | 指令解码 + CSR 指令解码 |
 | `src/core/CSR.bsv` | CSR 寄存器文件 |
 | `src/core/PrivilegedTypes.bsv` | 特权级类型定义 |
 | `src/core/ALU.bsv` | ALU 操作实现 |
 | `src/branch/BHT.bsv` | 2位饱和计数器预测 |
+| `src/branch/BTB.bsv` | 分支目标缓冲 |
+| `src/memory/DMem.bsv` | 数据内存 + tohost 监控 |
+| `src/peripheral/CLINT.bsv` | 定时器外设 |
+| `src/peripheral/PLIC.bsv` | 中断控制器 |
+| `src/peripheral/UART.bsv` | 控制台外设 |
 | `src/soc/TestProgram.bsv` | 自动生成的测试程序 |
 
 ### 数据前递
@@ -203,6 +210,10 @@ IF → ID → EX → MEM → WB
 - [x] CLINT 内存映射访问 (mtime, mtimecmp)
 - [x] 中断检查框架 (getPendingInterruptCause)
 - [x] 分支预测失败处理 (misprediction detection + flush)
+- [x] SOC 架构 (Core ↔ SOC ↔ 外设)
+- [x] PLIC 中断控制器框架 (8 IRQ)
+- [x] UART 控制台框架
+- [x] BSV 规则调度修复 (descending_urgency)
 - [x] 所有测试通过 (11 tests)
 
 ## 内存配置
@@ -210,8 +221,16 @@ IF → ID → EX → MEM → WB
 | 内存 | 大小 | 索引方式 | 基址 |
 |------|------|----------|------|
 | IMem | 1024×32bit (4KB) | PC[11:2] | 0x80000000 |
-| DMem | 512×32bit (2KB) | addr[10:2] | - |
+| DMem | 2048×32bit (8KB) | addr[12:2] | - |
 | tohost | 1 word | - | 0x80001000 |
+
+**外设地址映射**：
+
+| 外设 | 地址范围 | 说明 |
+|------|----------|------|
+| CLINT | 0x02000000-0x0200FFFF | mtime, mtimecmp |
+| PLIC | 0x0C000000-0x0C0FFFFF | 中断控制器 |
+| UART | 0x10000000-0x10000FFF | 控制台 |
 
 ## BSV 模式
 
@@ -236,9 +255,12 @@ typedef struct {
 - Load 不在 MEM→EX 前递（数据尚未可用）
 - 编译汇编时必须禁用压缩指令: `-march=rv32i_zicsr`
 - Verilator 4.038 不支持 VerilatedVar API
-- DMem 地址必须 < 2048 (512 words)
+- DMem 地址必须 < 8192 (2048 words)
 - 分支跳转后 IF 阶段暂停一周期（branch_flush 控制）
 - CSR 指令需要 Zicsr 扩展
+- **BSV 规则调度**: Wire 信号会引发跨规则冲突，优先使用 Reg
+- **BSV 规则调度**: 使用 `descending_urgency` 属性解决死锁
+- **BSV 规则调度**: 检查 Verilog 输出中的 enable 信号（如 `1'b0 &&`）
 
 ## 开发阶段
 
@@ -266,13 +288,30 @@ typedef struct {
 
 关键修复：分支预测只影响下一周期 PC，不跳过当前指令；ID_EX_Packet 携带预测信息；executeStage 检测 misprediction 并正确冲刷。详见 `docs/debugging-lessons.md`。
 
+### 阶段 5（已完成）
+
+1. ✓ SOC 架构重构 (Core ↔ SOC ↔ 外设)
+2. ✓ CLINT 定时器模块 (CLINT.bsv)
+3. ✓ PLIC 中断控制器 (PLIC.bsv, 8 IRQ)
+4. ✓ UART 控制台框架 (UART.bsv)
+5. ✓ 内存请求/响应接口 (MemReq/MemResp)
+6. ✓ BSV 规则调度修复 (descending_urgency)
+
+关键修复：Wire 信号引发规则冲突 → 改用 Reg；TestBench 规则死锁 → 使用 descending_urgency 属性。详见 `docs/debugging-lessons.md`。
+
 ---
 
-### 阶段 5+（待开始）
+### 阶段 6：FreeRTOS 支持（待开始）
 
-- PLIC 中断控制器
-- UART 控制台
-- FreeRTOS/uClinux
+| 任务 | 内容 | 优先级 |
+|------|------|--------|
+| 内存扩展 | 16MB RAM，支持操作系统加载 | 高 |
+| 中断向量 | mtvec MODE=1，中断跳转实现 | 高 |
+| 栈初始化 | MSP 设置，启动代码 | 高 |
+| Timer中断 | CLINT mtimecmp 中断触发 | 中 |
+| FreeRTOS移植 | 首次启动测试 | 低 |
+
+**里程碑目标**: 首次启动 FreeRTOS，执行简单任务调度
 
 ## 相关文档
 

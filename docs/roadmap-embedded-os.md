@@ -1,6 +1,6 @@
 # 嵌入式操作系统支持路线图
 
-日期：2026-04-18（更新）
+日期：2026-04-19（更新）
 
 ## 目标
 
@@ -8,42 +8,46 @@
 
 ## 开发阶段
 
-### 阶段 1-3：已完成
+### 阶段 1-4：已完成
 
 | 阶段 | 内容 | 状态 |
 |------|------|------|
 | 阶段 1 | 五级流水线、数据前递、分支预测 | ✓ 完成 |
 | 阶段 2 | RV32I 全指令、Load-Use 冒险、WB 前递双缓冲 | ✓ 完成 |
 | 阶段 3 | 特权级架构、CSR、陷阱处理 | ✓ 完成 |
+| 阶段 4 | 分支预测失败修复、测试通过 | ✓ 完成 |
 
-### 阶段 4：分支预测修复（已完成）
+### 阶段 5：中断框架（已完成）
 
-**问题**：loop_test/pipeline_test 超时
+**内容**：
+- CLINT 定时器（mtime, mtimecmp 内存映射）
+- PLIC 中断控制器（8 IRQ sources）
+- UART 控制台框架
+- 中断信号连接（Core ↔ SOC ↔ 外设）
+- 内存请求/响应接口（MemReq/MemResp）
 
-**根因**：分支预测失败时，流水线没有正确冲刷错误路径
-- BHT/BTB 预测跳转时，fetchStage 直接从预测目标取指，跳过了分支指令本身
-- ID_EX_Packet 没有携带预测信息，executeStage 无法检测预测失败
-- 预测失败时没有重定向 PC 到顺序地址
+**新增文件**：
+- src/peripheral/CLINT.bsv
+- src/peripheral/PLIC.bsv
+- src/peripheral/UART.bsv
+- src/soc/SOC.bsv（重构）
 
-**修复方案**：
-1. fetchStage：预测只影响下一周期 PC，当前周期仍取原地址指令
-2. ID_EX_Packet：添加 `predicted_taken` 和 `predicted_target` 字段
-3. executeStage：检测 `mispredicted` 并正确冲刷
-4. 冲刷恢复期间禁用预测
+**关键修复**：
+- BSV 规则调度冲突：使用 `descending_urgency` 属性解决 TestBench 规则死锁
+- DMem Wire 信号改为寄存器，避免读写冲突
 
 **修复结果**：
-| 测试 | 修复前 | 修复后 |
-|------|--------|--------|
-| loop_test.s | TIMEOUT | PASSED (71 cycles) |
-| pipeline_test.s | TIMEOUT | PASSED (65 cycles) |
+- 仿真正常完成，32 cycles
+- Test Results: PASSED
 
-### 阶段 5-7：待开始
+### 阶段 6：FreeRTOS 支持（待开始）
 
-| 阶段 | 内容 | 新增文件 |
-|------|------|----------|
-| 阶段 5 | PLIC 中断控制器 | src/peripheral/PLIC.bsv |
-| 阶段 6 | UART 控制台 | src/peripheral/UART.bsv |
-| 阶段 7 | 内存扩展（16MB RAM） | - |
+| 任务 | 内容 |
+|------|------|
+| 内存扩展 | 16MB RAM，支持操作系统加载 |
+| 中断向量 | mtvec 配置，中断跳转实现 |
+| 栈初始化 | MSP 设置，启动代码 |
+| FreeRTOS | 首次启动测试 |
 
 ## 里程碑
 
@@ -52,7 +56,7 @@
 | M1 | ✓ 完成 | RV32I 全指令支持 |
 | M2 | ✓ 完成 | 特权级架构完成 |
 | M3 | ✓ 完成 | 分支预测修复完成 |
-| M4 | ⏳ 待开始 | PLIC/外设完成 |
+| M4 | ✓ 完成 | 中断框架完成 |
 | M5 | ⏳ 待开始 | 首次启动 FreeRTOS |
 
 ## 测试状态
@@ -66,3 +70,9 @@
 | csr_immediate_test.s | ✓ PASSED | CSR 立即数指令 |
 | loop_test.s | ✓ PASSED | 循环分支（71 cycles） |
 | pipeline_test.s | ✓ PASSED | 完整流水线（65 cycles） |
+| rtype_complete_test.s | ✓ PASSED | R-Type 全指令 |
+| itype_alu_test.s | ✓ PASSED | I-Type ALU |
+| simple_branch_test.s | ✓ PASSED | 分支预测 |
+| simple_loop.s | ✓ PASSED | 循环计数 |
+
+**总计**: 11 个测试，全部通过

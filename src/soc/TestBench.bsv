@@ -14,7 +14,6 @@ module mkTestBench(TestBench);
     SOC soc <- mkSOC;
 
     Reg#(Bit#(32)) cycleCount <- mkReg(0);
-    Reg#(Bool) programDone <- mkReg(False);
     Reg#(Bool) dumpDone <- mkReg(False);
     Reg#(Bool) programLoaded <- mkReg(False);
 
@@ -23,20 +22,21 @@ module mkTestBench(TestBench);
         programLoaded <= True;
     endrule
 
+    // 使用 descending_urgency 设置优先级：checkCompletion > countCycles
+    // 这样当两者条件都满足时，checkCompletion 先执行
+    (* descending_urgency = "checkCompletion, countCycles" *)
     rule countCycles (programLoaded && !dumpDone);
         cycleCount <= cycleCount + 1;
-    endrule
 
-    rule checkDone (programLoaded && !programDone);
-        Bool done = soc.testDone() || (cycleCount >= 100000);
-        if (done) begin
-            if (cycleCount >= 100000)
-                $display("WARNING: Timeout at cycle %0d", cycleCount);
-            programDone <= True;
+        // 超时检查
+        if (cycleCount >= 100000) begin
+            $display("WARNING: Timeout at cycle %0d", cycleCount);
+            dumpDone <= True;
         end
     endrule
 
-    rule report (programDone && !dumpDone);
+    (* descending_urgency = "checkCompletion, countCycles" *)
+    rule checkCompletion (programLoaded && !dumpDone && soc.tohostValue() != 0);
         $display("\n====================================");
         if (soc.tohostValue() == 1) begin
             $display("  Test Results: PASSED");

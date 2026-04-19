@@ -68,10 +68,20 @@ end:
 | csr_basic_test.s | ✓ PASSED | CSR 读写 (58 cycles) |
 | privilege_m_mode_test.s | ✓ PASSED | M-mode CSR (64 cycles) |
 | csr_immediate_test.s | ✓ PASSED | CSR 立即数 (46 cycles) |
-| loop_test.s | ✓ PASSED | 循环分支 (70 cycles) |
+| loop_test.s | ✓ PASSED | 循环分支 (71 cycles) |
 | pipeline_test.s | ✓ PASSED | 完整流水线 (65 cycles) |
 
 **总计**: 11 个测试，全部通过
+
+## 阶段状态
+
+| 阶段 | 内容 | 状态 |
+|------|------|------|
+| 阶段 1-2 | 流水线 + RV32I | ✓ 完成 |
+| 阶段 3 | CSR + 陷阱处理 | ✓ 完成 |
+| 阶段 4 | 分支预测修复 | ✓ 完成 |
+| 阶段 5 | SOC + 中断框架 | ✓ 完成 |
+| 阶段 6 | FreeRTOS | ⏳ 待开始 |
 
 ## 调试技巧
 
