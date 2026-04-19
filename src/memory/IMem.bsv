@@ -10,18 +10,18 @@ interface IMem;
     method Action write(Addr addr, Word data);
 endinterface
 
-// 简化版指令内存（用于测试，无延迟）
+// 指令内存（32KB, 8K words）
 module mkIMem(IMem);
-    // 使用Reg数组模拟内存（4KB）
-    Vector#(1024, Reg#(Word)) memory <- replicateM(mkReg(0));
+    // 32KB = 8192 words
+    Vector#(8192, Reg#(Word)) memory <- replicateM(mkReg(0));
 
     method Word read(Addr addr);
-        Bit#(10) index = addr[11:2];  // 字地址对齐
+        Bit#(13) index = addr[14:2];  // 13位索引 (32KB = 8K words)
         return memory[index];
     endmethod
 
     method Action write(Addr addr, Word data);
-        Bit#(10) index = addr[11:2];
+        Bit#(13) index = addr[14:2];
         memory[index] <= data;
     endmethod
 endmodule
