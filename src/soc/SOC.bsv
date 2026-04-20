@@ -65,6 +65,9 @@ module mkSOC(SOC);
                     dmem.write(addr, req.wdata);
             end
 
+            // 确认请求已处理（握手）
+            core.memReqAck();
+
             // 响应
             if (req.op == MEM_READ) begin
                 // 字节/半字扩展（由 SOC 处理）

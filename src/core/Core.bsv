@@ -24,6 +24,7 @@ interface Core;
     method Word readReg(Bit#(5) addr);
     // 新增：内存请求接口（请求/响应式）
     method MemReq memReq();
+    method Action memReqAck();  // SOC 确认请求已处理
     method Action memResp(MemResp resp);
     // 新增：CSR 模块接口（用于 SOC 连接中断信号）
     method CSRs csrModule();
@@ -65,10 +66,11 @@ module mkCore#(String firmwareFile)(Core);
     Reg#(Word) wb_alu_result_cached <- mkReg(0);
     Reg#(Word) wb_mem_data_cached <- mkReg(0);
 
-    // 分支冲刷控制
-    Reg#(Bool) branch_flush <- mkReg(False);      // 分支冲刷标志
-    Reg#(Bool) branch_flush_done <- mkReg(False); // 分支冲刷完成标志（阻止 IF 更新 PC）
-    Reg#(Bool) no_pc_update <- mkReg(False);      // 阻止 IF 更新 PC（用于 JAL 循环）
+    // 控制流重定向协议（统一处理分支/JAL/trap/MRET/中断）
+    Reg#(Bool) redirect_pending <- mkReg(False);   // 重定向请求挂起
+    Reg#(Addr) redirect_target <- mkReg(0);        // 重定向目标地址
+    Reg#(Bit#(4)) redirect_reason <- mkReg(0);     // 重定向原因（用于 trace）
+    // redirect_reason: 0=NONE, 1=BRANCH, 2=JAL, 3=TRAP, 4=MRET, 5=INTERRUPT
 
     // PC和状态
     Reg#(Addr) pcReg <- mkReg(32'h80000000);
@@ -85,6 +87,11 @@ module mkCore#(String firmwareFile)(Core);
     Reg#(Bit#(5)) wb_forward_rd1 <- mkReg(0);
     Reg#(Bool) wb_forward_valid1 <- mkReg(False);
 
+    // 当前周期 WB->EX bypass（同周期直通，解决 WB 与 EX 同周期相遇时的前递）
+    Wire#(Word) wb_bypass_data <- mkDWire(0);
+    Wire#(Bit#(5)) wb_bypass_rd <- mkDWire(0);
+    Wire#(Bool) wb_bypass_valid <- mkDWire(False);
+
     // 内存（保持原配置避免编译问题）
     Vector#(1024, Reg#(Word)) imem <- replicateM(mkReg(0));   // 4KB, 2^10 entries
     // dmem 移至外部模块 DMem.bsv
@@ -93,6 +100,9 @@ module mkCore#(String firmwareFile)(Core);
     Reg#(MemReq) current_mem_req <- mkReg(nopMemReq());
     Reg#(MemResp) pending_mem_resp <- mkReg(MemResp {valid: False, rdata: 0});
     Reg#(Bool) mem_resp_pending <- mkReg(False);
+
+    // Load 阻塞状态：等待 SOC 响应期间冻结流水线
+    Reg#(Bool) waiting_for_load_resp <- mkReg(False);
 
     // tohost 检测（移至外部模块 DMem.bsv）
     Reg#(Bool) test_done <- mkReg(False);
@@ -106,25 +116,41 @@ module mkCore#(String firmwareFile)(Core);
     // IF阶段
     // ============================================================
 
-    rule fetchStage (programLoaded && state == RUNNING && !stall_load_use && !branch_flush);
+    // execution_order: consumeRedirect 先执行，然后 fetchStage
+    (* execution_order = "consumeRedirect, fetchStage" *)
+    rule fetchStage (programLoaded && state == RUNNING && !stall_load_use && !redirect_pending && !waiting_for_load_resp);
         Addr fetchPC = pcReg;
         Bool take_prediction = False;
         Addr prediction_target = 0;
 
-        // 只有在非冲刷恢复期间才应用分支预测
-        // 预测只影响下一周期的 PC，不影响当前取指地址
-        if (!branch_flush_done && !no_pc_update) begin
-            Maybe#(Addr) btb_hit = btb.lookup(fetchPC);
-            Bool bht_predict = bht.predict(fetchPC);
+        Bit#(10) idx = fetchPC[11:2];  // 10 位索引
+        Word instr = imem[idx];
 
-            if (btb_hit matches tagged Valid .target &&& bht_predict) begin
+        // 分支预测
+        Maybe#(Addr) btb_hit = btb.lookup(fetchPC);
+        Bool bht_predict = bht.predict(fetchPC);
+
+        // 检查指令类型
+        Bit#(7) opcode = instr[6:0];
+        Bool is_jal = (opcode == 7'b1101111);  // JAL
+        Bool is_jalr = (opcode == 7'b1100111); // JALR
+
+        if (btb_hit matches tagged Valid .target) begin
+            // BTB 有记录
+            if (is_jal || is_jalr) begin
+                // JAL/JALR: 无条件跳转，只要 BTB 有记录就预测跳转
+                take_prediction = True;
+                prediction_target = target;
+            end else if (bht_predict) begin
+                // 条件分支: 需要 BHT 也预测跳转
                 take_prediction = True;
                 prediction_target = target;
             end
         end
 
-        Bit#(10) idx = fetchPC[11:2];  // 10 位索引
-        Word instr = imem[idx];
+        // Trace: FETCH_PC
+        Addr next_pc = take_prediction ? prediction_target : fetchPC + 4;
+        $display("FETCH_PC: old=%h new=%h predicted=%d", fetchPC, next_pc, take_prediction);
 
         if2id.enq(IF_ID_Packet {
             pc: fetchPC,
@@ -136,30 +162,25 @@ module mkCore#(String firmwareFile)(Core);
 
         currentInstr <= instr;
         // PC 更新：如果预测跳转，下一周期从预测目标取指；否则顺序执行
-        if (!branch_flush_done && !no_pc_update) begin
-            if (take_prediction)
-                pcReg <= prediction_target;
-            else
-                pcReg <= pcReg + 4;
-        end
+        if (take_prediction)
+            pcReg <= prediction_target;
+        else
+            pcReg <= pcReg + 4;
     endrule
 
-    // 分支冲刷清除（branch_flush 持续一周期后自动清除）
-    rule clearBranchFlush (branch_flush);
-        branch_flush <= False;
-        branch_flush_done <= True;  // 设置完成标志，阻止 IF 更新 PC 一周期
-    endrule
-
-    // 分支冲刷完成标志清除
-    rule clearBranchFlushDone (branch_flush_done && !branch_flush);
-        branch_flush_done <= False;
+    // 控制流重定向消费（fetchStage 消费 redirect 后清除）
+    rule consumeRedirect (redirect_pending);
+        // Fetch 已经使用了 redirect_target，清除挂起状态
+        redirect_pending <= False;
+        // Trace: 重定向已消费
+        $display("REDIRECT_CONSUMED: target=%h reason=%d", redirect_target, redirect_reason);
     endrule
 
     // ============================================================
     // ID阶段
     // ============================================================
 
-    rule decodeStage (!stall_load_use && if2id.notEmpty);
+    rule decodeStage (!stall_load_use && !waiting_for_load_resp && if2id.notEmpty);
         IF_ID_Packet pkt = if2id.first;
         DecodedInstr dec = decoder.decode(pkt.instruction);
 
@@ -177,7 +198,7 @@ module mkCore#(String firmwareFile)(Core);
         if (load_use_hazard) begin
             // 停顿 ID 阶段，不发送包到 EX
             stall_load_use <= True;
-            stall_count <= 2;  // Load 需要 2 周期从 EX→MEM→WB
+            stall_count <= 3;  // Load 需要 3 周期：EX→MEM→SOC响应→WB
             // 立即插入气泡到 id2ex（当前周期）
             id2ex.enq(nopPacket());
             // 更新 EX 缓存（气泡不是 load）
@@ -291,7 +312,7 @@ module mkCore#(String firmwareFile)(Core);
 
     (* execution_order = "writebackStage, executeStage" *)
     (* preempts = "executeStage, fetchStage" *)
-    rule executeStage (id2ex.notEmpty && ex2mem.notFull);
+    rule executeStage (id2ex.notEmpty && ex2mem.notFull && !waiting_for_load_resp);
         ID_EX_Packet pkt = id2ex.first;
 
         // 前递逻辑 - 使用缓存避免空FIFO访问
@@ -301,17 +322,28 @@ module mkCore#(String firmwareFile)(Core);
         // MEM→EX 前递（最高优先级，使用缓存）
         if (mem_write_reg_cached && !mem_is_load_cached && mem_rd_cached == pkt.rs1 && pkt.rs1 != 0)
             op1 = mem_alu_result_cached;
+        // 当前周期 WB bypass（同周期直通，优先于 wb_write_reg_cached）
+        else if (wb_bypass_valid && wb_bypass_rd == pkt.rs1 && pkt.rs1 != 0)
+            op1 = wb_bypass_data;
+        // 上一周期 WB cache
         else if (wb_write_reg_cached && wb_rd_cached == pkt.rs1 && pkt.rs1 != 0)
             op1 = wb_is_load_cached ? wb_mem_data_cached : wb_alu_result_cached;
+        // 更早周期 WB 前递
         else if (wb_forward_valid0 && wb_forward_rd0 == pkt.rs1 && pkt.rs1 != 0)
             op1 = wb_forward_data0;
         else if (wb_forward_valid1 && wb_forward_rd1 == pkt.rs1 && pkt.rs1 != 0)
             op1 = wb_forward_data1;
 
+        // rs2 前递（同样优先级）
         if (mem_write_reg_cached && !mem_is_load_cached && mem_rd_cached == pkt.rs2 && pkt.rs2 != 0)
             op2 = mem_alu_result_cached;
+        // 当前周期 WB bypass
+        else if (wb_bypass_valid && wb_bypass_rd == pkt.rs2 && pkt.rs2 != 0)
+            op2 = wb_bypass_data;
+        // 上一周期 WB cache
         else if (wb_write_reg_cached && wb_rd_cached == pkt.rs2 && pkt.rs2 != 0)
             op2 = wb_is_load_cached ? wb_mem_data_cached : wb_alu_result_cached;
+        // 更早周期 WB 前递
         else if (wb_forward_valid0 && wb_forward_rd0 == pkt.rs2 && pkt.rs2 != 0)
             op2 = wb_forward_data0;
         else if (wb_forward_valid1 && wb_forward_rd1 == pkt.rs2 && pkt.rs2 != 0)
@@ -362,8 +394,11 @@ module mkCore#(String firmwareFile)(Core);
         // 更新BHT和BTB
         Bool btb_update_valid = (pkt.is_jump) || (pkt.is_branch && branch_taken);
         btb.update(pkt.pc, actual_target, btb_update_valid);
+        // BHT 更新：条件分支按实际结果，无条件跳转（JAL）设为跳转
         if (pkt.is_branch)
             bht.update(pkt.pc, branch_taken);
+        else if (pkt.is_jump)
+            bht.update(pkt.pc, True);  // JAL/JALR 总是跳转
 
         // ========== 主控制流：陷阱 -> CSR -> MRET -> 正常分支 ==========
         Bool is_mret = (getOpcode(pkt.instruction) == 7'b1110011) && (getFunct3(pkt.instruction) == 3'b000) && (getFunct7(pkt.instruction) == 7'b0011000);
@@ -385,9 +420,13 @@ module mkCore#(String firmwareFile)(Core);
             csrs.setMode(M_MODE);
 
             Addr trap_base = csrs.readCSR(12'h305) & ~32'h3;
+            // 统一重定向协议
+            redirect_pending <= True;
+            redirect_target <= trap_base;
+            redirect_reason <= 3;  // TRAP
             pcReg <= trap_base;
-            branch_flush <= True;
-            no_pc_update <= True;
+            $display("REDIRECT_REQ: pc=%h target=%h reason=TRAP", pkt.pc, trap_base);
+            $display("PIPE_FLUSH: if2id id2ex");
             if2id.clear;
             id2ex.clear;
         end else begin
@@ -421,9 +460,14 @@ module mkCore#(String firmwareFile)(Core);
                 PrivilegeMode prev = unpack(ms.mpp);
                 csrs.setMode(prev);
 
-                pcReg <= csrs.readCSR(12'h341);
-                no_pc_update <= True;
-                branch_flush <= True;
+                Addr mepc = csrs.readCSR(12'h341);
+                // 统一重定向协议
+                redirect_pending <= True;
+                redirect_target <= mepc;
+                redirect_reason <= 4;  // MRET
+                pcReg <= mepc;
+                $display("REDIRECT_REQ: pc=%h target=%h reason=MRET", pkt.pc, mepc);
+                $display("PIPE_FLUSH: if2id id2ex");
                 if2id.clear;
                 id2ex.clear;
             end else begin
@@ -432,22 +476,30 @@ module mkCore#(String firmwareFile)(Core);
 
                 if (branch_taken) begin
                     // Branch/jump taken - go to target
+                    // 统一重定向协议
+                    Bit#(4) reason = pkt.is_jump ? 2 : 1;  // JAL vs BRANCH
+                    redirect_pending <= True;
+                    redirect_target <= actual_target;
+                    redirect_reason <= reason;
                     pcReg <= actual_target;
-                    branch_flush <= True;
-                    no_pc_update <= True;
+                    $display("REDIRECT_REQ: pc=%h target=%h reason=%s", pkt.pc, actual_target, pkt.is_jump ? "JAL" : "BRANCH");
+                    $display("PIPE_FLUSH: if2id id2ex");
                     if2id.clear;
                     id2ex.clear;
                 end else if (mispredicted) begin
                     // Prediction said taken but branch is not taken - redirect to sequential
+                    // 统一重定向协议
+                    redirect_pending <= True;
+                    redirect_target <= pkt.pc + 4;
+                    redirect_reason <= 1;  // BRANCH mispredict
                     pcReg <= pkt.pc + 4;
-                    branch_flush <= True;
-                    no_pc_update <= True;
+                    $display("REDIRECT_REQ: pc=%h target=%h reason=BRANCH_MISPREDICT", pkt.pc, pkt.pc + 4);
+                    $display("PIPE_FLUSH: if2id id2ex");
                     if2id.clear;
                     id2ex.clear;
                 end else begin
                     // Normal execution, no misprediction
                     id2ex.deq;
-                    no_pc_update <= False;
                 end
 
                 // enq 到 ex2mem
@@ -475,7 +527,8 @@ module mkCore#(String firmwareFile)(Core);
     // MEM阶段
     // ============================================================
 
-    rule memoryStage (ex2mem.notEmpty);
+    (* execution_order = "writebackStage, memoryStage" *)
+    rule memoryStage (ex2mem.notEmpty && !waiting_for_load_resp);
         EX_MEM_Packet pkt = ex2mem.first;
         ex2mem.deq;
 
@@ -502,11 +555,22 @@ module mkCore#(String firmwareFile)(Core);
                 width: pkt.mem_width,
                 is_unsigned: pkt.mem_unsigned
             };
+
+            // === 提交级 trace ===
+            $display("MEM_REQ: pc=%h addr=%h op=%s wdata=%h",
+                     pkt.pc, pkt.alu_result, pkt.mem_op, pkt.rs2_val);
+
+            // Store 指令特别标记（最终提交点）
+            if (pkt.mem_op == MEM_WRITE) begin
+                $display("STORE_COMMIT: pc=%h addr=%h wdata=%h",
+                         pkt.pc, pkt.alu_result, pkt.rs2_val);
+            end
         end
         current_mem_req <= req;
 
-        // 如果是读操作，标记等待响应
-        if (pkt.mem_op == MEM_READ) begin
+        // 如果是 Load，设置阻塞状态等待响应
+        if (pkt.is_load) begin
+            waiting_for_load_resp <= True;
             mem_resp_pending <= True;
         end
 
@@ -528,70 +592,104 @@ module mkCore#(String firmwareFile)(Core);
 
     rule writebackStage (mem2wb.notEmpty);
         MEM_WB_Packet pkt = mem2wb.first;
-        mem2wb.deq;
 
-        Word wb_data = pkt.alu_result;
+        // Load 指令需要等待响应到达
+        // 只有当 pending_mem_resp.valid == True 时才允许提交
+        Bool can_commit = !pkt.is_load || pending_mem_resp.valid;
 
-        // 如果是 Load，等待响应
-        if (pkt.is_load && mem_resp_pending) begin
-            wb_data = pending_mem_resp.rdata;
-            mem_resp_pending <= False;
-        end
+        if (can_commit) begin
+            // 确认响应已到达（或非 load 指令），执行写回
+            mem2wb.deq;
 
-        // 更新 WB 缓存（供下一周期 executeStage 前递使用）
-        wb_write_reg_cached <= pkt.write_reg;
-        wb_is_load_cached <= pkt.is_load;
-        wb_rd_cached <= pkt.rd;
-        wb_alu_result_cached <= pkt.alu_result;
-        wb_mem_data_cached <= wb_data;  // 使用实际数据（可能是 load 结果）
+            Word wb_data = pkt.alu_result;
 
-        if (pkt.write_reg && pkt.rd != 0) begin
-            regFile.write(pkt.rd, wb_data);
-        end
+            // 如果是 Load，使用响应数据并清除阻塞状态
+            if (pkt.is_load && pending_mem_resp.valid) begin
+                wb_data = pending_mem_resp.rdata;
+                mem_resp_pending <= False;
+                waiting_for_load_resp <= False;  // 解除流水线阻塞
+                // 清除响应（已消费）
+                pending_mem_resp <= MemResp {valid: False, rdata: 0};
+                // 清除 EX 缓存，防止后续指令误判 Load-Use 冒险
+                ex_is_load_cached <= False;
+                ex_rd_cached <= 0;
+            end
 
-        // WB 前递设置（Load 数据在此阶段可用）
-        // 双缓冲更新：wb_forward_data1 ← wb_forward_data0 ← wb_data
-        wb_forward_data1 <= wb_forward_data0;
-        wb_forward_rd1 <= wb_forward_rd0;
-        wb_forward_valid1 <= wb_forward_valid0;
+            // 如果不是 load 但有遗留的 pending 状态，也要清除
+            //（这种情况发生在 load-use stall 之后的指令）
+            if (!pkt.is_load && mem_resp_pending) begin
+                mem_resp_pending <= False;
+                pending_mem_resp <= MemResp {valid: False, rdata: 0};
+            end
 
-        wb_forward_data0 <= wb_data;
-        wb_forward_rd0 <= pkt.rd;
-        wb_forward_valid0 <= pkt.write_reg && pkt.rd != 0;  // 只有写入非零寄存器才标记为有效
+            // 更新 WB 缓存（供下一周期 executeStage 前递使用）
+            wb_write_reg_cached <= pkt.write_reg;
+            wb_is_load_cached <= pkt.is_load;
+            wb_rd_cached <= pkt.rd;
+            wb_alu_result_cached <= pkt.alu_result;
+            wb_mem_data_cached <= wb_data;  // 使用实际数据（可能是 load 结果）
 
-        // CSR 指令在 EX 阶段已处理，这里只更新计数器
-        csrs.incrementMinstret;
+            if (pkt.write_reg && pkt.rd != 0) begin
+                regFile.write(pkt.rd, wb_data);
+            end
 
-        // 提交边界检查中断（并入 writebackStage 尾部）
-        if (csrs.hasPendingInterrupt()) begin
-            MStatus ms = unpackMStatus(csrs.readCSR(12'h300));
-            if (ms.mie == 1'b1) begin
-                // 保存 trap 信息
-                Maybe#(Bit#(5)) cause_opt = csrs.getPendingInterruptCause();
-                if (cause_opt matches tagged Valid .cause) begin
-                    csrs.writeCSR(12'h341, pack(pkt.pc));  // mepc
-                    csrs.writeCSR(12'h342, {1'b1, 26'b0, cause});  // mcause (最高位=1表示中断)
-                    csrs.writeCSR(12'h343, 0);  // mtval
+            // === 提交级 trace ===
+            $display("WB_COMMIT: pc=%h rd=%d data=%h write=%d is_load=%d",
+                     pkt.pc, pkt.rd, wb_data, pkt.write_reg, pkt.is_load);
 
-                    MStatus new_ms = ms;
-                    new_ms.mpie = ms.mie;
-                    new_ms.mpp = 2'b11;  // M-mode
-                    new_ms.mie = 1'b0;
-                    csrs.writeCSR(12'h300, packMStatus(new_ms));
+            // WB 前递设置（Load 数据在此阶段可用）
+            // 双缓冲更新：wb_forward_data1 ← wb_forward_data0 ← wb_data
+            wb_forward_data1 <= wb_forward_data0;
+            wb_forward_rd1 <= wb_forward_rd0;
+            wb_forward_valid1 <= wb_forward_valid0;
 
-                    // flush 流水线
-                    if2id.clear;
-                    id2ex.clear;
-                    ex2mem.clear;
+            wb_forward_data0 <= wb_data;
+            wb_forward_rd0 <= pkt.rd;
+            wb_forward_valid0 <= pkt.write_reg && pkt.rd != 0;  // 只有写入非零寄存器才标记为有效
 
-                    // 跳转到 mtvec
-                    Addr trap_vec = csrs.readCSR(12'h305) & ~32'h3;
-                    pcReg <= trap_vec;
-                    branch_flush <= True;
-                    no_pc_update <= True;
+            // 当前周期 WB bypass（同周期直通给 executeStage 使用）
+            wb_bypass_data <= wb_data;
+            wb_bypass_rd <= pkt.rd;
+            wb_bypass_valid <= pkt.write_reg && pkt.rd != 0;
+
+            // CSR 指令在 EX 阶段已处理，这里只更新计数器
+            csrs.incrementMinstret;
+
+            // 提交边界检查中断（并入 writebackStage 尾部）
+            if (csrs.hasPendingInterrupt()) begin
+                MStatus ms = unpackMStatus(csrs.readCSR(12'h300));
+                if (ms.mie == 1'b1) begin
+                    // 保存 trap 信息
+                    Maybe#(Bit#(5)) cause_opt = csrs.getPendingInterruptCause();
+                    if (cause_opt matches tagged Valid .cause) begin
+                        csrs.writeCSR(12'h341, pack(pkt.pc));  // mepc
+                        csrs.writeCSR(12'h342, {1'b1, 26'b0, cause});  // mcause (最高位=1表示中断)
+                        csrs.writeCSR(12'h343, 0);  // mtval
+
+                        MStatus new_ms = ms;
+                        new_ms.mpie = ms.mie;
+                        new_ms.mpp = 2'b11;  // M-mode
+                        new_ms.mie = 1'b0;
+                        csrs.writeCSR(12'h300, packMStatus(new_ms));
+
+                        // flush 流水线
+                        if2id.clear;
+                        id2ex.clear;
+                        ex2mem.clear;
+
+                        // 跳转到 mtvec（统一重定向协议）
+                        Addr trap_vec = csrs.readCSR(12'h305) & ~32'h3;
+                        redirect_pending <= True;
+                        redirect_target <= trap_vec;
+                        redirect_reason <= 5;  // INTERRUPT
+                        pcReg <= trap_vec;
+                        $display("REDIRECT_REQ: target=%h reason=INTERRUPT", trap_vec);
+                        $display("PIPE_FLUSH: if2id id2ex ex2mem");
+                    end
                 end
             end
         end
+        // 如果 !can_commit（load 且响应无效），保持 mem2wb 不出队，等待下一周期
     endrule
 
     // ============================================================
@@ -623,8 +721,17 @@ module mkCore#(String firmwareFile)(Core);
         return current_mem_req;
     endmethod
 
+    method Action memReqAck();
+        // SOC 确认请求已处理，清除请求
+        current_mem_req <= nopMemReq();
+    endmethod
+
     method Action memResp(MemResp resp);
         pending_mem_resp <= resp;
+        // === 提交级 trace ===
+        if (resp.valid) begin
+            $display("MEM_RESP: data=%h valid=1", resp.rdata);
+        end
     endmethod
 
     method CSRs csrModule();

@@ -27,11 +27,19 @@ VM_CLASSES_FAST += \
 	VmkTestBench__1 \
 	VmkTestBench__2 \
 	VmkTestBench__3 \
+	VmkTestBench__4 \
+	VmkTestBench__5 \
+	VmkTestBench__6 \
+	VmkTestBench__7 \
+	VmkTestBench__8 \
+	VmkTestBench__9 \
+	VmkTestBench__10 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
 	VmkTestBench__Slow \
 	VmkTestBench__1__Slow \
+	VmkTestBench__2__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \

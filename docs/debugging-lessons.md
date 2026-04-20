@@ -305,31 +305,155 @@ Reg#(Word) tohost_value_reg <- mkReg(0);
 
 ---
 
+## 问题 6：控制流重定向协议缺失导致死循环
+
+**日期**：2026-04-20
+
+**现象**：simple_branch_test 和 simple_loop 测试失败，程序卡在 `jal zero, end` 无限循环处。
+
+**调试时长**：约 2 小时
+
+### 根因分析
+
+这是**测试程序不完整**和**架构缺陷**的组合问题：
+
+#### 1. 测试程序缺少 tohost 写入
+
+测试程序在 `end:` 标签处使用 `jal zero, end` 无限循环，但没有写入 tohost (0x80001000)。
+
+**表现**：程序逻辑正确执行（x7=1），但测试框架无法检测完成。
+
+#### 2. 控制流协议架构缺陷
+
+原有实现使用三个重叠的状态标志：
+- `branch_flush` - 分支冲刷标志
+- `branch_flush_done` - 冲刷完成标志
+- `no_pc_update` - 阻止 PC 更新
+
+**问题**：`no_pc_update` 没有完整的清除协议：
+
+```bsv
+if (branch_taken) begin
+    // JAL 总是进入这个分支
+    no_pc_update <= True;  // 设置 True
+    // ... 但永远不清除！
+end else begin
+    // 只有"正常执行"才清除
+    no_pc_update <= False;
+end
+```
+
+**结果**：JAL 指令（无条件跳转）永远设置 `no_pc_update=True`，导致 fetchStage 永久暂停。
+
+### 调试方法
+
+#### 1. Trace 分析
+
+```
+WB_COMMIT: pc=80000018 rd= 0 data=8000001c write=1
+C25: PC=80000018 wait=0 stall=0 b_flush=0 b_done=1 x7=1
+C26: PC=80000018 wait=0 stall=0 b_flush=0 b_done=0 x7=1
+... PC 永久停在 0x80000018
+```
+
+观察：PC 停止更新，但 x7=1 说明程序逻辑正确执行。
+
+#### 2. 架构审查
+
+分析控制流重定向的职责边界：
+
+| 标志 | 原职责 | 问题 |
+|------|--------|------|
+| `branch_flush` | 冲刷流水线 | 无清除机制 |
+| `branch_flush_done` | 冲刷后暂停 | 与 `no_pc_update` 重叠 |
+| `no_pc_update` | 阻止 PC 更新 | 无清除协议 |
+
+### 解决方案
+
+#### 方案 A：最小修复
+
+删除冗余的 `no_pc_update`，统一使用 `branch_flush_done`。
+
+#### 方案 B：架构重构
+
+收敛为单一控制流重定向协议：
+
+```bsv
+// 统一状态
+Reg#(Bool) redirect_pending <- mkReg(False);
+Reg#(Addr) redirect_target <- mkReg(0);
+Reg#(Bit#(4)) redirect_reason <- mkReg(0);
+
+// redirect_reason 编码
+// 0 = NONE, 1 = BRANCH, 2 = JAL, 3 = TRAP, 4 = MRET, 5 = INTERRUPT
+```
+
+**协议流程**：
+
+```
+EX/WB 检测重定向需求
+    ↓ 设置 redirect_pending + target + reason
+    ↓ 清空流水段
+fetchStage 看到 redirect_pending
+    ↓ 等待（条件: !redirect_pending）
+consumeRedirect 规则
+    ↓ 清除 redirect_pending
+    ↓ 下一周期正常取指
+```
+
+**统一处理**：
+- 条件分支 (taken/mispredict)
+- JAL/JALR 无条件跳转
+- Trap (ECALL/EBREAK)
+- MRET 返回
+- WB 阶段中断
+
+### 经验教训
+
+1. **测试程序必须完整**
+   - 无限循环必须配合 tohost 写入
+   - 否则测试框架无法检测完成
+
+2. **状态机必须有完整协议**
+   - 每个状态标志都要有"何时设置"和"何时清除"
+   - 职责重叠会导致维护困难
+
+3. **统一协议优于分散标志**
+   - 多个重叠标志是架构坏味道
+   - 应收敛为单一控制流协议
+
+4. **区分 architectural_commit vs instr_write**
+   - Trace 中 `write_reg=1` 但 `rd=0` 只是语义不够精确
+   - 实际写入条件是 `write_reg && rd != 0`
+
+---
+
 ## 总结：调试方法论
 
 ### 1. 周期级 trace 是最强大的工具
 
 ```bsv
-$display("Cycle %0d: PC=%h, op1=%h, op2=%h, taken=%b, predicted=%b",
-         cycleCount, pkt.pc, op1, op2, branch_taken, pkt.predicted_taken);
+$display("REDIRECT_REQ: pc=%h target=%h reason=%d", pc, target, reason);
+$display("FETCH_PC: old=%h new=%h predicted=%d", old, new, predicted);
+$display("PIPE_FLUSH: stages");
+$display("REDIRECT_CONSUMED: target=%h reason=%d", target, reason);
 ```
 
-每个关键信号都要打印，不要省略。
+### 2. 架构审查优于补丁式修复
 
-### 2. 逐步排除法
-
-- 禁用可疑功能 → 测试是否通过 → 确认问题范围
-- 不要一次性改变多个变量
+- 先判断是"实现 bug"还是"协议/架构 bug"
+- 优先从职责边界不清角度分析
+- 给出最小正确架构，再讨论优化
 
 ### 3. 检查"跳过"假设
 
-- 流水线中每个指令都必须进入所有阶段
-- 不要假设某个阶段可以跳过
+- 每个控制流改变都要有完整协议
+- "何时阻塞"、"何时恢复"必须明确
 
-### 4. 预测信息完整性
+### 4. 测试程序完整性
 
-- 决策点和执行点之间要传递完整信息
-- pipeline packet 结构要仔细设计
+- 必须包含 tohost 写入
+- 无限循环必须配合结束标记
 
 ### 5. BSV 规则调度
 
@@ -339,4 +463,4 @@ $display("Cycle %0d: PC=%h, op1=%h, op2=%h, taken=%b, predicted=%b",
 
 ---
 
-*更新日期: 2026-04-19*
+*更新日期: 2026-04-20*
