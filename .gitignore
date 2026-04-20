@@ -19,3 +19,5 @@ a.out
 a.out.so
 *.o
 .worktrees/
+/freertos/
+.gitignore

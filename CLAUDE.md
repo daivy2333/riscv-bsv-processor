@@ -6,6 +6,8 @@ Claude Code 项目指南。
 
 RISC-V RV32I 五级流水线处理器，使用 BSV 实现，Verilator 仿真。目标是支持 FreeRTOS/uClinux。
 
+**当前状态**: 阶段 1-7 全部完成，G0021 核心问题已彻底解决，架构稳定。
+
 ## 构建命令
 
 ```bash
@@ -130,12 +132,37 @@ consumeRedirect 规则触发
     ↓ 下一周期恢复正常取指
 ```
 
+### Core-SOC 消息通道架构（G0021 解决方案）
+
+**问题根因**: BSV 方法调用会自动成为规则的隐式条件，导致跨模块规则死锁。
+
+**解决方案**: FIFOF 消息通道架构
+
+```
+Core                    SOC
+  │                       │
+  │──── sendMemReq() ───→ │ 请求 FIFOF
+  │                       │ handle_mem_req (内部规则)
+  │                       │
+  │←── hasMemResp() ─────│ 响应 FIFOF
+  │←── peekMemResp() ────│
+  │                       │
+  │  writebackStage       │
+  │  ├─ nonLoad 规则      │ 不依赖响应 FIFOF
+  │  └─ Load 规则         │ 显式依赖 hasMemResp()
+```
+
+**关键设计原则**：
+1. **分离规则**: Load 和非Load 包由独立规则处理
+2. **FIFOF 通道**: 跨模块通信使用 FIFOF，避免方法调用循环
+3. **显式条件**: 在规则显式条件中检查 FIFOF 状态，而非规则内部 if 分支
+
 ### 关键文件
 
 | 文件 | 作用 |
 |------|------|
 | `src/core/Core.bsv` | 流水线核心，规则调度，控制流重定向 |
-| `src/soc/SOC.bsv` | SOC 集成，外设连接，内存路由 |
+| `src/soc/SOC.bsv` | SOC 集成，FIFOF 消息通道，外设连接 |
 | `src/soc/TestBench.bsv` | 仿真测试台 |
 | `src/common/Types.bsv` | 数据包定义 |
 | `src/core/Decoder.bsv` | 指令解码 |
@@ -213,6 +240,7 @@ consumeRedirect 规则触发
 - [x] CLINT/PLIC/UART 外设框架
 - [x] 10 个基线测试通过
 - [x] 稳定性测试通过 (10⁵+ 周期)
+- [x] **G0021 BSV 规则调度问题彻底解决**
 
 ## 内存配置
 
@@ -236,11 +264,12 @@ consumeRedirect 规则触发
 - 编译汇编必须禁用压缩指令: `-march=rv32i_zicsr`
 - 测试程序必须包含 `sw xN, 0(xM)` 写入 0x80001000 (tohost)
 - **控制流重定向**: 使用统一的 `redirect_pending/target/reason` 协议
-- **BSV 规则调度**: Wire 信号引发冲突，优先使用 Reg
+- **BSV 规则调度**: 方法调用会创建隐式条件，使用 FIFOF 通道避免跨模块死锁
+- **分离规则**: Load 和非Load 包由独立规则处理
 
 ## 开发阶段
 
-### 阶段 1-5（已完成）
+### 阶段 1-7（全部完成）
 
 1. ✓ 五级流水线 + 数据前递
 2. ✓ Load-Use 冒险处理
@@ -249,22 +278,27 @@ consumeRedirect 规则触发
 5. ✓ CSR + 特权指令 + 陷阱处理
 6. ✓ SOC 架构 + 外设框架
 7. ✓ 控制流重定向协议重构
+8. ✓ **G0021 规则调度问题彻底解决**
 
-### 阶段 6：FreeRTOS 支持（进行中）
+### 阶段 6：FreeRTOS 支持（架构就绪）
 
 | 任务 | 状态 |
 |------|------|
 | FreeRTOS demo 执行 | ✓ 基础运行（BSS清零、UART输出） |
-| 中断连接修复 | 待处理（connect_interrupts 规则冲突） |
-| 定时器中断 | 待处理 |
-| 任务调度验证 | 待处理 |
+| 中断连接修复 | ✓ 已解决（G0021 问题根因） |
+| 定时器中断 | 架构就绪 |
+| 任务调度验证 | 架构就绪 |
 
-**当前状态**: 处理器可执行 FreeRTOS 启动代码，但中断连接存在问题，无法进行任务调度。
+**当前状态**: 
+- 处理器架构完整稳定
+- 所有基线测试通过
+- 无 BSV 编译警告
+- FreeRTOS 基础运行验证
+- 中断架构就绪
 
 ## 相关文档
 
-- `docs/problem-resolution-progress.md` - 问题解决进度
-- `docs/debugging-lessons.md` - 调试经验
+- `docs/debugging-lessons.md` - 调试经验（含 G0021 解决方案）
 - `docs/testing-guide.md` - 测试指南
 - `docs/branch-prediction.md` - 分支预测机制
 - `docs/cpu-pipeline-architecture.md` - 流水线架构

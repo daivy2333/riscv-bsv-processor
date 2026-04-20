@@ -8,7 +8,7 @@ interface PLIC;
     method Word read(Addr addr);
     method Action write(Addr addr, Word data);
     method Bool externalIRQ();          // MEIP 输出
-    method Action setIRQ(Bit#(32) source_id, Bool v);  // 外设 IRQ 输入
+    method Action irqWire(Bit#(32) source_id, Bool v);  // IRQ Wire 输入（由 SOC 每周期驱动）
 endinterface
 
 module mkPLIC(PLIC);
@@ -79,7 +79,8 @@ module mkPLIC(PLIC);
         return getHighestPending() != 0;
     endmethod
 
-    method Action setIRQ(Bit#(32) source_id, Bool v);
+    // IRQ Wire 输入方法（由 SOC 每周期驱动）
+    method Action irqWire(Bit#(32) source_id, Bool v);
         if (source_id > 0 && source_id < 32)
             irq_pending[source_id] <= v;
     endmethod

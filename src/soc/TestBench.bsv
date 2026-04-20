@@ -1,8 +1,10 @@
-// src/soc/TestBench.bsv
+// src/soc/TestBench.bsv - 彻底重构版
 package TestBench;
 
 import Types::*;
 import SOC::*;
+import Core::*;
+import MemInterface::*;
 import Vector::*;
 import TestProgram::*;
 
@@ -11,25 +13,25 @@ interface TestBench;
 endinterface
 
 module mkTestBench(TestBench);
-    SOC soc <- mkSOC;
+    // 先创建 SOC（实现 MemChannel 接口）
+    MemChannel soc <- mkSOC;
+
+    // 然后创建 Core，传入 SOC 的 MemChannel 接口
+    Core core <- mkCore("test", soc);
 
     Reg#(Bit#(32)) cycleCount <- mkReg(0);
     Reg#(Bool) dumpDone <- mkReg(False);
     Reg#(Bool) programLoaded <- mkReg(False);
 
     rule load (!programLoaded);
-        soc.loadProgram(testProgram());
+        core.loadProgram(testProgram());
         programLoaded <= True;
     endrule
 
-    // 使用 descending_urgency 设置优先级：checkCompletion > countCycles
-    // 这样当两者条件都满足时，checkCompletion 先执行
     (* descending_urgency = "checkCompletion, countCycles" *)
     rule countCycles (programLoaded && !dumpDone);
         cycleCount <= cycleCount + 1;
-        // mtime 递增由 CLINT 内部规则自动处理
 
-        // 超时检查
         if (cycleCount >= 100000) begin
             $display("WARNING: Timeout at cycle %0d", cycleCount);
             dumpDone <= True;

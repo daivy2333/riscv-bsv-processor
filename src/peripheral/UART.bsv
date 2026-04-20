@@ -21,12 +21,9 @@ module mkUART(UART);
     Reg#(Bit#(32)) ie <- mkReg(0);     // 中断使能
     Reg#(Bit#(32)) ip <- mkReg(0);     // 中断挂起
 
-    // 模拟发送完成（简化实现）
-    rule tx_complete (tx_full);
-        tx_full <= False;
-        ip[0] <= 1;  // TX 完成 interrupt
-        $display("UART TX: %h", txdata);
-    endrule
+    // 注意：删除了 tx_complete 规则
+    // 原因：write(TXDATA) 已经立即输出，规则冗余
+    // 单写者契约：ip 只有 write method 写入
 
     method Word read(Addr addr);
         Addr offset = addr & 32'hFF;  // 取低 8 位

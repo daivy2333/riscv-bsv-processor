@@ -15,10 +15,11 @@ interface CSRs;
     method Action setMode(PrivilegeMode mode);
     method Addr getTrapVector(TrapInfo trap);
     method Bool hasPendingInterrupt();
-    method Maybe#(Bit#(5)) getPendingInterruptCause();  // Returns cause of highest priority interrupt
-    method Action setMEIP(Bool v);
-    method Action setMSIP(Bool v);
-    method Action setMTIP(Bool v);
+    method Maybe#(Bit#(5)) getPendingInterruptCause();
+    // 中断信号 Wire 输入（由 SOC 每周期驱动）
+    method Action timerIRQWire(Bool irq);      // MTIP 输入
+    method Action softwareIRQWire(Bool irq);   // MSIP 输入
+    method Action externalIRQWire(Bool irq);   // MEIP 输入
     method Action incrementCycle;
     method Action incrementMinstret;
     method Bit#(64) getMtime();
@@ -126,17 +127,19 @@ module mkCSR(CSRs);
     Reg#(Bit#(64)) mtimecmp <- mkReg('hFFFFFFFFFFFFFFFF);      // Machine time compare (初始化为最大值，避免立即触发定时器中断)
     Reg#(Bit#(64)) minstret <- mkReg(0);      // Machine instructions retired
 
-    // Interrupt pending signals from external sources
-    Reg#(Bool) meip <- mkReg(False);  // Machine external interrupt pending (bit 11)
-    Reg#(Bool) msip <- mkReg(False);  // Machine software interrupt pending (bit 3)
-    Reg#(Bool) mtip <- mkReg(False);  // Machine timer interrupt pending (bit 7)
+    // 中断信号 Wire 输入（由 SOC 每周期驱动）
+    // 使用 mkDWire：默认值为 False，SOC 必须每周期驱动
+    Wire#(Bool) timer_irq_wire <- mkDWire(False);      // MTIP 来源
+    Wire#(Bool) software_irq_wire <- mkDWire(False);   // MSIP 来源
+    Wire#(Bool) external_irq_wire <- mkDWire(False);   // MEIP 来源
 
-    // Update mip register based on interrupt signals
+    // update_mip 规则：从 Wire 更新 mip（唯一写入者）
+    // 标准语义：直接覆盖 MTIP/MSIP/MEIP，符合 RISC-V spec
     rule update_mip;
-        Bit#(32) new_mip = 0;
-        new_mip[11] = meip ? 1 : 0;  // MEIP (外部中断)
-        new_mip[7] = mtip ? 1 : 0;   // MTIP (定时器中断，来自CLINT)
-        new_mip[3] = msip ? 1 : 0;   // MSIP (软件中断)
+        Word new_mip = mip;
+        new_mip[11] = external_irq_wire ? 1 : 0;   // MEIP（外部中断）
+        new_mip[7] = timer_irq_wire ? 1 : 0;       // MTIP（定时器中断）
+        new_mip[3] = software_irq_wire ? 1 : 0;    // MSIP（软件中断）
         mip <= new_mip;
     endrule
 
@@ -268,16 +271,17 @@ module mkCSR(CSRs);
         return result;
     endmethod
 
-    method Action setMEIP(Bool v);
-        meip <= v;
+    // Wire 输入方法实现（由 SOC 每周期驱动）
+    method Action timerIRQWire(Bool irq);
+        timer_irq_wire <= irq;
     endmethod
 
-    method Action setMSIP(Bool v);
-        msip <= v;
+    method Action softwareIRQWire(Bool irq);
+        software_irq_wire <= irq;
     endmethod
 
-    method Action setMTIP(Bool v);
-        mtip <= v;
+    method Action externalIRQWire(Bool irq);
+        external_irq_wire <= irq;
     endmethod
 
     method Action incrementCycle;

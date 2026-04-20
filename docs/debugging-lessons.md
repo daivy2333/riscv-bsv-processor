@@ -428,6 +428,180 @@ consumeRedirect 规则
 
 ---
 
+## 问题 7：BSV G0021 警告"规则永不能执行"导致流水线死锁
+
+**日期**：2026-04-20
+
+**现象**：BSV编译产生 G0021 警告，仿真中流水线在约20周期后阻塞，所有FIFO满但无法执行任何规则。
+
+**调试时长**：约 6 小时
+
+### 根因分析
+
+这是 **BSV 方法调用的隐式条件** 和 **FIFO 深度不足** 的组合问题：
+
+#### 1. 方法调用的隐式谓词
+
+BSV编译器会将接口方法调用转换为Verilog信号读取，并自动添加到规则的隐式条件中：
+
+```bsv
+// BSV 代码
+rule writebackStage (mem2wb.notEmpty);
+    Bool can_commit = !pkt.is_load || mem_if.hasMemResp();
+    if (can_commit) begin
+        // ...
+    end
+endrule
+```
+
+编译后生成：
+
+```verilog
+// Verilog 输出
+assign WILL_FIRE_RL_writebackStage =
+    mem2wb$EMPTY_N && soc_mem_resp_fifo$EMPTY_N && ...;
+```
+
+**问题**：`hasMemResp()` 被转换为 `soc_mem_resp_fifo$EMPTY_N`（响应FIFO非空）作为规则的 **隐式条件**，即使代码中只在 `if (can_commit)` 内使用。
+
+#### 2. writebackStage 被完全阻塞
+
+当响应FIFO空时，`soc_mem_resp_fifo$EMPTY_N=0`，导致整个 writebackStage 规则无法执行，即使处理非Load包。
+
+#### 3. 流水线死锁
+
+```
+writebackStage 无法执行（等待响应）
+    ↓ mem2wb FIFO 满
+memoryStage 无法执行（mem2wb.notFull=false）
+    ↓ ex2mem FIFO 满
+executeStage 无法执行（ex2mem.notFull=false）
+    ↓ id2ex FIFO 满
+decodeStage 无法执行（id2ex.notFull=false）
+    ↓ if2id FIFO 满
+fetchStage 无法执行（if2id.notFull=false）
+```
+
+### 调试方法
+
+#### 1. 检查 G0021 警告
+
+```bash
+bsc ... 2>&1 | grep G0021
+# Warning: rule 'drive_interrupts' can never fire.
+```
+
+#### 2. 检查 Verilog 规则条件
+
+```verilog
+assign WILL_FIRE_RL_core_writebackStage =
+    core_mem2wb$EMPTY_N && soc_mem_resp_fifo$EMPTY_N && ...
+```
+
+发现 `soc_mem_resp_fifo$EMPTY_N` 作为规则条件而非 if 内的条件。
+
+#### 3. 监控 FIFO 状态
+
+仿真输出显示：
+```
+C20: if2id(f=0,e=1) id2ex(f=0,e=1) ex2mem(f=0,e=1) mem2wb(f=0,e=1)
+```
+
+所有FIFO `f=0`（满），流水线阻塞。
+
+### 解决方案
+
+#### 方案：分离 Load 和非Load 处理规则
+
+将 writebackStage 分为两个独立规则：
+
+```bsv
+// 非Load包：不依赖响应FIFO
+rule writebackStage_nonLoad (mem2wb.notEmpty && !mem2wb.first.is_load);
+    MEM_WB_Packet pkt = mem2wb.first;
+    mem2wb.deq;
+    // 直接处理，无需等待响应
+endrule
+
+// Load包：显式依赖响应FIFO
+rule writebackStage_Load (mem2wb.notEmpty && mem2wb.first.is_load && mem_if.hasMemResp());
+    MEM_WB_Packet pkt = mem2wb.first;
+    mem2wb.deq;
+    MemResp resp = mem_if.peekMemResp();
+    // 处理Load响应
+endrule
+```
+
+**关键点**：
+- `hasMemResp()` 在 Load 规则的显式条件中使用
+- 非Load 规则完全不依赖响应FIFO
+- 规则条件直接检查 `mem2wb.first.is_load`，不通过中间变量
+
+#### 架构变更
+
+彻底重构 Core-SOC 接口：
+
+```
+旧架构（G0021问题）：
+  Core → SOC (方法调用) → Core (方法调用返回)
+  ↑ 形成跨模块循环依赖，隐式条件阻塞规则
+
+新架构（FIFOF消息通道）：
+  Core → SOC.sendMemReq (enq请求FIFO)
+  SOC.handle_mem_req (内部规则，不调用Core方法)
+  SOC → SOC.mem_resp_fifo (enq响应FIFO)
+  Core ← SOC.peekMemResp (读取响应FIFO)
+  ↑ 无跨模块方法调用循环，规则独立执行
+```
+
+### 经验教训
+
+#### 1. BSV 方法调用会创建隐式条件
+
+接口方法调用（特别是读取状态的方法）会自动成为规则的隐式条件。即使只在 `if` 内使用，也会影响整个规则的执行。
+
+**避免方法**：
+- 避免在规则条件中通过方法读取跨模块状态
+- 使用 FIFOF 作为消息通道，而非方法调用
+- 分离依赖不同条件的处理逻辑
+
+#### 2. FIFO 深度不足会阻塞上游
+
+深度1的FIFO在满时阻塞所有上游流水段。使用深度2（mkFIFOF）可以缓解但根本问题是规则调度。
+
+#### 3. 分离规则优于条件分支
+
+```bsv
+// 错误：条件分支导致隐式依赖
+rule process (fifo.notEmpty);
+    if (needs_external_condition) begin
+        // ...
+    end else begin
+        // 外部条件成为整个规则的隐式条件
+    end
+endrule
+
+// 正确：分离规则
+rule process_normal (fifo.notEmpty && !needs_external_condition);
+    // ...
+endrule
+
+rule process_special (fifo.notEmpty && needs_external_condition && external_ok);
+    // ...
+endrule
+```
+
+#### 4. 跨模块通信优先使用 FIFOF
+
+| 通信方式 | BSV 调度影响 | 适用场景 |
+|----------|--------------|----------|
+| 方法调用 | 创建隐式条件 | 简单状态查询 |
+| Wire | 同周期读写冲突 | 需避免 |
+| Reg | 规则结束时更新 | 状态传递 |
+| FIFOF | 独立规则处理 | 跨模块消息 |
+
+---
+
 ## 总结：调试方法论
 
 ### 1. 周期级 trace 是最强大的工具
@@ -464,3 +638,5 @@ $display("REDIRECT_CONSUMED: target=%h reason=%d", target, reason);
 ---
 
 *更新日期: 2026-04-20*
+
+*最后问题: G0021规则调度死锁 - 通过分离Load/非Load处理规则和FIFOF消息通道架构彻底解决*
