@@ -19,6 +19,8 @@ interface MemChannel;
     method Bool clintTimerIRQ();
     method Bool clintSoftwareIRQ();
     method Bool plicExternalIRQ();
+    // UART RX 输入（仿真环境传入字符）
+    method Action uartRXInput(Bit#(8) data, Bool valid);
     // 其他方法
     method Bool testDone();
     method Word tohostValue();

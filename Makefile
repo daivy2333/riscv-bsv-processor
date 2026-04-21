@@ -144,12 +144,71 @@ asm-all:
 # FreeRTOS 测试
 # ============================================================
 
-test-freertos:
-	@echo "=== Running FreeRTOS Demo ==="
+# FreeRTOS 专用编译（使用 FreeRTOSBench）
+compile-freertos: firmware/freertos_demo.hex
+	mkdir -p build
 	python3 tools/hex_to_bsv.py firmware/$(FREERTOS_TEST).hex > src/soc/TestProgram.bsv
-	$(MAKE) compile
-	$(MAKE) verilator
-	timeout 120 ./obj_dir/VmkTestBench 2>&1 | tail -30
+	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) \
+		-bdir build -vdir build \
+		-u -g mkFreeRTOSBench \
+		src/soc/FreeRTOSBench.bsv \
+		+RTS -K64M -RTS
+
+# 编译 FreeRTOS demo
+firmware/freertos_demo.hex:
+	$(MAKE) -f freertos.mk
+
+verilator-freertos:
+	rm -rf obj_dir
+	$(VERILATOR) --cc --exe --build \
+		-o VmkFreeRTOSBench \
+		--top-module mkFreeRTOSBench \
+		build/mkFreeRTOSBench.v \
+		/opt/bsc/lib/Verilog/FIFO2.v \
+		tests/c/freertos_bench.cpp \
+		-Wno-STMTDLY -Wno-WIDTH -Wno-TIMESCALEMOD \
+		-LDFLAGS "-pthread"
+
+test-freertos: compile-freertos verilator-freertos
+	@echo "=== Running FreeRTOS Demo ==="
+	@echo "UART output displayed, stdin input supported"
+	@echo "Press Ctrl+C to exit"
+	@echo ""
+	./obj_dir/VmkFreeRTOSBench
+
+# UART Echo 测试（简单交互式回显）
+compile-uart-echo: asm-uart_echo_test
+	mkdir -p build
+	python3 tools/hex_to_bsv.py firmware/uart_echo_test.hex > src/soc/TestProgram.bsv
+	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) \
+		-bdir build -vdir build \
+		-u -g mkFreeRTOSBench \
+		src/soc/FreeRTOSBench.bsv \
+		+RTS -K64M -RTS
+
+test-uart-echo: compile-uart-echo verilator-freertos
+	@echo ""
+	@echo "=== UART Echo Test ==="
+	@echo "Type characters and see them echoed..."
+	@echo "Press Ctrl+C to exit"
+	@echo ""
+	@./obj_dir/VmkFreeRTOSBench
+
+# UART Echo 自动测试（无 stdin）
+verilator-uart-auto:
+	rm -rf obj_dir
+	$(VERILATOR) --cc --exe --build \
+		-o VmkFreeRTOSBench \
+		--top-module mkFreeRTOSBench \
+		build/mkFreeRTOSBench.v \
+		/opt/bsc/lib/Verilog/FIFO2.v \
+		tests/c/uart_echo_auto_test.cpp \
+		-Wno-STMTDLY -Wno-WIDTH -Wno-TIMESCALEMOD
+
+test-uart-echo-auto: compile-uart-echo verilator-uart-auto
+	@echo ""
+	@echo "=== UART Echo Auto Test ==="
+	./obj_dir/VmkFreeRTOSBench
 
 # ============================================================
 # 调试模式
@@ -169,7 +228,7 @@ debug-%:
 
 clean:
 	rm -rf build obj_dir firmware/*.elf firmware/*.hex firmware/*.dump
-	rm -f debug_*.log freertos_debug.log
+	rm -f debug_*.log freertos_debug.log freertos.log
 
 clean-all: clean
 	rm -f src/soc/TestProgram.bsv
@@ -186,7 +245,8 @@ help:
 	@echo "  make test-baseline    运行所有基线测试（10个）"
 	@echo "  make test-timer       运行定时器中断测试"
 	@echo "  make test-all         运行所有测试（12个）"
-	@echo "  make test-freertos    运行 FreeRTOS demo"
+	@echo "  make test-freertos    运行 FreeRTOS demo（交互式 UART）"
+	@echo "  make test-uart-echo   UART 回显测试（交互式输入）"
 	@echo ""
 	@echo "汇编编译:"
 	@echo "  make asm-<name>       编译单个汇编文件"
@@ -211,5 +271,5 @@ help:
 	@echo "  make asm-all && make test-all"
 
 .PHONY: all compile verilator run clean clean-all help \
-        test-baseline test-timer test-all test-freertos \
-        asm-all
+        test-baseline test-timer test-all test-freertos test-uart-echo \
+        compile-freertos verilator-freertos asm-all

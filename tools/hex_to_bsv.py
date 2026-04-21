@@ -41,7 +41,7 @@ def parse_hex(hex_file):
 
     return words
 
-def generate_bsv(words, max_words=1024):
+def generate_bsv(words, max_words=4096):
     """生成 BSV 程序定义"""
     print("// Auto-generated test program from hex file")
     print("package TestProgram;")

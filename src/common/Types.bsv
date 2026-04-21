@@ -156,6 +156,7 @@ typedef struct {
     Bool        branch_taken;   // 分支是否命中（实际判断结果）
     Addr        actual_target;  // 实际分支目标地址
     Bool        predicted_taken;// 分支预测结果
+    Addr        predicted_target;// 预测目标地址（用于验证预测）
     Bool        write_reg;
     Bool        is_load;        // 是否是Load指令
     MemWidth    mem_width;      // 内存访问宽度

@@ -110,6 +110,10 @@ module mkSOC(MemChannel);
         return plic.externalIRQ();
     endmethod
 
+    method Action uartRXInput(Bit#(8) data, Bool valid);
+        uart.setRX(data, valid);
+    endmethod
+
     method Bool testDone();
         return dmem.tohostWritten();
     endmethod

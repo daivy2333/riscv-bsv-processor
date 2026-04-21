@@ -19,7 +19,7 @@ interface Core;
     method Addr pc;
     method Word instruction;
     method Bool running;
-    method Action loadProgram(Vector#(1024, Word) prog);  // 加载程序
+    method Action loadProgram(Vector#(4096, Word) prog);  // 加载程序（16KB）
 endinterface
 
 // Core 接收 MemChannel 接口作为参数
@@ -84,7 +84,7 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
     Wire#(Bool) wb_bypass_valid <- mkDWire(False);
 
     // 内存
-    Vector#(1024, Reg#(Word)) imem <- replicateM(mkReg(0));
+    Vector#(4096, Reg#(Word)) imem <- replicateM(mkReg(0));
 
     // Load 响应等待状态
     Reg#(Bool) waiting_for_load_resp <- mkReg(False);
@@ -112,7 +112,7 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
         Bool take_prediction = False;
         Addr prediction_target = 0;
 
-        Bit#(10) idx = fetchPC[11:2];
+        Bit#(12) idx = fetchPC[13:2];
         Word instr = imem[idx];
 
         Maybe#(Addr) btb_hit = btb.lookup(fetchPC);
@@ -133,7 +133,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
         end
 
         Addr next_pc = take_prediction ? prediction_target : fetchPC + 4;
-        $display("FETCH_PC: old=%h new=%h predicted=%d", fetchPC, next_pc, take_prediction);
 
         if2id.enq(IF_ID_Packet {
             pc: fetchPC,
@@ -152,7 +151,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
 
     rule consumeRedirect (redirect_pending);
         redirect_pending <= False;
-        $display("REDIRECT_CONSUMED: target=%h reason=%d", redirect_target, redirect_reason);
     endrule
 
     // ============================================================
@@ -376,8 +374,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
             redirect_target <= trap_base;
             redirect_reason <= 3;
             pcReg <= trap_base;
-            $display("REDIRECT_REQ: pc=%h target=%h reason=TRAP", pkt.pc, trap_base);
-            $display("PIPE_FLUSH: if2id id2ex");
             if2id.clear;
             id2ex.clear;
         end else begin
@@ -413,30 +409,36 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
                 redirect_target <= mepc;
                 redirect_reason <= 4;
                 pcReg <= mepc;
-                $display("REDIRECT_REQ: pc=%h target=%h reason=MRET", pkt.pc, mepc);
-                $display("PIPE_FLUSH: if2id id2ex");
                 if2id.clear;
                 id2ex.clear;
             end else begin
                 Bool mispredicted = pkt.is_branch && (pkt.predicted_taken != branch_taken);
 
+                // 先处理 deq（除非需要 clear）
+                Bool need_clear = False;
+
                 if (branch_taken) begin
-                    Bit#(4) reason = pkt.is_jump ? 2 : 1;
-                    redirect_pending <= True;
-                    redirect_target <= actual_target;
-                    redirect_reason <= reason;
-                    pcReg <= actual_target;
-                    $display("REDIRECT_REQ: pc=%h target=%h reason=%s", pkt.pc, actual_target, pkt.is_jump ? "JAL" : "BRANCH");
-                    $display("PIPE_FLUSH: if2id id2ex");
-                    if2id.clear;
-                    id2ex.clear;
+                    // 分支 taken：只有预测失败时才重定向
+                    Bool prediction_correct = pkt.predicted_taken && (pkt.predicted_target == actual_target);
+                    if (!prediction_correct) begin
+                        need_clear = True;
+                        Bit#(4) reason = pkt.is_jump ? 2 : 1;
+                        redirect_pending <= True;
+                        redirect_target <= actual_target;
+                        redirect_reason <= reason;
+                        pcReg <= actual_target;
+                    end
+                    // 预测正确时，不重定向（PC 已由预测设置）
                 end else if (mispredicted) begin
+                    need_clear = True;
                     redirect_pending <= True;
                     redirect_target <= pkt.pc + 4;
                     redirect_reason <= 1;
                     pcReg <= pkt.pc + 4;
-                    $display("REDIRECT_REQ: pc=%h target=%h reason=BRANCH_MISPREDICT", pkt.pc, pkt.pc + 4);
-                    $display("PIPE_FLUSH: if2id id2ex");
+                end
+
+                // 清除或正常消费
+                if (need_clear) begin
                     if2id.clear;
                     id2ex.clear;
                 end else begin
@@ -454,6 +456,7 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
                     branch_taken: branch_taken,
                     actual_target: actual_target,
                     predicted_taken: pkt.predicted_taken,
+                    predicted_target: pkt.predicted_target,
                     write_reg: pkt.write_reg,
                     is_load: is_load,
                     mem_width: pkt.mem_width,
@@ -478,8 +481,7 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
         mem_alu_result_cached <= pkt.alu_result;
 
         if (pkt.mem_op != MEM_NONE && !checkAlignment(pkt.alu_result, pkt.mem_width)) begin
-            $display("WARNING: Misaligned access at PC=%h, addr=%h, width=%s",
-                     pkt.pc, pkt.alu_result, pkt.mem_width);
+            // Misaligned access - silently handle
         end
 
         // 通过 MemChannel 发送请求
@@ -493,14 +495,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
                 width: pkt.mem_width,
                 is_unsigned: pkt.mem_unsigned
             };
-
-            $display("MEM_REQ: pc=%h addr=%h op=%s wdata=%h",
-                     pkt.pc, pkt.alu_result, pkt.mem_op, pkt.rs2_val);
-
-            if (pkt.mem_op == MEM_WRITE) begin
-                $display("STORE_COMMIT: pc=%h addr=%h wdata=%h",
-                         pkt.pc, pkt.alu_result, pkt.rs2_val);
-            end
 
             // 直接调用 MemChannel 方法发送请求
             mem_if.sendMemReq(req);
@@ -541,9 +535,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
             regFile.write(pkt.rd, wb_data);
         end
 
-        $display("WB_COMMIT: pc=%h rd=%d data=%h write=%d is_load=%d",
-                 pkt.pc, pkt.rd, wb_data, pkt.write_reg, pkt.is_load);
-
         wb_forward_data1 <= wb_forward_data0;
         wb_forward_rd1 <= wb_forward_rd0;
         wb_forward_valid1 <= wb_forward_valid0;
@@ -583,8 +574,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
                     redirect_target <= trap_vec;
                     redirect_reason <= 5;
                     pcReg <= trap_vec;
-                    $display("REDIRECT_REQ: target=%h reason=INTERRUPT", trap_vec);
-                    $display("PIPE_FLUSH: if2id id2ex ex2mem");
                 end
             end
         end
@@ -601,7 +590,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
         mem_if.deqMemResp();
         ex_is_load_cached <= False;
         ex_rd_cached <= 0;
-        $display("MEM_RESP: data=%h valid=1", wb_data);
 
         wb_write_reg_cached <= pkt.write_reg;
         wb_is_load_cached <= pkt.is_load;
@@ -612,9 +600,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
         if (pkt.write_reg && pkt.rd != 0) begin
             regFile.write(pkt.rd, wb_data);
         end
-
-        $display("WB_COMMIT: pc=%h rd=%d data=%h write=%d is_load=%d",
-                 pkt.pc, pkt.rd, wb_data, pkt.write_reg, pkt.is_load);
 
         wb_forward_data1 <= wb_forward_data0;
         wb_forward_rd1 <= wb_forward_rd0;
@@ -655,8 +640,6 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
                     redirect_target <= trap_vec;
                     redirect_reason <= 5;
                     pcReg <= trap_vec;
-                    $display("REDIRECT_REQ: target=%h reason=INTERRUPT", trap_vec);
-                    $display("PIPE_FLUSH: if2id id2ex ex2mem");
                 end
             end
         end
@@ -670,8 +653,8 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
     method Word instruction = currentInstr;
     method Bool running = (state == RUNNING);
 
-    method Action loadProgram(Vector#(1024, Word) prog);
-        for (Integer i = 0; i < 1024; i = i + 1)
+    method Action loadProgram(Vector#(4096, Word) prog);
+        for (Integer i = 0; i < 4096; i = i + 1)
             imem[i] <= prog[i];
         if2id.clear;
         id2ex.clear;
