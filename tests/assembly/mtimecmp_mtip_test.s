@@ -15,11 +15,14 @@ _start:
     li x4, 0
     sw x4, 0(x3)             # mtime_lo = 0
 
-    # 设置 mtimecmp = 50（低32位）
-    # 注意：mtimecmp_hi 已是 0xFFFFFFFF，设置低位为 50
-    li x5, 0x02004000        # mtimecmp_lo 地址
-    li x6, 50
-    sw x6, 0(x5)             # mtimecmp_lo = 50
+    # 设置 mtimecmp = 50（需要先设置高位为 0）
+    li x5, 0x02004004        # mtimecmp_hi 地址
+    li x6, 0
+    sw x6, 0(x5)             # mtimecmp_hi = 0
+
+    li x7, 0x02004000        # mtimecmp_lo 地址
+    li x8, 50
+    sw x8, 0(x7)             # mtimecmp_lo = 50
 
     # 等待 mtime 超过 50（约 60 周期）
     nop
@@ -40,23 +43,23 @@ _start:
     nop
 
     # 读取 mip CSR 检查 MTIP (bit 7)
-    csrr x7, mip             # x7 = mip
-    andi x8, x7, 0x80        # x8 = mip[7] (MTIP)
+    csrr x9, mip             # x9 = mip
+    andi x10, x9, 0x80       # x10 = mip[7] (MTIP)
 
     # 如果 MTIP=1，测试通过
-    bne x8, x0, passed       # 如果 MTIP != 0，跳转 passed
+    bne x10, x0, passed      # 如果 MTIP != 0，跳转 passed
 
     # MTIP 未触发，失败
     li x31, 0xDEAD           # FAILED marker
-    li x10, 0x80001000       # tohost 地址
-    sw x31, 0(x10)
+    li x11, 0x80001000       # tohost 地址
+    sw x31, 0(x11)
     j end
 
 passed:
     # 测试通过
     li x31, 1                # PASSED marker
-    li x10, 0x80001000       # tohost 地址
-    sw x31, 0(x10)
+    li x11, 0x80001000       # tohost 地址
+    sw x31, 0(x11)
 
 end:
     j end

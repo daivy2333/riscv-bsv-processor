@@ -133,15 +133,8 @@ module mkCSR(CSRs);
     Wire#(Bool) software_irq_wire <- mkDWire(False);   // MSIP 来源
     Wire#(Bool) external_irq_wire <- mkDWire(False);   // MEIP 来源
 
-    // update_mip 规则：从 Wire 更新 mip（唯一写入者）
-    // 标准语义：直接覆盖 MTIP/MSIP/MEIP，符合 RISC-V spec
-    rule update_mip;
-        Word new_mip = mip;
-        new_mip[11] = external_irq_wire ? 1 : 0;   // MEIP（外部中断）
-        new_mip[7] = timer_irq_wire ? 1 : 0;       // MTIP（定时器中断）
-        new_mip[3] = software_irq_wire ? 1 : 0;    // MSIP（软件中断）
-        mip <= new_mip;
-    endrule
+    // 注意：不再使用 update_mip 规则
+    // mip 寄存器只存储软件写入的部分，MTIP/MSIP/MEIP 在 readCSR 时直接从 Wire 读取
 
     method Word readCSR(Bit#(12) addr);
         Word value = 0;
@@ -163,7 +156,12 @@ module mkCSR(CSRs);
             12'h341: value = mepc;      // mepc
             12'h342: value = mcause;    // mcause
             12'h343: value = mtval;     // mtval
-            12'h344: value = mip;       // mip
+            12'h344: begin              // mip - 直接从 Wire 读取当前值
+                value = mip;
+                value[11] = external_irq_wire ? 1 : 0;   // MEIP（当前值）
+                value[7] = timer_irq_wire ? 1 : 0;       // MTIP（当前值）
+                value[3] = software_irq_wire ? 1 : 0;    // MSIP（当前值）
+            end
 
             // Machine Counter/Timer (lower 32 bits)
             12'hB00: value = mcycle[31:0];   // mcycle

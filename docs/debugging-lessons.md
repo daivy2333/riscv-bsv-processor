@@ -4,601 +4,198 @@
 
 ---
 
-## 问题 1：分支预测与前递交互导致死循环
+## 问题 1-7
 
-**日期**：2026-04-18
+详见上文（分支预测、前递时机、WB双缓冲、x0前递、规则调度死锁、控制流协议、G0021警告）。
 
-**现象**：loop_test.s 和 pipeline_test.s 超时，但禁用分支预测后测试通过。
+---
+
+## 问题 8：Load 响应污染导致 mtime 读取返回 0
+
+**日期**：2026-04-21
+
+**现象**：mtime 递增验证测试失败，两次读取 mtime 都返回 0，但调试显示 CLINT 的 mtime 值正确递增。
+
+**调试时长**：约 3 小时
+
+### 根因分析
+
+**问题**：SOC 为所有内存请求（包括 Store）生成响应，导致响应 FIFO 中存在上一条 Store 的响应残留。
+
+```
+Store 写入 mtimecmp_hi → SOC 响应 (rdata=0, op=MEM_WRITE)
+Load 读取 mtime → Core 读到 Store 响应 (错误！)
+```
+
+**时序分析**：
+
+```
+周期 N:   MEM_REQ (Store mtimecmp_hi, op=2)
+周期 N:   handle_mem_req → enq 响应 (rdata=0)
+周期 N+1: MEM_REQ (Load mtime, op=1)
+周期 N+1: writebackStage_Load → deq 响应 → 读到 Store 响应 (错误)
+周期 N+2: handle_mem_req → enq 正确响应 (rdata=21)
+```
+
+### 解决方案
+
+**方案**：只为 Load 请求发送响应，Store 不生成响应。
+
+```bsv
+rule handle_mem_req (mem_req_fifo.notEmpty);
+    MemReq req = mem_req_fifo.first;
+    mem_req_fifo.deq;
+    
+    // 处理请求...
+    
+    // 只为 Load 发送响应
+    if (req.op == MEM_READ)
+        mem_resp_fifo.enq(MemResp {valid: True, rdata: rdata});
+endrule
+```
+
+### 经验教训
+
+1. **FIFO 是消息队列，不是状态**
+   - Store 请求不需要响应数据
+   - 为 Store 生成响应会污染 FIFO
+
+2. **响应必须与请求匹配**
+   - 同周期内规则调度顺序不确定
+   - 需确保响应 FIFO 的数据对应正确的请求
+
+---
+
+## 问题 9：CSR mip 读取依赖规则隐式条件导致 MTIP 不触发
+
+**日期**：2026-04-21
+
+**现象**：MTIP 定时器中断测试失败，csrr mip 返回的 MTIP 位始终为 0，即使 mtime >= mtimecmp。
 
 **调试时长**：约 4 小时
 
 ### 根因分析
 
-这是一个多因素交织的问题，表面看起来是前递时机问题，实际上是分支预测失败处理缺失：
-
-1. **fetchStage 跳过分支指令**
-   - 当 BHT/BTB 预测"taken"时，旧实现直接用预测目标作为取指地址
-   - 这导致分支指令本身被跳过，流水线直接从预测目标取指
-   - 看起来像是"前递读到旧值"，实际是取了错误路径的指令
-
-2. **预测信息丢失**
-   - IF_ID_Packet 有 `predicted_taken` 字段
-   - 但 ID 阶段没有传递到 ID_EX_Packet
-   - executeStage 无法知道分支是否被预测，无法检测预测失败
-
-3. **预测失败处理缺失**
-   - 当预测"taken"但实际"not taken"时，没有冲刷流水线
-   - 错误路径指令继续执行，导致死循环
-
-### 调试方法
-
-1. **逐步排除法**
-   - 先禁用分支预测 → 测试通过 → 排除前递问题
-   - 确认问题在预测而非前递
-
-2. **周期级 trace**
-   - 添加详细的 cycle-level debug 输出
-   - 观察 `predicted_taken` 和 `branch_taken` 的对比
-   - 发现预测失败后 PC 没有重定向
-
-3. **关键发现**
-   ```
-   C26: BRANCH PC=80000014, op1=00000000, taken=0
-   但 PC 继续从 80000010 取指（预测目标），而非顺序地址 80000018
-   ```
-
-### 解决方案
+**问题**：CSR 的 update_mip 规则存在隐式条件，当 SOC 的 handle_mem_req 执行时，规则无法同时执行。
 
 ```bsv
-// 1. fetchStage：预测不改变当前取指地址
-rule fetchStage (...);
-    Addr fetchPC = pcReg;  // 当前周期取原地址
-    Bool take_prediction = False;
-    Addr prediction_target = 0;
-
-    // 预测只影响下一周期 PC
-    if (!branch_flush_done && !no_pc_update) begin
-        if (btb_hit && bht_predict) begin
-            take_prediction = True;
-            prediction_target = target;
-        end
-    end
-
-    // 当前周期仍取 fetchPC 的指令
-    Word instr = imem[fetchPC[11:2]];
-
-    // 下一周期 PC 由预测决定
-    if (take_prediction)
-        pcReg <= prediction_target;
-    else
-        pcReg <= pcReg + 4;
+// CSR.bsv - 原实现
+rule update_mip;
+    Word new_mip = mip;
+    new_mip[7] = timer_irq_wire ? 1 : 0;  // MTIP
+    mip <= new_mip;
 endrule
+```
 
-// 2. ID_EX_Packet 添加预测字段
-typedef struct {
+BSV 编译后，timer_irq_wire 的驱动成为隐式条件：
+
+```verilog
+// 生成的 Verilog
+assign result = { 
+    mip[31:12],
+    !WILL_FIRE_RL_soc_handle_mem_req && timer_irq_wire,  // 隐式条件！
     ...
-    Bool predicted_taken;
-    Addr predicted_target;
-} ID_EX_Packet ...;
+};
+```
 
-// 3. executeStage 检测预测失败
-Bool mispredicted = pkt.is_branch && (pkt.predicted_taken != branch_taken);
+当 handle_mem_req 执行时，MTIP 变成 0。
 
-if (mispredicted) begin
-    pcReg <= pkt.pc + 4;  // 重定向到顺序地址
-    branch_flush <= True;
-    if2id.clear;
-    id2ex.clear;
-end
+### 解决方案
+
+**方案 1**：移除 update_mip 规则，直接在 readCSR 中组合逻辑读取 Wire。
+
+```bsv
+// CSR.bsv - 新实现
+method Word readCSR(Bit#(12) addr);
+    case (addr)
+        12'h344: begin  // mip
+            value = mip;
+            value[11] = external_irq_wire ? 1 : 0;  // 直接读取 Wire
+            value[7] = timer_irq_wire ? 1 : 0;
+            value[3] = software_irq_wire ? 1 : 0;
+        end
+    endcase
+endmethod
+```
+
+**方案 2**：Core 添加 drive_interrupts 规则，每周期驱动 Wire。
+
+```bsv
+// Core.bsv
+rule drive_interrupts;
+    mem_if.timerIRQWire(mem_if.clintTimerIRQ());
+    mem_if.softwareIRQWire(mem_if.clintSoftwareIRQ());
+    mem_if.externalIRQWire(mem_if.plicExternalIRQ());
+endrule
+```
+
+### 架构变更
+
+```
+旧架构（隐式条件问题）：
+  SOC drive_interrupts 规则 → CSR timerIRQWire 方法
+  ↑ CSR 方法调用成为 SOC 规则的隐式条件
+  ↑ 与 handle_mem_req 规则冲突
+
+新架构（Wire 直连）：
+  Core drive_interrupts 规则 → CSR timerIRQWire 方法
+  ↑ Core 独立驱动，不影响 SOC 规则
+  CSR readCSR 直接读取 Wire（组合逻辑）
+  ↑ 无规则依赖，实时读取当前值
 ```
 
 ### 经验教训
 
-1. **不要跳过当前指令**
-   - 分支预测应该"预测下一周期的行为"，而不是"跳过当前周期"
-   - 当前周期的分支指令必须正常进入流水线
+1. **CSR mip 应从 Wire 直接读取**
+   - MTIP/MSIP/MEIP 是实时状态，不应存储在寄存器中
+   - 使用组合逻辑读取 Wire，避免规则隐式条件
 
-2. **预测信息必须完整传递**
-   - 预测决策点（IF）和判断点（EX）之间隔着多个阶段
-   - 必须在 pipeline packet 中携带预测信息
+2. **中断信号驱动应由 Core 负责**
+   - SOC 规则（handle_mem_req）不能被中断信号驱动阻塞
+   - Core 规则与 SOC 规则分离，无隐式条件冲突
 
-3. **冲刷恢复期间禁用预测**
-   - 冲刷后的几个周期内，BHT/BTB 可能基于错误路径的指令地址
-   - 应该等到 flush 完成后再恢复预测
-
----
-
-## 问题 2：BSV 规则调度与前递时机
-
-**日期**：2026-04-18（早期调试）
-
-**现象**：理论上 MEM→EX 前递应该工作，但实际读到旧值。
-
-### BSV 技术限制
-
-| 特性 | 行为 | 对流水线的影响 |
-|------|------|----------------|
-| `mkReg` 写入 | 规则结束时生效 | 同规则内读取是旧值 |
-| `mkFIFO` enq/deq | 规则结束时生效 | 同周期 `first` 是旧值 |
-| 规则执行顺序 | 编译器决定 | 无法保证 memoryStage 在 executeStage 之前 |
-
-### 尝试的方案
-
-| 方案 | 结果 |
-|------|------|
-| `descending_urgency` | 规则调度循环，executeStage 无法执行 |
-| `RWire` | Predicate 过于复杂，规则无法执行 |
-| 从 WB FIFO 读取 | 与 writebackStage 冲突 |
-
-### 最终方案
-
-使用 FIFO 的 `.first` 方法直接读取，配合正确的优先级：
-
-```bsv
-// MEM→EX 前递（最高优先级）
-// 注意：ex2mem.first 在同周期 memoryStage 执行后更新
-// 但 BSV 允许在同一个规则内读取 first（不会竞争）
-if (ex2mem.notEmpty && ex2mem.first.write_reg && !ex2mem.first.is_load ...)
-    op1 = ex2mem.first.alu_result;
-```
-
-**关键点**：实际前递不是问题的根因，真正的问题是分支预测。
-
-### 经验教训
-
-1. **不要过早归因**
-   - 看到"读到旧值"容易想到"前递时机问题"
-   - 但可能实际是取指地址错误，根本没执行到那条指令
-
-2. **最小化假设**
-   - 先排除最简单的可能（禁用预测）
-   - 再考虑复杂的架构重构
+3. **Wire vs Reg 的使用场景**
+   - Wire：实时状态传递，组合逻辑读取
+   - Reg：状态存储，规则结束时更新
 
 ---
 
-## 问题 3：WB 前递双缓冲写入时机
+## 问题 10：mtimecmp 64 位值设置不完整
 
-**日期**：阶段 2
+**日期**：2026-04-21
 
-**现象**：WB 前递的第一个周期数据不可用。
-
-### 根因
-
-`wb_forward_data0 <= wb_data` 在 writebackStage 结束时生效，同周期的 executeStage 读取的是旧值。
-
-### 解决方案
-
-双缓冲机制：
-
-```bsv
-// WB 前递历史（保存最近两个周期）
-Reg#(Word) wb_forward_data0 <- mkReg(0);
-Reg#(Word) wb_forward_data1 <- mkReg(0);
-
-// 每周期更新
-wb_forward_data1 <= wb_forward_data0;  // 两周期前
-wb_forward_data0 <= wb_data;           // 上一周期
-```
-
-前递优先级：
-
-```
-MEM→EX（最高） → WB→EX（中） → WB History（低） → RegFile
-```
-
----
-
-## 问题 4：wb_forward_valid0 写入 x0 寄存器
-
-**日期**：阶段 4
-
-**现象**：前递错误地匹配到 x0 寄存器（硬连线为 0）。
-
-### 根因
-
-```bsv
-// 错误代码
-wb_forward_valid0 <= pkt.write_reg;  // 不检查 rd != 0
-```
-
-x0 寄存器虽然 `write_reg=True`，但实际不应写入，不应参与前递。
-
-### 解决方案
-
-```bsv
-// 正确代码
-wb_forward_valid0 <= pkt.write_reg && pkt.rd != 0;
-```
-
----
-
-## 问题 5：BSV 规则调度死锁（TestBench 与 SOC 冲突）
-
-**日期**：2026-04-19
-
-**现象**：仿真超时，`done` 信号始终为 0，`tohost_value=1` 已写入但 TestBench 检测不到。
-
-**调试时长**：约 2 小时
+**现象**：MTIP 测试设置 mtimecmp_lo=50，但 MTIP 不触发。
 
 ### 根因分析
 
-BSV 规则调度冲突导致死锁：
+CLINT 的 mtimecmp 初始化为 64 位最大值（0xFFFFFFFFFFFFFFFF）。测试只设置低 32 位为 50，高位仍为最大值。
 
-1. **stepSimulation 规则阻止 handle_mem_req**
-   - TestBench 的 `stepSimulation` 规则读取 `soc.tohostValue()`
-   - SOC 的 `handle_mem_req` 规则写入 `soc_dmem_tohost_value_reg`
-   - BSC 生成 `!WILL_FIRE_RL_stepSimulation` 作为 handle_mem_req 的条件
-   - 导致内存操作被阻止，tohost 永远无法写入
-
-2. **checkDone 规则 never fire**
-   - `checkDone` 读取 `soc.testDone()`（调用 `tohost_written_reg`）
-   - `countCycles` 也读取 `dumpDone` 并写入 `cycleCount`
-   - 规则间读写冲突，BSC 优化掉 checkDone 的 enable 信号
-   - Verilog 生成 `programDone$EN = 1'b0 && ...`
-
-### 调试方法
-
-1. **Verilator 信号追踪**
-   - 检查 `WILL_FIRE_RL_stepSimulation` 和 `tohost_written_reg`
-   - 发现 stepSimulation 周期执行，但 tohost_written_reg 始终为 0
-   - 内存写入被阻止
-
-2. **Verilog 代码分析**
-   ```verilog
-   // handle_mem_req 条件中有 !WILL_FIRE_RL_stepSimulation
-   assign MUX_soc_dmem_tohost_value$write_1__SEL_1 =
-          !WILL_FIRE_RL_stepSimulation && soc_core_current_mem_req[69] ...
-   
-   // checkDone enable 被优化为 0
-   assign programDone$EN = 1'b0 && (soc_dmem_tohost_written || ...)
-   ```
+```
+mtimecmp = {0xFFFFFFFF, 50} = 巨大值
+mtime = 60 (递增中)
+mtime < mtimecmp → MTIP = 0
+```
 
 ### 解决方案
 
-使用 `descending_urgency` 属性调整规则优先级：
+测试程序必须同时设置 mtimecmp_hi 和 mtimecmp_lo：
 
-```bsv
-(* descending_urgency = "checkCompletion, countCycles" *)
-rule countCycles (programLoaded && !dumpDone);
-    cycleCount <= cycleCount + 1;
-    if (cycleCount >= 100000) begin
-        $display("WARNING: Timeout at cycle %0d", cycleCount);
-        dumpDone <= True;
-    end
-endrule
+```asm
+# 设置 mtimecmp = 50
+li x5, 0x02004004        # mtimecmp_hi 地址
+li x6, 0
+sw x6, 0(x5)             # mtimecmp_hi = 0
 
-(* descending_urgency = "checkCompletion, countCycles" *)
-rule checkCompletion (programLoaded && !dumpDone && soc.tohostValue() != 0);
-    $display("\n====================================");
-    if (soc.tohostValue() == 1) begin
-        $display("  Test Results: PASSED");
-    end else begin
-        $display("  Test Results: FAILED (tohost=0x%x)", soc.tohostValue());
-    end
-    $display("====================================");
-    $display("Cycles: %0d", cycleCount);
-    dumpDone <= True;
-endrule
-```
-
-同时简化 DMem，只使用寄存器而非 Wire：
-
-```bsv
-// 移除 Wire，避免读写冲突
-Reg#(Bool) tohost_written_reg <- mkReg(False);
-Reg#(Word) tohost_value_reg <- mkReg(0);
+li x7, 0x02004000        # mtimecmp_lo 地址
+li x8, 50
+sw x8, 0(x7)             # mtimecmp_lo = 50
 ```
 
 ### 经验教训
 
-1. **Wire 信号会引发规则冲突**
-   - Wire 在同周期可读写，BSC 无法确定执行顺序
-   - 对跨模块的状态信号，应使用 Reg
-
-2. **descending_urgency 是关键**
-   - BSV 默认按规则定义顺序调度，可能导致死锁
-   - 使用属性显式指定优先级
-
-3. **检查 Verilog 输出**
-   - 当规则"never fire"时，检查生成的 enable 信号
-   - `1'b0 &&` 表示规则条件被优化掉
-
----
-
-## 问题 6：控制流重定向协议缺失导致死循环
-
-**日期**：2026-04-20
-
-**现象**：simple_branch_test 和 simple_loop 测试失败，程序卡在 `jal zero, end` 无限循环处。
-
-**调试时长**：约 2 小时
-
-### 根因分析
-
-这是**测试程序不完整**和**架构缺陷**的组合问题：
-
-#### 1. 测试程序缺少 tohost 写入
-
-测试程序在 `end:` 标签处使用 `jal zero, end` 无限循环，但没有写入 tohost (0x80001000)。
-
-**表现**：程序逻辑正确执行（x7=1），但测试框架无法检测完成。
-
-#### 2. 控制流协议架构缺陷
-
-原有实现使用三个重叠的状态标志：
-- `branch_flush` - 分支冲刷标志
-- `branch_flush_done` - 冲刷完成标志
-- `no_pc_update` - 阻止 PC 更新
-
-**问题**：`no_pc_update` 没有完整的清除协议：
-
-```bsv
-if (branch_taken) begin
-    // JAL 总是进入这个分支
-    no_pc_update <= True;  // 设置 True
-    // ... 但永远不清除！
-end else begin
-    // 只有"正常执行"才清除
-    no_pc_update <= False;
-end
-```
-
-**结果**：JAL 指令（无条件跳转）永远设置 `no_pc_update=True`，导致 fetchStage 永久暂停。
-
-### 调试方法
-
-#### 1. Trace 分析
-
-```
-WB_COMMIT: pc=80000018 rd= 0 data=8000001c write=1
-C25: PC=80000018 wait=0 stall=0 b_flush=0 b_done=1 x7=1
-C26: PC=80000018 wait=0 stall=0 b_flush=0 b_done=0 x7=1
-... PC 永久停在 0x80000018
-```
-
-观察：PC 停止更新，但 x7=1 说明程序逻辑正确执行。
-
-#### 2. 架构审查
-
-分析控制流重定向的职责边界：
-
-| 标志 | 原职责 | 问题 |
-|------|--------|------|
-| `branch_flush` | 冲刷流水线 | 无清除机制 |
-| `branch_flush_done` | 冲刷后暂停 | 与 `no_pc_update` 重叠 |
-| `no_pc_update` | 阻止 PC 更新 | 无清除协议 |
-
-### 解决方案
-
-#### 方案 A：最小修复
-
-删除冗余的 `no_pc_update`，统一使用 `branch_flush_done`。
-
-#### 方案 B：架构重构
-
-收敛为单一控制流重定向协议：
-
-```bsv
-// 统一状态
-Reg#(Bool) redirect_pending <- mkReg(False);
-Reg#(Addr) redirect_target <- mkReg(0);
-Reg#(Bit#(4)) redirect_reason <- mkReg(0);
-
-// redirect_reason 编码
-// 0 = NONE, 1 = BRANCH, 2 = JAL, 3 = TRAP, 4 = MRET, 5 = INTERRUPT
-```
-
-**协议流程**：
-
-```
-EX/WB 检测重定向需求
-    ↓ 设置 redirect_pending + target + reason
-    ↓ 清空流水段
-fetchStage 看到 redirect_pending
-    ↓ 等待（条件: !redirect_pending）
-consumeRedirect 规则
-    ↓ 清除 redirect_pending
-    ↓ 下一周期正常取指
-```
-
-**统一处理**：
-- 条件分支 (taken/mispredict)
-- JAL/JALR 无条件跳转
-- Trap (ECALL/EBREAK)
-- MRET 返回
-- WB 阶段中断
-
-### 经验教训
-
-1. **测试程序必须完整**
-   - 无限循环必须配合 tohost 写入
-   - 否则测试框架无法检测完成
-
-2. **状态机必须有完整协议**
-   - 每个状态标志都要有"何时设置"和"何时清除"
-   - 职责重叠会导致维护困难
-
-3. **统一协议优于分散标志**
-   - 多个重叠标志是架构坏味道
-   - 应收敛为单一控制流协议
-
-4. **区分 architectural_commit vs instr_write**
-   - Trace 中 `write_reg=1` 但 `rd=0` 只是语义不够精确
-   - 实际写入条件是 `write_reg && rd != 0`
-
----
-
-## 问题 7：BSV G0021 警告"规则永不能执行"导致流水线死锁
-
-**日期**：2026-04-20
-
-**现象**：BSV编译产生 G0021 警告，仿真中流水线在约20周期后阻塞，所有FIFO满但无法执行任何规则。
-
-**调试时长**：约 6 小时
-
-### 根因分析
-
-这是 **BSV 方法调用的隐式条件** 和 **FIFO 深度不足** 的组合问题：
-
-#### 1. 方法调用的隐式谓词
-
-BSV编译器会将接口方法调用转换为Verilog信号读取，并自动添加到规则的隐式条件中：
-
-```bsv
-// BSV 代码
-rule writebackStage (mem2wb.notEmpty);
-    Bool can_commit = !pkt.is_load || mem_if.hasMemResp();
-    if (can_commit) begin
-        // ...
-    end
-endrule
-```
-
-编译后生成：
-
-```verilog
-// Verilog 输出
-assign WILL_FIRE_RL_writebackStage =
-    mem2wb$EMPTY_N && soc_mem_resp_fifo$EMPTY_N && ...;
-```
-
-**问题**：`hasMemResp()` 被转换为 `soc_mem_resp_fifo$EMPTY_N`（响应FIFO非空）作为规则的 **隐式条件**，即使代码中只在 `if (can_commit)` 内使用。
-
-#### 2. writebackStage 被完全阻塞
-
-当响应FIFO空时，`soc_mem_resp_fifo$EMPTY_N=0`，导致整个 writebackStage 规则无法执行，即使处理非Load包。
-
-#### 3. 流水线死锁
-
-```
-writebackStage 无法执行（等待响应）
-    ↓ mem2wb FIFO 满
-memoryStage 无法执行（mem2wb.notFull=false）
-    ↓ ex2mem FIFO 满
-executeStage 无法执行（ex2mem.notFull=false）
-    ↓ id2ex FIFO 满
-decodeStage 无法执行（id2ex.notFull=false）
-    ↓ if2id FIFO 满
-fetchStage 无法执行（if2id.notFull=false）
-```
-
-### 调试方法
-
-#### 1. 检查 G0021 警告
-
-```bash
-bsc ... 2>&1 | grep G0021
-# Warning: rule 'drive_interrupts' can never fire.
-```
-
-#### 2. 检查 Verilog 规则条件
-
-```verilog
-assign WILL_FIRE_RL_core_writebackStage =
-    core_mem2wb$EMPTY_N && soc_mem_resp_fifo$EMPTY_N && ...
-```
-
-发现 `soc_mem_resp_fifo$EMPTY_N` 作为规则条件而非 if 内的条件。
-
-#### 3. 监控 FIFO 状态
-
-仿真输出显示：
-```
-C20: if2id(f=0,e=1) id2ex(f=0,e=1) ex2mem(f=0,e=1) mem2wb(f=0,e=1)
-```
-
-所有FIFO `f=0`（满），流水线阻塞。
-
-### 解决方案
-
-#### 方案：分离 Load 和非Load 处理规则
-
-将 writebackStage 分为两个独立规则：
-
-```bsv
-// 非Load包：不依赖响应FIFO
-rule writebackStage_nonLoad (mem2wb.notEmpty && !mem2wb.first.is_load);
-    MEM_WB_Packet pkt = mem2wb.first;
-    mem2wb.deq;
-    // 直接处理，无需等待响应
-endrule
-
-// Load包：显式依赖响应FIFO
-rule writebackStage_Load (mem2wb.notEmpty && mem2wb.first.is_load && mem_if.hasMemResp());
-    MEM_WB_Packet pkt = mem2wb.first;
-    mem2wb.deq;
-    MemResp resp = mem_if.peekMemResp();
-    // 处理Load响应
-endrule
-```
-
-**关键点**：
-- `hasMemResp()` 在 Load 规则的显式条件中使用
-- 非Load 规则完全不依赖响应FIFO
-- 规则条件直接检查 `mem2wb.first.is_load`，不通过中间变量
-
-#### 架构变更
-
-彻底重构 Core-SOC 接口：
-
-```
-旧架构（G0021问题）：
-  Core → SOC (方法调用) → Core (方法调用返回)
-  ↑ 形成跨模块循环依赖，隐式条件阻塞规则
-
-新架构（FIFOF消息通道）：
-  Core → SOC.sendMemReq (enq请求FIFO)
-  SOC.handle_mem_req (内部规则，不调用Core方法)
-  SOC → SOC.mem_resp_fifo (enq响应FIFO)
-  Core ← SOC.peekMemResp (读取响应FIFO)
-  ↑ 无跨模块方法调用循环，规则独立执行
-```
-
-### 经验教训
-
-#### 1. BSV 方法调用会创建隐式条件
-
-接口方法调用（特别是读取状态的方法）会自动成为规则的隐式条件。即使只在 `if` 内使用，也会影响整个规则的执行。
-
-**避免方法**：
-- 避免在规则条件中通过方法读取跨模块状态
-- 使用 FIFOF 作为消息通道，而非方法调用
-- 分离依赖不同条件的处理逻辑
-
-#### 2. FIFO 深度不足会阻塞上游
-
-深度1的FIFO在满时阻塞所有上游流水段。使用深度2（mkFIFOF）可以缓解但根本问题是规则调度。
-
-#### 3. 分离规则优于条件分支
-
-```bsv
-// 错误：条件分支导致隐式依赖
-rule process (fifo.notEmpty);
-    if (needs_external_condition) begin
-        // ...
-    end else begin
-        // 外部条件成为整个规则的隐式条件
-    end
-endrule
-
-// 正确：分离规则
-rule process_normal (fifo.notEmpty && !needs_external_condition);
-    // ...
-endrule
-
-rule process_special (fifo.notEmpty && needs_external_condition && external_ok);
-    // ...
-endrule
-```
-
-#### 4. 跨模块通信优先使用 FIFOF
-
-| 通信方式 | BSV 调度影响 | 适用场景 |
-|----------|--------------|----------|
-| 方法调用 | 创建隐式条件 | 简单状态查询 |
-| Wire | 同周期读写冲突 | 需避免 |
-| Reg | 规则结束时更新 | 状态传递 |
-| FIFOF | 独立规则处理 | 跨模块消息 |
+1. **64 位 CSR 必须完整设置**
+   - 分两次写入时，高位和低位都要正确设置
+   - 初始化值可能是最大值，需要显式清零
 
 ---
 
@@ -607,10 +204,9 @@ endrule
 ### 1. 周期级 trace 是最强大的工具
 
 ```bsv
-$display("REDIRECT_REQ: pc=%h target=%h reason=%d", pc, target, reason);
-$display("FETCH_PC: old=%h new=%h predicted=%d", old, new, predicted);
-$display("PIPE_FLUSH: stages");
-$display("REDIRECT_CONSUMED: target=%h reason=%d", target, reason);
+$display("CLINT_READ: addr=%h rdata=%h", addr, rdata);
+$display("SOC_RESP: rdata=%h op=%h", rdata, pack(op));
+$display("MEM_RESP: data=%h valid=1", data);
 ```
 
 ### 2. 架构审查优于补丁式修复
@@ -619,24 +215,24 @@ $display("REDIRECT_CONSUMED: target=%h reason=%d", target, reason);
 - 优先从职责边界不清角度分析
 - 给出最小正确架构，再讨论优化
 
-### 3. 检查"跳过"假设
+### 3. BSV 规则调度的关键原则
 
-- 每个控制流改变都要有完整协议
-- "何时阻塞"、"何时恢复"必须明确
+| 问题 | 解决方案 |
+|------|----------|
+| 方法调用隐式条件 | 使用 FIFOF 消息通道 |
+| Wire 同周期读写冲突 | 使用 Reg 或组合逻辑直读 |
+| 规则死锁 | 分离依赖不同的规则 |
+| FIFO 污染 | 只为需要响应的请求生成响应 |
 
-### 4. 测试程序完整性
+### 4. 定时器中断架构要点
 
-- 必须包含 tohost 写入
-- 无限循环必须配合结束标记
-
-### 5. BSV 规则调度
-
-- Wire 信号会引发跨规则冲突，优先使用 Reg
-- 使用 `descending_urgency` 属性解决死锁
-- 检查 Verilog 输出中的 enable 信号
+- **mtime**: 自动递增（每周期 +1）
+- **MTIP**: 组合逻辑（mtime >= mtimecmp）
+- **mip**: 直接读取 Wire（不依赖规则）
+- **中断驱动**: Core 独立规则，不影响 SOC
 
 ---
 
-*更新日期: 2026-04-20*
+*更新日期: 2026-04-21*
 
-*最后问题: G0021规则调度死锁 - 通过分离Load/非Load处理规则和FIFOF消息通道架构彻底解决*
+*最后问题: 定时器中断机制完整实现，12 个测试全部通过*

@@ -11,6 +11,7 @@ import PrivilegedTypes::*;
 import MemInterface::*;
 import Vector::*;
 import FIFOF::*;
+import SpecialFIFOs::*;
 
 // SOC 实现 MemChannel 接口（Core 使用）
 module mkSOC(MemChannel);
@@ -21,7 +22,7 @@ module mkSOC(MemChannel);
 
     // 内存消息通道（SOC 内部 FIFOF）
     FIFOF#(MemReq) mem_req_fifo <- mkFIFOF;   // Core → SOC
-    FIFOF#(MemResp) mem_resp_fifo <- mkFIFOF; // SOC → Core
+    FIFOF#(MemResp) mem_resp_fifo <- mkBypassFIFOF; // SOC → Core（bypass 支持同周期读写）
 
     // CSR 模块（处理中断）
     CSRs csrs <- mkCSR;
@@ -61,16 +62,9 @@ module mkSOC(MemChannel);
                 dmem.write(addr, req.wdata);
         end
 
-        // 发送响应
-        mem_resp_fifo.enq(MemResp {valid: True, rdata: rdata});
-    endrule
-
-    // SOC 内部驱动中断信号（PLIC/CLINT → CSR）
-    rule drive_interrupts;
-        csrs.timerIRQWire(clint.timerIRQ());
-        csrs.softwareIRQWire(clint.softwareIRQStatus());
-        csrs.externalIRQWire(plic.externalIRQ());
-        plic.irqWire(1, uart.hasIRQ());
+        // 只为 Load 请求发送响应
+        if (req.op == MEM_READ)
+            mem_resp_fifo.enq(MemResp {valid: True, rdata: rdata});
     endrule
 
     // MemChannel 接口方法
@@ -90,6 +84,7 @@ module mkSOC(MemChannel);
         mem_resp_fifo.deq;
     endmethod
 
+    // 直接驱动中断信号（通过方法，每周期由 Core 调用）
     method Action timerIRQWire(Bool irq);
         csrs.timerIRQWire(irq);
     endmethod
@@ -100,6 +95,19 @@ module mkSOC(MemChannel);
 
     method Action externalIRQWire(Bool irq);
         csrs.externalIRQWire(irq);
+    endmethod
+
+    // 中断状态直接读取方法（供 Core 每周期调用）
+    method Bool clintTimerIRQ();
+        return clint.timerIRQ();
+    endmethod
+
+    method Bool clintSoftwareIRQ();
+        return clint.softwareIRQStatus();
+    endmethod
+
+    method Bool plicExternalIRQ();
+        return plic.externalIRQ();
     endmethod
 
     method Bool testDone();

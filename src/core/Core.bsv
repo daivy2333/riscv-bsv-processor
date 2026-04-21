@@ -94,6 +94,15 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
     Reg#(Bool) wfi_waiting <- mkReg(False);
 
     // ============================================================
+    // 中断驱动规则（每周期执行，优先级最高）
+    // ============================================================
+    rule drive_interrupts;
+        mem_if.timerIRQWire(mem_if.clintTimerIRQ());
+        mem_if.softwareIRQWire(mem_if.clintSoftwareIRQ());
+        mem_if.externalIRQWire(mem_if.plicExternalIRQ());
+    endrule
+
+    // ============================================================
     // IF阶段
     // ============================================================
 

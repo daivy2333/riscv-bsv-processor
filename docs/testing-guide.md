@@ -1,16 +1,37 @@
 # 测试指南
 
+## 快速测试命令
+
+```bash
+# 运行单个测试
+make test-loop_test
+
+# 运行所有基线测试（10个）
+make test-baseline
+
+# 运行定时器中断测试（2个）
+make test-timer
+
+# 运行所有测试（12个）
+make test-all
+
+# 编译汇编文件
+make asm-loop_test
+make asm-all
+
+# 查看帮助
+make help
+```
+
 ## 测试流程
 
 ```
 汇编测试 (tests/assembly/*.s)
-    ↓ riscv64-unknown-elf-gcc -march=rv32i_zicsr
+    ↓ make asm-<name>
 Hex 文件 (firmware/*.hex)
-    ↓ python3 tools/hex_to_bsv.py
-BSV 程序 (src/soc/TestProgram.bsv)
-    ↓ bsc -verilog ...
+    ↓ make test-<name>
 Verilator 仿真
-    ↓ ./obj_dir/VmkTestBench
+    ↓ 
 测试结果（检查 tohost 写入）
 ```
 
@@ -20,19 +41,9 @@ Verilator 仿真
 # 1. 编写汇编（必须包含 tohost 写入）
 vim tests/assembly/new_test.s
 
-# 2. 编译为 hex
-riscv64-unknown-elf-gcc -march=rv32i_zicsr -mabi=ilp32 -nostdlib -T scripts/link.ld tests/assembly/new_test.s -o firmware/new_test.elf
-riscv64-unknown-elf-objcopy -O verilog firmware/new_test.elf firmware/new_test.hex
-
-# 3. 生成 BSV
-python3 tools/hex_to_bsv.py firmware/new_test.hex > src/soc/TestProgram.bsv
-
-# 4. 编译
-/opt/bsc/bin/bsc -verilog -p src:src/common:src/core:src/memory:src/soc:src/branch:src/peripheral:%/Libraries -no-warn-action-shadowing -bdir build -vdir build -u -g mkTestBench src/soc/TestBench.bsv +RTS -K32M -RTS
-
-# 5. 运行
-rm -rf obj_dir && verilator --cc --exe --build -o VmkTestBench --top-module mkTestBench build/mkTestBench.v /opt/bsc/lib/Verilog/FIFO2.v tests/c/test_bench.cpp -Wno-STMTDLY -Wno-WIDTH
-./obj_dir/VmkTestBench
+# 2. 编译并运行
+make asm-new_test
+make test-new_test
 ```
 
 ## 注意事项
@@ -67,6 +78,8 @@ end:
 
 ## 测试状态
 
+### 基线测试（10个）
+
 | 测试 | 状态 | 说明 |
 |------|------|------|
 | loop_test.s | ✓ PASSED | 循环 + 分支预测 |
@@ -80,7 +93,14 @@ end:
 | simple_branch_test.s | ✓ PASSED | 分支预测执行 |
 | simple_loop.s | ✓ PASSED | 循环计数 |
 
-**总计**: 10 个测试，全部通过 ✓
+### 定时器中断测试（2个）
+
+| 测试 | 状态 | 说明 |
+|------|------|------|
+| mtime_increment_verify.s | ✓ PASSED | mtime 每周期递增验证 |
+| mtimecmp_mtip_test.s | ✓ PASSED | MTIP 定时器中断触发 |
+
+**总计**: 12 个测试，全部通过 ✓
 
 ## 阶段状态
 
@@ -92,9 +112,9 @@ end:
 | 阶段 5 | SOC + 外设框架 | ✓ 完成 |
 | 阶段 6 | FreeRTOS 基础运行 | ✓ 完成 |
 | 阶段 7 | 控制流协议重构 | ✓ 完成 |
-| 阶段 8 | G0021 规则调度解决 | ✓ 完成 |
+| 阶段 8 | **定时器中断支持** | ✓ 完成 |
 
-**最新突破**: G0021 BSV 规则调度问题彻底解决，通过分离 Load/非Load 处理规则和 FIFOF 消息通道架构。
+**最新突破**: 定时器中断机制完整实现，mtime 递增 + MTIP 触发测试通过。
 
 ## Trace 调试
 
@@ -105,10 +125,10 @@ end:
 | `FETCH_PC: old=X new=Y predicted=N` | IF 阶段 PC 更新 |
 | `WB_COMMIT: pc=X rd=N data=Y` | WB 阶段指令提交 |
 | `MEM_REQ: pc=X addr=Y` | MEM 阶段内存请求 |
+| `MEM_RESP: data=Y valid=1` | Load 响应数据 |
 | `STORE_COMMIT: addr=X wdata=Y` | Store 指令提交 |
 | `REDIRECT_REQ: pc=X target=Y reason=N` | 控制流重定向请求 |
 | `PIPE_FLUSH: stages` | 流水线冲刷 |
-| `REDIRECT_CONSUMED: target=X reason=N` | 重定向消费 |
 
 ### redirect_reason 编码
 
@@ -128,17 +148,17 @@ end:
 
 **解决**: 确保测试程序包含 `sw xN, 0(0x80001000)` 写入
 
-### BSV 编译错误
+### Load 响应为 0
 
-**原因**: 路径配置问题
+**原因**: Store 响应污染 Load 响应 FIFO
 
-**解决**: 使用完整的 `-p src:src/common:...` 路径列表
+**解决**: SOC 只为 Load 请求发送响应，使用 mkBypassFIFOF
 
-### Verilator 找不到模块
+### MTIP 不触发
 
-**原因**: build 目录缺少 .v 文件
+**原因**: CSR mip 依赖规则更新，存在隐式条件
 
-**解决**: 先运行 bsc 编译生成 Verilog
+**解决**: CSR mip 直接从 Wire 读取（组合逻辑）
 
 ### BSV G0021 警告"规则永不能执行"
 
@@ -147,6 +167,6 @@ end:
 **解决**: 
 1. 分离依赖不同条件的规则（Load/非Load）
 2. 使用 FIFOF 消息通道替代跨模块方法调用
-3. 在规则显式条件中检查状态，而非规则内部 if 分支
+3. 使用 mkBypassFIFOF 支持同周期读写
 
-详见 `docs/debugging-lessons.md` 问题 7
+详见 `docs/debugging-lessons.md`

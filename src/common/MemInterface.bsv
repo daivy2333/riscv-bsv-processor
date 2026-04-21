@@ -11,10 +11,14 @@ interface MemChannel;
     method Bool hasMemResp();                 // 检查响应是否可用
     method MemResp peekMemResp();             // 读取响应（不出队）
     method Action deqMemResp();               // 出队响应
-    // CSR 中断 Wire 输入（由 SOC 内部驱动）
+    // CSR 中断 Wire 输入（由 Core 每周期驱动）
     method Action timerIRQWire(Bool irq);
     method Action softwareIRQWire(Bool irq);
     method Action externalIRQWire(Bool irq);
+    // 中断状态直接读取（Core 每周期调用）
+    method Bool clintTimerIRQ();
+    method Bool clintSoftwareIRQ();
+    method Bool plicExternalIRQ();
     // 其他方法
     method Bool testDone();
     method Word tohostValue();
