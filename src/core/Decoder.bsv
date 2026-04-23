@@ -230,24 +230,20 @@ module mkDecoder(Decoder);
                 csr_op = CSR_OP_READ;
 
                 case (funct3)
-                    3'b001: csr_op = CSR_OP_WRITE;              // CSRRW
-                    3'b010: begin                               // CSRRS
-                        csr_op = CSR_OP_WRITE;
+                    3'b001: csr_op = CSR_OP_WRITE;              // CSRRW - 写入直接值
+                    3'b010: csr_op = (rs1_addr == 0) ? CSR_OP_READ : CSR_OP_SET;   // CSRRS - 置位
+                    3'b011: csr_op = (rs1_addr == 0) ? CSR_OP_READ : CSR_OP_CLR;   // CSRRC - 清位
+                    3'b101: begin                              // CSRRWI - 立即数写入
+                        csr_op = (instruction[19:15] == 0) ? CSR_OP_READ : CSR_OP_WRITE;
                         is_csr_imm = True;
                         use_rs1 = False;
                     end
-                    3'b011: begin                               // CSRRC
-                        csr_op = (rs1_addr == 0) ? CSR_OP_READ : CSR_OP_SET;
-                    end
-                    3'b101: begin                              // CSRRWI
+                    3'b110: begin                               // CSRRSI - 立即数置位
                         csr_op = (instruction[19:15] == 0) ? CSR_OP_READ : CSR_OP_SET;
                         is_csr_imm = True;
                         use_rs1 = False;
                     end
-                    3'b110: begin                               // CSRRSI
-                        csr_op = (rs1_addr == 0) ? CSR_OP_READ : CSR_OP_CLR;
-                    end
-                    3'b111: begin                               // CSRRCI
+                    3'b111: begin                               // CSRRCI - 立即数清位
                         csr_op = (instruction[19:15] == 0) ? CSR_OP_READ : CSR_OP_CLR;
                         is_csr_imm = True;
                         use_rs1 = False;

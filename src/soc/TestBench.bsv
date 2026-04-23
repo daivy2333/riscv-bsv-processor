@@ -24,7 +24,10 @@ module mkTestBench(TestBench);
     Reg#(Bool) programLoaded <- mkReg(False);
 
     rule load (!programLoaded);
-        core.loadProgram(testProgram());
+        Vector#(4096, Word) imem_prog = testProgramForIMem();
+        Vector#(8192, Word) dmem_prog = testProgram();
+        core.loadProgram(imem_prog);
+        soc.loadProgram(dmem_prog);
         programLoaded <= True;
     endrule
 

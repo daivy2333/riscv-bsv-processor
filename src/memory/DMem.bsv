@@ -10,6 +10,7 @@ interface DMem;
     method Action write(Addr addr, Word data);
     method Bool tohostWritten();   // tohost 写入检测
     method Word tohostValue();     // tohost 写入值
+    method Action loadProgram(Vector#(8192, Word) prog);  // 加载程序数据
 endinterface
 
 // 数据内存（32KB, 支持tohost监控）
@@ -25,7 +26,7 @@ module mkDMem(DMem);
 
     method Word read(Addr addr);
         Bit#(13) index = addr[14:2];  // 13位索引 (32KB = 8K words)
-        return memory[index];
+        return memory[index]._read;
     endmethod
 
     method Action write(Addr addr, Word data);
@@ -36,6 +37,12 @@ module mkDMem(DMem);
         if (addr == tohostAddr()) begin
             tohost_written_reg <= True;
             tohost_value_reg <= data;
+        end
+    endmethod
+
+    method Action loadProgram(Vector#(8192, Word) prog);
+        for (Integer i = 0; i < 8192; i = i + 1) begin
+            memory[i] <= prog[i];
         end
     endmethod
 

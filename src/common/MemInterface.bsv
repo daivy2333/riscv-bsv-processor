@@ -26,6 +26,15 @@ interface MemChannel;
     method Word tohostValue();
     // CSR 模块接口（Core 使用）
     method CSRs csrModule();
+    // 程序加载方法（用于初始化 DMem）
+    method Action loadProgram(Vector#(8192, Word) prog);
+    // 调试方法：获取 mtime 和 mtimecmp
+    method Bit#(64) getMtime();
+    method Bit#(64) getMtimecmp();
+    // 调试方法：获取 CSR 状态
+    method Word getMStatus();
+    method Word getMIE();
+    method Word getMIP();
 endinterface
 
 endpackage

@@ -255,26 +255,11 @@ IF → ID → EX → MEM → WB
 7. ✓ 控制流重定向协议重构
 8. ✓ **定时器中断支持**
 
-### FreeRTOS 支持（架构就绪）
-
-| 任务 | 状态 |
-|------|------|
-| 定时器中断 | ✓ PASSED |
-| FreeRTOS demo 运行 | ✓ 启动成功，任务调度活跃 |
-| UART 输出 | ✓ 架构就绪 |
-
-**当前状态**: 
-- 处理器架构完整稳定
-- 12 个测试全部通过
-- 定时器中断机制完整
-- FreeRTOS 架构支持就绪
-
 ## 相关文档
 
+- `docs/architecture.md` - 流水线架构、分支预测、内存布局
 - `docs/debugging-lessons.md` - 调试经验
 - `docs/testing-guide.md` - 测试指南
-- `docs/branch-prediction.md` - 分支预测机制
-- `docs/cpu-pipeline-architecture.md` - 流水线架构
 
 ---
 

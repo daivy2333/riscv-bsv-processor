@@ -100,6 +100,11 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
         mem_if.timerIRQWire(mem_if.clintTimerIRQ());
         mem_if.softwareIRQWire(mem_if.clintSoftwareIRQ());
         mem_if.externalIRQWire(mem_if.plicExternalIRQ());
+
+        // 调试：显示定时器中断状态（已禁用）
+        // if (mem_if.clintTimerIRQ()) begin
+        //     $display("[IRQ] Timer IRQ active!");
+        // end
     endrule
 
     // ============================================================
@@ -107,8 +112,14 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
     // ============================================================
 
     (* execution_order = "consumeRedirect, fetchStage" *)
-    rule fetchStage (programLoaded && state == RUNNING && !stall_load_use && !redirect_pending && !waiting_for_load_resp);
+    // IF 规则：当流水线被清空时（mem2wb 空），允许取指即使有 Load 等待状态
+    // 这是为了处理 WB 中断处理后流水线清空的情况
+    rule fetchStage (programLoaded && state == RUNNING && !stall_load_use && !redirect_pending && (!waiting_for_load_resp || !mem2wb.notEmpty));
         Addr fetchPC = pcReg;
+
+        // 调试：显示取指地址和状态（已禁用）
+        // $display("[IF] Fetch from %x, redirect_pending=%d, waiting_for_load_resp=%d", fetchPC, redirect_pending, waiting_for_load_resp);
+
         Bool take_prediction = False;
         Addr prediction_target = 0;
 
@@ -356,17 +367,20 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
         Bool is_load = (pkt.mem_op == MEM_READ);
 
         if (pkt.has_trap) begin
+            /* 标准RISC-V：CPU更新CSR并跳转
+             * trap_entry 负责：保存CSR到帧，恢复寄存器
+             */
+            $display("[TRAP] cause=%d, pc=%x", pkt.trap_cause, pkt.trap_epc);
             mem_if.csrModule().writeCSR(12'h341, pack(pkt.trap_epc));
-            mem_if.csrModule().writeCSR(12'h342, zeroExtend(pkt.trap_cause));
+            mem_if.csrModule().writeCSR(12'h342, zeroExtend(pack(pkt.trap_cause)) | (pkt.trap_is_interrupt ? 32'h80000000 : 0));
             mem_if.csrModule().writeCSR(12'h343, pack(pkt.trap_tval));
 
             MStatus ms = unpackMStatus(mem_if.csrModule().readCSR(12'h300));
             MStatus new_ms = ms;
             new_ms.mpie = ms.mie;
-            new_ms.mpp = pkt.trap_mode;
+            new_ms.mpp = pack(pkt.trap_mode);
             new_ms.mie = 0;
             mem_if.csrModule().writeCSR(12'h300, packMStatus(new_ms));
-
             mem_if.csrModule().setMode(M_MODE);
 
             Addr trap_base = mem_if.csrModule().readCSR(12'h305) & ~32'h3;
@@ -388,6 +402,9 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
                     CSR_OP_READ:  old_csr;
                     default:      old_csr;
                 endcase;
+                // 调试：打印 CSR 指令执行（已禁用）
+                // $display("[EX_CSR] pc=%x, csr_addr=%x, csr_op=%d, is_imm=%d, zimm=%x, op1=%x, old=%x, new=%x",
+                //     pkt.pc, dec.csr_addr, dec.csr_op, dec.is_csr_imm, dec.csr_zimm, op1, old_csr, new_csr);
                 if (dec.csr_op != CSR_OP_READ) begin
                     mem_if.csrModule().writeCSR(dec.csr_addr, new_csr);
                 end
@@ -510,7 +527,9 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
             alu_result: pkt.alu_result,
             rd: pkt.rd,
             write_reg: pkt.write_reg,
-            is_load: pkt.is_load
+            is_load: pkt.is_load,
+            mem_width: pkt.mem_width,
+            mem_unsigned: pkt.mem_unsigned
         });
     endrule
 
@@ -549,13 +568,20 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
 
         mem_if.csrModule().incrementMinstret;
 
-        // 中断处理
-        if (mem_if.csrModule().hasPendingInterrupt()) begin
+        // 中断处理 - 详细调试（已禁用大部分）
+        Bool has_irq = mem_if.csrModule().hasPendingInterrupt();
+        if (has_irq) begin
+            // $display("[WB_IRQ] hasPendingInterrupt=True, checking MIE...");
+        end
+        if (has_irq) begin
             MStatus ms = unpackMStatus(mem_if.csrModule().readCSR(12'h300));
+            // $display("[WB_IRQ] mstatus=%x (MIE=%d, MPIE=%d)", packMStatus(ms), ms.mie, ms.mpie);
             if (ms.mie == 1'b1) begin
                 Maybe#(Bit#(5)) cause_opt = mem_if.csrModule().getPendingInterruptCause();
                 if (cause_opt matches tagged Valid .cause) begin
-                    mem_if.csrModule().writeCSR(12'h341, pack(pkt.pc));
+                    Addr return_addr = pkt.pc + 4;
+                    $display("[WB_IRQ] Timer IRQ: pc=%x, return_addr=%x", pkt.pc, return_addr);
+                    mem_if.csrModule().writeCSR(12'h341, pack(return_addr));
                     mem_if.csrModule().writeCSR(12'h342, {1'b1, 26'b0, cause});
                     mem_if.csrModule().writeCSR(12'h343, 0);
 
@@ -565,11 +591,13 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
                     new_ms.mie = 1'b0;
                     mem_if.csrModule().writeCSR(12'h300, packMStatus(new_ms));
 
+                    Addr trap_vec = mem_if.csrModule().readCSR(12'h305) & ~32'h3;
+                    // $display("[WB_IRQ] mtvec=%x, trap_vec=%x", mem_if.csrModule().readCSR(12'h305), trap_vec);
+
                     if2id.clear;
                     id2ex.clear;
                     ex2mem.clear;
 
-                    Addr trap_vec = mem_if.csrModule().readCSR(12'h305) & ~32'h3;
                     redirect_pending <= True;
                     redirect_target <= trap_vec;
                     redirect_reason <= 5;
@@ -585,7 +613,24 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
         mem2wb.deq;
 
         MemResp resp = mem_if.peekMemResp();
-        Word wb_data = resp.rdata;
+        Word raw_data = resp.rdata;  // SOC 返回的原始 word
+
+        // 字节/半字提取（根据 width 和地址偏移）
+        Word wb_data = raw_data;
+        if (pkt.mem_width == MEM_BYTE) begin
+            // LB/LBU: 根据 addr[1:0] 提取字节
+            Bit#(2) byte_off = pkt.alu_result[1:0];
+            Bit#(5) shift = {3'b0, byte_off} * 8;
+            Bit#(8) byte_val = (raw_data >> shift)[7:0];
+            wb_data = pkt.mem_unsigned ? {24'b0, byte_val} : signExtend(byte_val);
+        end else if (pkt.mem_width == MEM_HALF) begin
+            // LH/LHU: 根据 addr[1] 提取半字
+            Bit#(1) half_off = pkt.alu_result[1];
+            Bit#(5) shift = {4'b0, half_off} * 16;
+            Bit#(16) half_val = (raw_data >> shift)[15:0];
+            wb_data = pkt.mem_unsigned ? {16'b0, half_val} : signExtend(half_val);
+        end
+
         waiting_for_load_resp <= False;
         mem_if.deqMemResp();
         ex_is_load_cached <= False;
@@ -615,13 +660,20 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
 
         mem_if.csrModule().incrementMinstret;
 
-        // 中断处理
-        if (mem_if.csrModule().hasPendingInterrupt()) begin
+        // 中断处理 - 详细调试（已禁用大部分）
+        Bool has_irq = mem_if.csrModule().hasPendingInterrupt();
+        if (has_irq) begin
+            // $display("[WB_IRQ] hasPendingInterrupt=True, checking MIE...");
+        end
+        if (has_irq) begin
             MStatus ms = unpackMStatus(mem_if.csrModule().readCSR(12'h300));
+            // $display("[WB_IRQ] mstatus=%x (MIE=%d, MPIE=%d)", packMStatus(ms), ms.mie, ms.mpie);
             if (ms.mie == 1'b1) begin
                 Maybe#(Bit#(5)) cause_opt = mem_if.csrModule().getPendingInterruptCause();
                 if (cause_opt matches tagged Valid .cause) begin
-                    mem_if.csrModule().writeCSR(12'h341, pack(pkt.pc));
+                    Addr return_addr = pkt.pc + 4;
+                    $display("[WB_IRQ] Timer IRQ: pc=%x, return_addr=%x", pkt.pc, return_addr);
+                    mem_if.csrModule().writeCSR(12'h341, pack(return_addr));
                     mem_if.csrModule().writeCSR(12'h342, {1'b1, 26'b0, cause});
                     mem_if.csrModule().writeCSR(12'h343, 0);
 
@@ -631,11 +683,13 @@ module mkCore#(String firmwareFile, MemChannel mem_if)(Core);
                     new_ms.mie = 1'b0;
                     mem_if.csrModule().writeCSR(12'h300, packMStatus(new_ms));
 
+                    Addr trap_vec = mem_if.csrModule().readCSR(12'h305) & ~32'h3;
+                    // $display("[WB_IRQ] mtvec=%x, trap_vec=%x", mem_if.csrModule().readCSR(12'h305), trap_vec);
+
                     if2id.clear;
                     id2ex.clear;
                     ex2mem.clear;
 
-                    Addr trap_vec = mem_if.csrModule().readCSR(12'h305) & ~32'h3;
                     redirect_pending <= True;
                     redirect_target <= trap_vec;
                     redirect_reason <= 5;

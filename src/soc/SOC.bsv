@@ -35,6 +35,11 @@ module mkSOC(MemChannel);
         Addr addr = req.addr;
         Word rdata = 0;
 
+        // 调试：追踪 CLINT 写入
+        if (addr >= 32'h02000000 && addr < 32'h02010000 && req.op == MEM_WRITE) begin
+            $display("[SOC] CLINT write: addr=%x data=%x", addr, req.wdata);
+        end
+
         // 地址路由
         if (addr >= 32'h02000000 && addr < 32'h02010000) begin
             // CLINT
@@ -124,6 +129,33 @@ module mkSOC(MemChannel);
 
     method CSRs csrModule();
         return csrs;
+    endmethod
+
+    // 程序加载方法（用于初始化 DMem）
+    method Action loadProgram(Vector#(8192, Word) prog);
+        dmem.loadProgram(prog);
+    endmethod
+
+    // 调试方法：获取 mtime 和 mtimecmp
+    method Bit#(64) getMtime();
+        return clint.getMtime();
+    endmethod
+
+    method Bit#(64) getMtimecmp();
+        return clint.getMtimecmp();
+    endmethod
+
+    // 调试方法：获取 CSR 状态
+    method Word getMStatus();
+        return csrs.getMStatus();
+    endmethod
+
+    method Word getMIE();
+        return csrs.getMIE();
+    endmethod
+
+    method Word getMIP();
+        return csrs.getMIP();
     endmethod
 endmodule
 

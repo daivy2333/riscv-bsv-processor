@@ -26,6 +26,10 @@ interface CSRs;
     method Action setMtime(Bit#(64) v);
     method Bit#(64) getMtimecmp();
     method Action setMtimecmp(Bit#(64) v);
+    // 调试方法：读取关键寄存器
+    method Word getMStatus();
+    method Word getMIE();
+    method Word getMIP();
 endinterface
 
 // Helper function: check if CSR is read-only
@@ -54,7 +58,9 @@ function Word packMStatus(MStatus s);
     result[8] = s.spp;
     result[9] = s._reserved9;
     result[10] = s._reserved10;
-    result[12:11] = s.mpp;
+    // 修复：MPP = bit 11:10 (不是 bit 12:11)
+    result[11:10] = s.mpp;
+    // FS = bit 14:12 (3 bits，和 MPP 不重叠)
     result[14:12] = s.fs;
     result[16:15] = s.xs;
     result[17] = s.mprv;
@@ -82,7 +88,8 @@ function MStatus unpackMStatus(Bit#(32) w);
         spp:        w[8],
         _reserved9:  w[9],
         _reserved10: w[10],
-        mpp:        w[12:11],
+        // 修复：MPP = bit 11:10
+        mpp:        w[11:10],
         fs:         w[14:12],
         xs:         w[16:15],
         mprv:       w[17],
@@ -187,7 +194,10 @@ module mkCSR(CSRs);
                 // Machine Trap Setup
                 12'h300: mstatus <= unpackMStatus(data);  // mstatus
                 12'h304: mie <= data;                      // mie
-                12'h305: mtvec <= data;                    // mtvec
+                12'h305: begin
+                    mtvec <= data;
+                    // $display("[CSR] mtvec written: addr=%x, data=%x, new_mtvec=%x", addr, data, data);
+                end
                 12'h306: mcounteren <= data;               // mcounteren
 
                 // Machine Trap Handling
@@ -243,7 +253,12 @@ module mkCSR(CSRs);
     // Check if there is a pending interrupt
     // Interrupt is pending if (mie & mip) & mstatus.mie
     method Bool hasPendingInterrupt();
-        Bit#(32) enabled_interrupts = mie & mip;
+        // 动态构建 mip：包含 Wire 值
+        Bit#(32) dynamic_mip = mip;
+        dynamic_mip[11] = external_irq_wire ? 1 : 0;   // MEIP（当前值）
+        dynamic_mip[7] = timer_irq_wire ? 1 : 0;       // MTIP（当前值）
+        dynamic_mip[3] = software_irq_wire ? 1 : 0;    // MSIP（当前值）
+        Bit#(32) enabled_interrupts = mie & dynamic_mip;
         Bool global_enable = mstatus.mie == 1;
         return (enabled_interrupts != 0) && global_enable;
     endmethod
@@ -253,7 +268,12 @@ module mkCSR(CSRs);
     // Priority: MEIP(11) > MTIP(7) > MSIP(3) for M-mode
     method Maybe#(Bit#(5)) getPendingInterruptCause();
         Maybe#(Bit#(5)) result = Invalid;
-        Bit#(32) enabled_interrupts = mie & mip;
+        // 动态构建 mip：包含 Wire 值
+        Bit#(32) dynamic_mip = mip;
+        dynamic_mip[11] = external_irq_wire ? 1 : 0;   // MEIP
+        dynamic_mip[7] = timer_irq_wire ? 1 : 0;       // MTIP
+        dynamic_mip[3] = software_irq_wire ? 1 : 0;    // MSIP
+        Bit#(32) enabled_interrupts = mie & dynamic_mip;
         Bool global_enable = mstatus.mie == 1;
 
         if (global_enable) begin
@@ -304,6 +324,22 @@ module mkCSR(CSRs);
 
     method Action setMtimecmp(Bit#(64) v);
         mtimecmp <= v;
+    endmethod
+
+    // 调试方法：读取关键寄存器
+    method Word getMStatus();
+        return packMStatus(mstatus);
+    endmethod
+    method Word getMIE();
+        return mie;
+    endmethod
+    method Word getMIP();
+        // 返回动态的 mip（包含 Wire 值）
+        Bit#(32) dynamic_mip = mip;
+        dynamic_mip[11] = external_irq_wire ? 1 : 0;
+        dynamic_mip[7] = timer_irq_wire ? 1 : 0;
+        dynamic_mip[3] = software_irq_wire ? 1 : 0;
+        return dynamic_mip;
     endmethod
 endmodule
 

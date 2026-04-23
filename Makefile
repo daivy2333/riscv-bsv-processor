@@ -1,115 +1,60 @@
 # Makefile for RISC-V BSV Processor
-# ============================================================
 
-PROJECT = riscv-bsv-processor
 BSC = /opt/bsc/bin/bsc
-BSC_FLAGS = -no-warn-action-shadowing
 VERILATOR = verilator
 CC = riscv64-unknown-elf-gcc
 OBJCOPY = riscv64-unknown-elf-objcopy
-OBJDUMP = riscv64-unknown-elf-objdump
 
-# Bluespec include paths
 BSC_PATHS = -p src:src/common:src/core:src/memory:src/soc:src/branch:src/peripheral:%/Libraries
 
-# ============================================================
-# 测试列表
-# ============================================================
-
-# 基线测试（10个，全部通过）
 BASELINE_TESTS = loop_test simple_arith_test load_test csr_basic_test \
                   privilege_m_mode_test csr_immediate_test rtype_complete_test \
                   itype_alu_test simple_branch_test simple_loop
 
-# 定时器中断测试（新增，通过）
 TIMER_TESTS = mtime_increment_verify mtimecmp_mtip_test
 
-# 所有测试
 ALL_TESTS = $(BASELINE_TESTS) $(TIMER_TESTS)
 
-# FreeRTOS 测试
-FREERTOS_TEST = freertos_demo
+all:
+	@echo "Run: make test-all"
 
 # ============================================================
-# 默认目标
+# 测试
 # ============================================================
 
-all: compile verilator
-
-# ============================================================
-# 快捷测试命令
-# ============================================================
-
-# 运行单个测试：make test-loop_test
 test-%:
-	@echo "=== Running $* ==="
-	@if [ ! -f "firmware/$*.hex" ]; then \
-		echo "Compiling $*.s..."; \
-		$(MAKE) asm-$*; \
-	fi
-	python3 tools/hex_to_bsv.py firmware/$*.hex > src/soc/TestProgram.bsv
-	$(MAKE) compile
-	$(MAKE) verilator
-	timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep -E "Test Results"
+	@echo -n "$*: "
+	@if [ ! -f "build/$*.hex" ]; then $(MAKE) asm-$* >/dev/null 2>&1; fi
+	@python3 tools/hex_to_bsv.py build/$*.hex > src/soc/TestProgram.bsv
+	@$(MAKE) compile verilator >/dev/null 2>&1
+	@result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep -E "Test Results"); \
+	if echo "$$result" | grep -q "PASSED"; then echo "✓ PASSED"; else echo "✗ FAILED"; fi
 
-# 运行所有基线测试
 test-baseline:
-	@echo "=== Running all baseline tests ==="
-	@passed=0; failed=0; \
-	for test in $(BASELINE_TESTS); do \
-		result=$$($(MAKE) test-$$test 2>&1 | grep "Test Results"); \
-		echo "$$test: $$result"; \
-		if echo "$$result" | grep -q "PASSED"; then \
-			passed=$$((passed + 1)); \
-		else \
-			failed=$$((failed + 1)); \
-		fi; \
-	done; \
-	echo ""; \
-	echo "=== Summary: $$passed passed, $$failed failed ==="
+	@for t in $(BASELINE_TESTS); do $(MAKE) test-$$t; done
 
-# 运行定时器中断测试
 test-timer:
-	@echo "=== Running timer interrupt tests ==="
-	@for test in $(TIMER_TESTS); do \
-		$(MAKE) test-$$test; \
-	done
+	@for t in $(TIMER_TESTS); do $(MAKE) test-$$t; done
 
-# 运行所有测试
 test-all:
-	@echo "=== Running all tests ==="
-	@passed=0; failed=0; \
-	for test in $(ALL_TESTS); do \
-		result=$$($(MAKE) test-$$test 2>&1 | grep "Test Results"); \
-		echo "$$test: $$result"; \
-		if echo "$$result" | grep -q "PASSED"; then \
-			passed=$$((passed + 1)); \
-		else \
-			failed=$$((failed + 1)); \
-		fi; \
-	done; \
-	echo ""; \
-	echo "=== Summary: $$passed passed, $$failed failed ==="
+	@for t in $(ALL_TESTS); do $(MAKE) test-$$t; done
 
 # ============================================================
-# 编译流程
+# 编译
 # ============================================================
 
 compile:
 	mkdir -p build
-	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) \
+	$(BSC) -verilog $(BSC_PATHS) -no-warn-action-shadowing \
 		-bdir build -vdir build \
-		-u -g mkTestBench \
-		src/soc/TestBench.bsv \
+		-u -g mkTestBench src/soc/TestBench.bsv \
 		+RTS -K32M -RTS
 
 verilator:
 	rm -rf obj_dir
 	$(VERILATOR) --cc --exe --build \
-		-o VmkTestBench \
-		--top-module mkTestBench \
-		build/mkTestBench.v \
-		/opt/bsc/lib/Verilog/FIFO2.v \
+		-o VmkTestBench --top-module mkTestBench \
+		build/mkTestBench.v /opt/bsc/lib/Verilog/FIFO2.v \
 		tests/c/test_bench.cpp \
 		-Wno-STMTDLY -Wno-WIDTH
 
@@ -117,159 +62,58 @@ run:
 	./obj_dir/VmkTestBench
 
 # ============================================================
-# 汇编编译（从 .s 到 .hex）
+# 汇编
 # ============================================================
 
-# 编译单个汇编文件：make asm-loop_test
 asm-%:
-	@echo "=== Compiling $*.s ==="
-	@if [ -f "tests/assembly/$*.s" ]; then \
-		mkdir -p firmware; \
-		$(CC) -march=rv32i_zicsr -mabi=ilp32 \
-			-nostdlib -T scripts/link.ld \
-			tests/assembly/$*.s -o firmware/$*.elf; \
-		$(OBJCOPY) -O verilog firmware/$*.elf firmware/$*.hex; \
-		echo "Generated firmware/$*.hex"; \
-	else \
-		echo "Error: tests/assembly/$*.s not found"; \
-	fi
+	@mkdir -p build
+	$(CC) -march=rv32i_zicsr -mabi=ilp32 -nostdlib -T scripts/link.ld \
+		tests/assembly/$*.s -o build/$*.elf
+	$(OBJCOPY) -O verilog build/$*.elf build/$*.hex
 
-# 编译所有汇编测试
 asm-all:
-	@for test in $(ALL_TESTS); do \
-		$(MAKE) asm-$$test; \
-	done
+	@for t in $(ALL_TESTS); do $(MAKE) asm-$$t; done
 
 # ============================================================
-# FreeRTOS 测试
+# Mini-OS
 # ============================================================
 
-# FreeRTOS 专用编译（使用 FreeRTOSBench）
-compile-freertos: firmware/freertos_demo.hex
+test-mini-os:
+	@echo "=== Mini-OS Demo ==="
+	$(MAKE) -f mini-os/Makefile
+	python3 tools/hex_to_bsv.py build/mini-os/mini-os.hex > src/soc/TestProgram.bsv
 	mkdir -p build
-	python3 tools/hex_to_bsv.py firmware/$(FREERTOS_TEST).hex > src/soc/TestProgram.bsv
-	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) \
+	$(BSC) -verilog $(BSC_PATHS) -no-warn-action-shadowing \
 		-bdir build -vdir build \
-		-u -g mkFreeRTOSBench \
-		src/soc/FreeRTOSBench.bsv \
+		-u -g mkMiniOSBench src/soc/MiniOSBench.bsv \
 		+RTS -K64M -RTS
-
-# 编译 FreeRTOS demo
-firmware/freertos_demo.hex:
-	$(MAKE) -f freertos.mk
-
-verilator-freertos:
 	rm -rf obj_dir
 	$(VERILATOR) --cc --exe --build \
-		-o VmkFreeRTOSBench \
-		--top-module mkFreeRTOSBench \
-		build/mkFreeRTOSBench.v \
-		/opt/bsc/lib/Verilog/FIFO2.v \
-		tests/c/freertos_bench.cpp \
+		-o VmkMiniOSBench --top-module mkMiniOSBench \
+		build/mkMiniOSBench.v /opt/bsc/lib/Verilog/FIFO2.v \
+		tests/c/mini_os_bench.cpp \
 		-Wno-STMTDLY -Wno-WIDTH -Wno-TIMESCALEMOD \
 		-LDFLAGS "-pthread"
-
-test-freertos: compile-freertos verilator-freertos
-	@echo "=== Running FreeRTOS Demo ==="
-	@echo "UART output displayed, stdin input supported"
-	@echo "Press Ctrl+C to exit"
-	@echo ""
-	./obj_dir/VmkFreeRTOSBench
-
-# UART Echo 测试（简单交互式回显）
-compile-uart-echo: asm-uart_echo_test
-	mkdir -p build
-	python3 tools/hex_to_bsv.py firmware/uart_echo_test.hex > src/soc/TestProgram.bsv
-	$(BSC) -verilog $(BSC_PATHS) $(BSC_FLAGS) \
-		-bdir build -vdir build \
-		-u -g mkFreeRTOSBench \
-		src/soc/FreeRTOSBench.bsv \
-		+RTS -K64M -RTS
-
-test-uart-echo: compile-uart-echo verilator-freertos
-	@echo ""
-	@echo "=== UART Echo Test ==="
-	@echo "Type characters and see them echoed..."
-	@echo "Press Ctrl+C to exit"
-	@echo ""
-	@./obj_dir/VmkFreeRTOSBench
-
-# UART Echo 自动测试（无 stdin）
-verilator-uart-auto:
-	rm -rf obj_dir
-	$(VERILATOR) --cc --exe --build \
-		-o VmkFreeRTOSBench \
-		--top-module mkFreeRTOSBench \
-		build/mkFreeRTOSBench.v \
-		/opt/bsc/lib/Verilog/FIFO2.v \
-		tests/c/uart_echo_auto_test.cpp \
-		-Wno-STMTDLY -Wno-WIDTH -Wno-TIMESCALEMOD
-
-test-uart-echo-auto: compile-uart-echo verilator-uart-auto
-	@echo ""
-	@echo "=== UART Echo Auto Test ==="
-	./obj_dir/VmkFreeRTOSBench
-
-# ============================================================
-# 调试模式
-# ============================================================
-
-# 详细调试输出
-debug-%:
-	@echo "=== Debug mode for $* ==="
-	python3 tools/hex_to_bsv.py firmware/$*.hex > src/soc/TestProgram.bsv
-	$(MAKE) compile
-	$(MAKE) verilator
-	./obj_dir/VmkTestBench 2>&1 | tee debug_$*.log
+	./obj_dir/VmkMiniOSBench
 
 # ============================================================
 # 清理
 # ============================================================
 
 clean:
-	rm -rf build obj_dir firmware/*.elf firmware/*.hex firmware/*.dump
-	rm -f debug_*.log freertos_debug.log freertos.log
+	rm -rf build obj_dir
 
 clean-all: clean
 	rm -f src/soc/TestProgram.bsv
 
-# ============================================================
-# 帮助
-# ============================================================
-
 help:
-	@echo "RISC-V BSV Processor - Makefile"
-	@echo ""
-	@echo "快速测试:"
-	@echo "  make test-<name>      运行单个测试"
-	@echo "  make test-baseline    运行所有基线测试（10个）"
-	@echo "  make test-timer       运行定时器中断测试"
-	@echo "  make test-all         运行所有测试（12个）"
-	@echo "  make test-freertos    运行 FreeRTOS demo（交互式 UART）"
-	@echo "  make test-uart-echo   UART 回显测试（交互式输入）"
-	@echo ""
-	@echo "汇编编译:"
-	@echo "  make asm-<name>       编译单个汇编文件"
-	@echo "  make asm-all          编译所有汇编测试"
-	@echo ""
-	@echo "构建:"
-	@echo "  make all              编译 BSV + Verilator"
-	@echo "  make compile          仅编译 BSV"
-	@echo "  make verilator        仅构建 Verilator"
-	@echo "  make run              运行当前程序"
-	@echo ""
-	@echo "调试:"
-	@echo "  make debug-<name>     详细调试输出"
+	@echo "测试:"
+	@echo "  make test-all      全部测试"
+	@echo "  make test-<name>   单个测试"
+	@echo "  make test-mini-os  Mini-OS Demo"
 	@echo ""
 	@echo "清理:"
-	@echo "  make clean            清理构建产物"
-	@echo "  make clean-all        清理所有（含 TestProgram.bsv）"
-	@echo ""
-	@echo "示例:"
-	@echo "  make test-loop_test"
-	@echo "  make test-baseline"
-	@echo "  make asm-all && make test-all"
+	@echo "  make clean"
 
 .PHONY: all compile verilator run clean clean-all help \
-        test-baseline test-timer test-all test-freertos test-uart-echo \
-        compile-freertos verilator-freertos asm-all
+        test-baseline test-timer test-all asm-all test-mini-os

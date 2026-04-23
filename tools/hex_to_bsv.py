@@ -41,19 +41,36 @@ def parse_hex(hex_file):
 
     return words
 
-def generate_bsv(words, max_words=4096):
+def generate_bsv(words, max_words=8192):
     """生成 BSV 程序定义"""
     print("// Auto-generated test program from hex file")
     print("package TestProgram;")
     print("import Types::*;")
     print("import Vector::*;")
     print("")
+    # 生成完整的 8192 words 版本（用于 DMem）
     print(f"function Vector#({max_words}, Word) testProgram();")
     print(f"    Vector#({max_words}, Word) prog = replicate(0);")
     print("")
 
     for idx in sorted(words.keys()):
         if idx >= 0 and idx < max_words:
+            word = words[idx]
+            addr = 0x80000000 + idx * 4
+            print(f"    prog[{idx}] = 32'h{word:08x};  // @ {addr:#x}")
+
+    print("")
+    print("    return prog;")
+    print("endfunction")
+
+    # 生成截取的 4096 words 版本（用于 IMem）
+    print("")
+    print("function Vector#(4096, Word) testProgramForIMem();")
+    print("    Vector#(4096, Word) prog = replicate(0);")
+    print("")
+
+    for idx in sorted(words.keys()):
+        if idx >= 0 and idx < 4096:
             word = words[idx]
             addr = 0x80000000 + idx * 4
             print(f"    prog[{idx}] = 32'h{word:08x};  // @ {addr:#x}")

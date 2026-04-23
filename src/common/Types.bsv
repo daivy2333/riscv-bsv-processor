@@ -167,10 +167,12 @@ typedef struct {
 typedef struct {
     Addr        pc;
     Word        mem_data;       // 内存读取的数据（Load指令）
-    Word        alu_result;     // ALU结果（非Load指令）
+    Word        alu_result;     // ALU结果/地址（非Load指令或Load地址）
     Bit#(5)     rd;
     Bool        write_reg;
     Bool        is_load;
+    MemWidth    mem_width;      // 内存访问宽度（Load指令）
+    Bool        mem_unsigned;   // 是否无符号扩展（Load指令）
 } MEM_WB_Packet deriving (Bits, Eq, FShow);
 
 // ============================================================

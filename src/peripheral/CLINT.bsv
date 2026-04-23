@@ -10,6 +10,8 @@ interface CLINT;
     method Bool timerIRQ();             // MTIP: mtime >= mtimecmp
     method Bool softwareIRQStatus();   // MSIP 读状态
     method Action softwareIRQ(Bool v); // MSIP 写入
+    method Bit#(64) getMtime();        // 调试：读取 mtime
+    method Bit#(64) getMtimecmp();     // 调试：读取 mtimecmp
 endinterface
 
 module mkCLINT(CLINT);
@@ -32,6 +34,15 @@ module mkCLINT(CLINT);
     // mtime 自动递增规则（每周期递增）
     rule auto_increment_mtime;
         mtime <= mtime + 1;
+    endrule
+
+    // 调试规则：追踪 mtimecmp 变化
+    Reg#(Bit#(64)) last_mtimecmp <- mkReg(64'hFFFFFFFFFFFFFFFF);
+    rule trace_mtimecmp_change (mtimecmp != last_mtimecmp);
+        $display("[CLINT] mtimecmp changed from %x_%x to %x_%x",
+            last_mtimecmp[63:32], last_mtimecmp[31:0],
+            mtimecmp[63:32], mtimecmp[31:0]);
+        last_mtimecmp <= mtimecmp;
     endrule
 
     method Word read(Addr addr);
@@ -72,6 +83,14 @@ module mkCLINT(CLINT);
 
     method Action softwareIRQ(Bool v);
         msip <= v;
+    endmethod
+
+    method Bit#(64) getMtime();
+        return mtime;
+    endmethod
+
+    method Bit#(64) getMtimecmp();
+        return mtimecmp;
     endmethod
 endmodule
 

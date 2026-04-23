@@ -1,23 +1,20 @@
-# BSV编译产物
+# BSV 编译产物
 build/*.bo
 build/*.ba
-build/*.cxx
-build/*.h
-build/*.o
 build/*.v
+build/mk*.v
 
-# Verilator编译产物
+# Verilator 编译产物
 obj_dir/
 
-# ELF和测试产物
-firmware/*.elf
-firmware/*.mem
-firmware/*.dump
+# 编译产物
+*.o
+*.log
+*.pir
+
+# Mini-OS 编译产物
+mini-os/build/
 
 # 其他
+.trae/
 a.out
-a.out.so
-*.o
-.worktrees/
-/freertos/
-.gitignore
