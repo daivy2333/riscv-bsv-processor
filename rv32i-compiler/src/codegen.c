@@ -217,6 +217,11 @@ static void gen_stmt(ASTNode *n)
 {
     switch (n->type) {
 
+    case AST_FUNC_CALL:
+        /* Function call as statement - evaluate and discard result */
+        gen_expr(n);
+        break;
+
     case AST_VAR_DECL:
         if (n->init) {
             gen_expr(n->init);

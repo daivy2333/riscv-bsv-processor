@@ -463,6 +463,17 @@ static ASTNode *parse_stmt(void)
         Token *next = cur->next;
         if (next && next->type == TOK_ASSIGN)
             return parse_assign();
+        /* Function call statement: func(args); */
+        if (next && next->type == TOK_LPAREN) {
+            /* Parse function call expression, then expect ';' */
+            ASTNode *call = parse_primary();  /* parse_primary handles function call */
+            if (cur->type != TOK_SEMI) {
+                parse_error(cur->line, cur->col, "expected ';' after function call");
+            } else {
+                cur = cur->next;  /* skip ';' */
+            }
+            return call;
+        }
         parse_error(cur->line, cur->col, "expected statement");
         return NULL;
     }

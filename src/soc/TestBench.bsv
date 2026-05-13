@@ -44,13 +44,9 @@ module mkTestBench(TestBench);
     (* descending_urgency = "checkCompletion, countCycles" *)
     rule checkCompletion (programLoaded && !dumpDone && soc.tohostValue() != 0);
         $display("\n====================================");
-        if (soc.tohostValue() == 1) begin
-            $display("  Test Results: PASSED");
-        end else begin
-            $display("  Test Results: FAILED (tohost=0x%x)", soc.tohostValue());
-        end
+        $display("  Test Results: tohost=0x%h", soc.tohostValue());
+        $display("  Cycles: %0d", cycleCount);
         $display("====================================");
-        $display("Cycles: %0d", cycleCount);
         dumpDone <= True;
     endrule
 
