@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include "types.h"
+
 /* AST node types */
 typedef enum {
     AST_FUNC_DEF,
@@ -29,6 +31,7 @@ typedef struct ASTNode {
     struct ASTNode *left;  /* for BIN_OP: left operand */
     struct ASTNode *right; /* for BIN_OP: right operand */
     char *name;            /* for VAR_DECL, VAR_REF, ASSIGN: variable name */
+    Type  var_type;        /* for VAR_DECL: variable type (int, int*, etc.) */
     struct ASTNode *init;  /* for VAR_DECL: optional initializer (NULL if none) */
     struct ASTNode *expr;  /* for ASSIGN: right-hand side expression */
     struct ASTNode *next;  /* linked-list chain for statements */
