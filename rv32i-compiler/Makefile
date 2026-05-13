@@ -18,7 +18,8 @@ OBJS = $(BUILDDIR)/main.o $(BUILDDIR)/lexer.o $(BUILDDIR)/parser.o \
         test-phase3 test-phase3-precedence test-phase3-if-true test-phase3-if-false \
         test-phase3-if-else test-phase3-while test-phase3-for \
         test-phase4 test-phase4-fib test-phase4-add test-phase4-call test-phase4-multi \
-        test-phase5 test-phase5-swap
+        test-phase5 test-phase5-swap \
+        test-phase6 test-phase6-array
 
 all: $(BUILDDIR)/microcc
 
@@ -148,6 +149,20 @@ test-phase5-swap: build/phase5_swap.hex
 
 test-phase5: test-phase5-swap
 	@echo "=== All Phase 5 tests done ==="
+
+# ----- Phase 6 test hex targets -----
+HEX6 = build/phase6_array.hex
+
+$(HEX6): build/phase6_%.hex: tests/phase6/test_%.c $(BUILDDIR)/microcc $(RTDIR)/crt0.s $(RTDIR)/lib.S
+	@mkdir -p $(BUILDDIR)
+	./$(BUILDDIR)/microcc $< $@ $(RTDIR)/crt0.s $(BUILDDIR)/_phase6_$*.s $(RTDIR)/lib.S
+
+# ----- Phase 6 test execution targets -----
+test-phase6-array: build/phase6_array.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x0000000f" && echo "✓ PASSED (tohost=15)" || echo "✗ FAILED (expected tohost=15)"
+
+test-phase6: test-phase6-array
+	@echo "=== All Phase 6 tests done ==="
 
 clean:
 	rm -rf $(BUILDDIR)
