@@ -208,10 +208,35 @@ static ASTNode *parse_var_decl(void)
     return n;
 }
 
-/* assign-stmt = identifier "=" expression ";" */
+/* assign-stmt = identifier "=" expression ";" OR "*" primary "=" expression ";" */
 static ASTNode *parse_assign(void)
 {
     ASTNode *n = ast_new(AST_ASSIGN);
+    n->is_deref_assign = 0;  /* default: normal assignment */
+
+    /* Check for dereference assignment: *p = expr */
+    if (cur->type == TOK_STAR) {
+        n->is_deref_assign = 1;
+        cur = cur->next; /* skip '*' */
+        n->deref_target = parse_primary();  /* Get pointer expression */
+        n->name = NULL;  /* no name for deref assignment */
+
+        if (cur->type != TOK_ASSIGN) {
+            parse_error(cur->line, cur->col, "expected '=' after dereference");
+            return NULL;
+        }
+        cur = cur->next; /* skip '=' */
+        n->expr = parse_expr();
+
+        if (cur->type != TOK_SEMI) {
+            parse_error(cur->line, cur->col, "expected ';' after assignment");
+        } else {
+            cur = cur->next;
+        }
+        return n;
+    }
+
+    /* Normal assignment: x = expr */
     n->name = strdup(cur->text);
     cur = cur->next;
 
@@ -407,6 +432,9 @@ static ASTNode *parse_stmt(void)
         return parse_return();
     if (cur->type == TOK_INT)
         return parse_var_decl();
+    /* Dereference assignment: *p = expr */
+    if (cur->type == TOK_STAR)
+        return parse_assign();
     if (cur->type == TOK_ID && cur->next && cur->next->type == TOK_INC) {
         /* desugar i++ → i = i + 1 */
         char *name = strdup(cur->text);

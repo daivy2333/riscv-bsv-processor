@@ -32,6 +32,8 @@ typedef struct ASTNode {
     struct ASTNode *right; /* for BIN_OP: right operand */
     char *name;            /* for VAR_DECL, VAR_REF, ASSIGN: variable name */
     Type  var_type;        /* for VAR_DECL: variable type (int, int*, etc.) */
+    int   is_deref_assign; /* for ASSIGN: 1 if assigning to *p */
+    struct ASTNode *deref_target; /* for ASSIGN: pointer expr for *p = */
     struct ASTNode *init;  /* for VAR_DECL: optional initializer (NULL if none) */
     struct ASTNode *expr;  /* for ASSIGN: right-hand side expression */
     struct ASTNode *next;  /* linked-list chain for statements */

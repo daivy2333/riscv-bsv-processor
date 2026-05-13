@@ -226,9 +226,23 @@ static void gen_stmt(ASTNode *n)
         break;
 
     case AST_ASSIGN:
-        gen_expr(n->expr);
-        {
+        gen_expr(n->expr);  /* Evaluate right side, result in t0 */
+
+        if (n->is_deref_assign) {
+            /* Dereference assignment: *p = expr */
+            /* Need to save t0 first, then evaluate pointer */
+            int my_off = spill_depth * 4;
+            emit("    sw t0, %d(sp)\n", my_off);  /* Save value */
+            gen_expr(n->deref_target);  /* Evaluate pointer, get address in t0 */
+            emit("    lw t1, %d(sp)\n", my_off);  /* Load saved value to t1 */
+            emit("    sw t1, 0(t0)\n");  /* Store value at address */
+        } else {
+            /* Normal variable assignment: x = expr */
             int off = sym_lookup(n->name);
+            if (off < 0) {
+                fprintf(stderr, "codegen error: undefined variable '%s'\n", n->name);
+                return;
+            }
             emit("    sw t0, %d(sp)\n", off);
         }
         break;
