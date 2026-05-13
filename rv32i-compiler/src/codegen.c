@@ -80,6 +80,161 @@ static Type sym_lookup_type(const char *name)
 }
 
 /* ================================================================
+ *  Global symbol table — .data segment with absolute offsets
+ * ================================================================ */
+
+#define MAX_GLOBALS 64
+#define MAX_STRING_LITS 64
+
+static struct {
+    char *name;
+    int   offset;       /* .data segment offset (bytes) */
+    Type  type;
+    int   init_val;     /* integer initializer value */
+    char *init_str;     /* string initializer (for char*) */
+    int   str_len;      /* string length including \0 */
+} globals[MAX_GLOBALS];
+
+static int global_count;
+static int data_offset;  /* current .data offset */
+
+static struct {
+    char *content;
+    int   len;
+    int   label;        /* .LstrN label number */
+} string_lits[MAX_STRING_LITS];
+
+static int string_lit_count;
+static int string_label_counter;
+
+static int global_lookup(const char *name)
+{
+    for (int i = 0; i < global_count; i++)
+        if (strcmp(globals[i].name, name) == 0)
+            return globals[i].offset;
+    return -1;
+}
+
+static Type global_lookup_type(const char *name)
+{
+    for (int i = 0; i < global_count; i++)
+        if (strcmp(globals[i].name, name) == 0)
+            return globals[i].type;
+    return type_make_int();
+}
+
+static int register_string_literal(const char *str)
+{
+    /* Check if already registered */
+    for (int i = 0; i < string_lit_count; i++) {
+        if (strcmp(string_lits[i].content, str) == 0)
+            return string_lits[i].label;
+    }
+
+    /* Register new string */
+    int label = string_label_counter++;
+    string_lits[string_lit_count].content = strdup(str);
+    string_lits[string_lit_count].len = strlen(str) + 1;  /* include \0 */
+    string_lits[string_lit_count].label = label;
+    string_lit_count++;
+    return label;
+}
+
+/* Pass 0: collect global declarations */
+static void collect_globals(ASTNode *prog)
+{
+    global_count = 0;
+    data_offset = 0;
+    string_lit_count = 0;
+    string_label_counter = 0;
+
+    for (ASTNode *n = prog; n; n = n->next) {
+        if (n->type == AST_GLOBAL_DECL) {
+            globals[global_count].name = strdup(n->name);
+            globals[global_count].type = n->var_type;
+            globals[global_count].offset = data_offset;
+            globals[global_count].init_val = 0;
+            globals[global_count].init_str = NULL;
+            globals[global_count].str_len = 0;
+
+            /* Handle initializer */
+            if (n->str_val) {
+                /* char* = "hello" - store string content */
+                globals[global_count].init_str = strdup(n->str_val);
+                globals[global_count].str_len = strlen(n->str_val) + 1;
+                data_offset += globals[global_count].str_len;
+                /* Align to 4 bytes */
+                while (data_offset % 4 != 0) data_offset++;
+            } else if (n->init) {
+                /* int = expr - evaluate constant expression */
+                if (n->init->type == AST_INT_LIT) {
+                    globals[global_count].init_val = n->init->int_val;
+                } else if (n->init->type == AST_BIN_OP) {
+                    /* Simple constant expression evaluation */
+                    int left = (n->init->left->type == AST_INT_LIT) ? n->init->left->int_val : 0;
+                    int right = (n->init->right->type == AST_INT_LIT) ? n->init->right->int_val : 0;
+                    if (n->init->op == TOK_PLUS)
+                        globals[global_count].init_val = left + right;
+                    else if (n->init->op == TOK_MINUS)
+                        globals[global_count].init_val = left - right;
+                    else if (n->init->op == TOK_STAR)
+                        globals[global_count].init_val = left * right;
+                }
+                data_offset += 4;  /* int takes 4 bytes */
+            } else {
+                /* No initializer - default to 0, allocate space */
+                if (n->var_type.array_size > 0) {
+                    data_offset += n->var_type.array_size * 4;
+                } else {
+                    data_offset += 4;
+                }
+            }
+            global_count++;
+        }
+    }
+}
+
+static void emit_data_segment(void)
+{
+    if (global_count == 0 && string_lit_count == 0)
+        return;
+
+    emit("    .data\n");
+
+    /* Output global variables */
+    for (int i = 0; i < global_count; i++) {
+        emit(".global_%s:\n", globals[i].name);
+        if (globals[i].init_str) {
+            /* Output string bytes */
+            emit("    .byte ");
+            for (int j = 0; j < globals[i].str_len; j++) {
+                unsigned char c = (unsigned char)globals[i].init_str[j];
+                if (j > 0) emit(",");
+                emit("%d", c);
+            }
+            emit("\n");
+            emit("    .align 4\n");
+        } else {
+            /* Output integer word */
+            emit("    .word %d\n", globals[i].init_val);
+        }
+    }
+
+    /* Output string literals used in expressions */
+    for (int i = 0; i < string_lit_count; i++) {
+        emit(".Lstr%d:\n", string_lits[i].label);
+        emit("    .byte ");
+        for (int j = 0; j < string_lits[i].len; j++) {
+            unsigned char c = (unsigned char)string_lits[i].content[j];
+            if (j > 0) emit(",");
+            emit("%d", c);
+        }
+        emit("\n");
+        emit("    .align 4\n");
+    }
+}
+
+/* ================================================================
  *  Pass 1 — compute stack-frame size (recursive into if/while bodies)
  * ================================================================ */
 
@@ -160,18 +315,38 @@ static void gen_expr(ASTNode *n)
         emit("    li t0, %d\n", n->int_val);
         break;
 
+    case AST_STRING_LIT: {
+        /* Register string and get label */
+        int label = register_string_literal(n->str_val);
+        n->str_label = label;
+        emit("    la t0, .Lstr%d\n", label);
+        break;
+    }
+
     case AST_VAR_REF: {
-        int off = sym_lookup(n->name);
-        if (off < 0) {
-            fprintf(stderr, "codegen error: undefined variable '%s'\n", n->name);
-            return;
-        }
-        Type t = sym_lookup_type(n->name);
-        /* If variable is array, return its address (not load value) */
-        if (type_is_array(t)) {
-            emit("    addi t0, sp, %d\n", off);  /* t0 = &arr[0] */
+        /* Check if global first */
+        int global_off = global_lookup(n->name);
+        if (global_off >= 0) {
+            /* Global variable - use la instruction */
+            emit("    la t0, .global_%s\n", n->name);
+            Type t = global_lookup_type(n->name);
+            if (!type_is_array(t) && !type_is_ptr(t)) {
+                emit("    lw t0, 0(t0)\n");  /* load value */
+            }
+            /* For array/pointer, t0 already holds address */
         } else {
-            emit("    lw t0, %d(sp)\n", off);  /* t0 = value */
+            /* Local variable */
+            int off = sym_lookup(n->name);
+            if (off < 0) {
+                fprintf(stderr, "codegen error: undefined variable '%s'\n", n->name);
+                return;
+            }
+            Type t = sym_lookup_type(n->name);
+            if (type_is_array(t)) {
+                emit("    addi t0, sp, %d\n", off);  /* t0 = &arr[0] */
+            } else {
+                emit("    lw t0, %d(sp)\n", off);  /* t0 = value */
+            }
         }
         break;
     }
@@ -179,14 +354,27 @@ static void gen_expr(ASTNode *n)
     case AST_ARRAY_ACCESS: {
         /* arr[i] → compute address and load */
         int base = sym_lookup(n->name);
+        int is_global = 0;
+        Type arr_type;
+
         if (base < 0) {
-            fprintf(stderr, "codegen error: undefined array '%s'\n", n->name);
-            return;
+            /* Check if global array */
+            base = global_lookup(n->name);
+            if (base >= 0) {
+                is_global = 1;
+                arr_type = global_lookup_type(n->name);
+            } else {
+                fprintf(stderr, "codegen error: undefined array '%s'\n", n->name);
+                return;
+            }
+        } else {
+            arr_type = sym_lookup_type(n->name);
         }
-        Type arr_type = sym_lookup_type(n->name);
 
         /* Get array base address */
-        if (type_is_array(arr_type)) {
+        if (is_global) {
+            emit("    la t1, .global_%s\n", n->name);  /* t1 = &arr[0] */
+        } else if (type_is_array(arr_type)) {
             /* Local array: base address is stack offset */
             emit("    addi t1, sp, %d\n", base);  /* t1 = &arr[0] */
         } else {
@@ -206,7 +394,13 @@ static void gen_expr(ASTNode *n)
         /* Check if left operand is pointer (for arithmetic) */
         int is_ptr_left = 0;
         if (n->left->type == AST_VAR_REF) {
-            Type left_type = sym_lookup_type(n->left->name);
+            int global_off = global_lookup(n->left->name);
+            Type left_type;
+            if (global_off >= 0) {
+                left_type = global_lookup_type(n->left->name);
+            } else {
+                left_type = sym_lookup_type(n->left->name);
+            }
             is_ptr_left = type_is_array(left_type) || type_is_ptr(left_type);
         } else if (n->left->type == AST_ADDR) {
             is_ptr_left = 1;
@@ -265,17 +459,23 @@ static void gen_expr(ASTNode *n)
     }
 
     case AST_ADDR: {
-        /* &x → get address of variable x (stack offset) */
+        /* &x → get address of variable x (stack offset or global) */
         if (n->left->type != AST_VAR_REF) {
             fprintf(stderr, "codegen error: & operator requires variable\n");
             return;
         }
-        int off = sym_lookup(n->left->name);
-        if (off < 0) {
-            fprintf(stderr, "codegen error: undefined variable '%s'\n", n->left->name);
-            return;
+        int global_off = global_lookup(n->left->name);
+        if (global_off >= 0) {
+            /* Global variable - address is label */
+            emit("    la t0, .global_%s\n", n->left->name);
+        } else {
+            int off = sym_lookup(n->left->name);
+            if (off < 0) {
+                fprintf(stderr, "codegen error: undefined variable '%s'\n", n->left->name);
+                return;
+            }
+            emit("    addi t0, sp, %d\n", off);  /* t0 = address of x */
         }
-        emit("    addi t0, sp, %d\n", off);  /* t0 = address of x */
         break;
     }
 
@@ -321,14 +521,26 @@ static void gen_stmt(ASTNode *n)
             emit("    sw t0, %d(sp)\n", my_off);  /* save value */
 
             int base = sym_lookup(n->array_name);
+            int is_global = 0;
+            Type arr_type;
+
             if (base < 0) {
-                fprintf(stderr, "codegen error: undefined array '%s'\n", n->array_name);
-                return;
+                base = global_lookup(n->array_name);
+                if (base >= 0) {
+                    is_global = 1;
+                    arr_type = global_lookup_type(n->array_name);
+                } else {
+                    fprintf(stderr, "codegen error: undefined array '%s'\n", n->array_name);
+                    return;
+                }
+            } else {
+                arr_type = sym_lookup_type(n->array_name);
             }
-            Type arr_type = sym_lookup_type(n->array_name);
 
             /* Get array base address */
-            if (type_is_array(arr_type)) {
+            if (is_global) {
+                emit("    la t1, .global_%s\n", n->array_name);
+            } else if (type_is_array(arr_type)) {
                 emit("    addi t1, sp, %d\n", base);  /* t1 = &arr[0] */
             } else {
                 emit("    lw t1, %d(sp)\n", base);  /* t1 = arr (pointer value) */
@@ -347,13 +559,21 @@ static void gen_stmt(ASTNode *n)
             emit("    lw t1, %d(sp)\n", my_off);  /* Load saved value to t1 */
             emit("    sw t1, 0(t0)\n");  /* Store value at address */
         } else {
-            /* Normal variable assignment: x = expr */
-            int off = sym_lookup(n->name);
-            if (off < 0) {
-                fprintf(stderr, "codegen error: undefined variable '%s'\n", n->name);
-                return;
+            /* Check if global */
+            int global_off = global_lookup(n->name);
+            if (global_off >= 0) {
+                /* Global assignment */
+                emit("    la t1, .global_%s\n", n->name);
+                emit("    sw t0, 0(t1)\n");
+            } else {
+                /* Local variable assignment */
+                int off = sym_lookup(n->name);
+                if (off < 0) {
+                    fprintf(stderr, "codegen error: undefined variable '%s'\n", n->name);
+                    return;
+                }
+                emit("    sw t0, %d(sp)\n", off);
             }
-            emit("    sw t0, %d(sp)\n", off);
         }
         break;
 
@@ -435,7 +655,7 @@ static void gen_func_def(ASTNode *fn)
 }
 
 /* ================================================================
- *  Entry point — emit .text, .globl main, then each function
+ *  Entry point — emit .text first, then .data segment
  * ================================================================ */
 
 int codegen_gen(ASTNode *prog, const char *outfile)
@@ -446,6 +666,10 @@ int codegen_gen(ASTNode *prog, const char *outfile)
         return 1;
     }
 
+    /* Pass 0: collect global declarations */
+    collect_globals(prog);
+
+    /* Emit .text segment FIRST (code at 0x80000000) */
     emit("    .text\n");
     emit("    .globl main\n");
 
@@ -453,6 +677,9 @@ int codegen_gen(ASTNode *prog, const char *outfile)
         if (fn->type == AST_FUNC_DEF)
             gen_func_def(fn);
     }
+
+    /* Emit .data segment AFTER .text (data at 0x80000000 + text_size) */
+    emit_data_segment();
 
     fclose(out);
     return 0;
