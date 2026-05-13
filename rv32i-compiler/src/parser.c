@@ -527,6 +527,9 @@ static ASTNode *parse_stmt(void)
         Token *next = cur->next;
         if (next && next->type == TOK_ASSIGN)
             return parse_assign();
+        /* Array assignment: arr[i] = val */
+        if (next && next->type == TOK_LBRACKET)
+            return parse_assign();
         /* Function call statement: func(args); */
         if (next && next->type == TOK_LPAREN) {
             /* Parse function call expression, then expect ';' */
