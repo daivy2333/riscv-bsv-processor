@@ -33,9 +33,27 @@ static int expect(TokenType t)
     return 1;
 }
 
-/* primary = integer-literal | identifier | "(" expression ")" */
+/* primary = integer-literal | identifier | "&" primary | "*" primary | "(" expression ")" */
 static ASTNode *parse_primary(void)
 {
+    /* Address-of operator: &x */
+    if (cur->type == TOK_AND) {
+        cur = cur->next; /* skip '&' */
+        ASTNode *operand = parse_primary();
+        ASTNode *n = ast_new(AST_ADDR);
+        n->left = operand;
+        return n;
+    }
+
+    /* Dereference operator: *p */
+    if (cur->type == TOK_STAR) {
+        cur = cur->next; /* skip '*' */
+        ASTNode *operand = parse_primary();
+        ASTNode *n = ast_new(AST_DEREF);
+        n->left = operand;
+        return n;
+    }
+
     if (cur->type == TOK_NUM) {
         ASTNode *n = ast_new(AST_INT_LIT);
         n->int_val = atoi(cur->text);
