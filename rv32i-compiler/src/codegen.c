@@ -86,8 +86,12 @@ static Type sym_lookup_type(const char *name)
 static void count_vars(ASTNode *list)
 {
     for (ASTNode *s = list; s; s = s->next) {
-        if (s->type == AST_VAR_DECL)
+        if (s->type == AST_VAR_DECL) {
             sym_add(s->name);
+            /* Set type including array_size or ptr_level */
+            if (s->var_type.array_size > 0 || s->var_type.ptr_level > 0)
+                sym_set_type(s->name, s->var_type);
+        }
         else if (s->type == AST_IF) {
             if (s->body) count_vars(s->body);
             if (s->right) count_vars(s->right);
@@ -97,16 +101,49 @@ static void count_vars(ASTNode *list)
     }
 }
 
+/* Calculate total bytes needed for all locals (arrays use size*4) */
+static int sym_get_total_size(void)
+{
+    int total = 0;
+    for (int i = 0; i < sym_count; i++) {
+        if (syms[i].type.array_size > 0)
+            total += syms[i].type.array_size * 4;
+        else
+            total += 4;
+    }
+    return total;
+}
+
+/* Recalculate offsets accounting for array sizes */
+static void sym_recalc_offsets(void)
+{
+    int offset = 16;  /* start after 4 spill slots */
+    for (int i = 0; i < sym_count; i++) {
+        syms[i].offset = offset;
+        if (syms[i].type.array_size > 0)
+            offset += syms[i].type.array_size * 4;
+        else
+            offset += 4;
+    }
+}
+
 static int count_frame(ASTNode *fn)
 {
     sym_count = 0;
-    /* Register parameters first (get lowest local offsets) */
-    for (ASTNode *p = fn->right; p; p = p->next)
+    /* Register parameters first */
+    for (ASTNode *p = fn->right; p; p = p->next) {
         sym_add(p->name);
+        if (p->var_type.array_size > 0 || p->var_type.ptr_level > 0)
+            sym_set_type(p->name, p->var_type);
+    }
     /* Then register body local variables */
     count_vars(fn->body);
-    /* 4 spill(16) + locals(4*N) + arg area(32) + ra(4) */
-    int frame_size = 16 + 4 * sym_count + 36;
+    /* Recalculate offsets accounting for arrays */
+    sym_recalc_offsets();
+    /* Calculate total local size */
+    int local_size = sym_get_total_size();
+    /* 4 spill(16) + locals + arg area(32) + ra(4) */
+    int frame_size = 16 + local_size + 36;
     frame_size = (frame_size + 15) & ~15;
     return frame_size;
 }
@@ -129,11 +166,42 @@ static void gen_expr(ASTNode *n)
             fprintf(stderr, "codegen error: undefined variable '%s'\n", n->name);
             return;
         }
-        emit("    lw t0, %d(sp)\n", off);
+        Type t = sym_lookup_type(n->name);
+        /* If variable is array, return its address (not load value) */
+        if (type_is_array(t)) {
+            emit("    addi t0, sp, %d\n", off);  /* t0 = &arr[0] */
+        } else {
+            emit("    lw t0, %d(sp)\n", off);  /* t0 = value */
+        }
+        break;
+    }
+
+    case AST_ARRAY_ACCESS: {
+        /* arr[i] → compute address and load */
+        int base = sym_lookup(n->name);
+        if (base < 0) {
+            fprintf(stderr, "codegen error: undefined array '%s'\n", n->name);
+            return;
+        }
+        /* Evaluate index expression */
+        gen_expr(n->array_index);  /* index in t0 */
+        emit("    slli t0, t0, 2\n");  /* t0 = index * 4 (byte offset) */
+        emit("    addi t1, sp, %d\n", base);  /* t1 = base address */
+        emit("    add t0, t1, t0\n");  /* t0 = &arr[i] */
+        emit("    lw t0, 0(t0)\n");  /* t0 = arr[i] */
         break;
     }
 
     case AST_BIN_OP: {
+        /* Check if left operand is pointer (for arithmetic) */
+        int is_ptr_left = 0;
+        if (n->left->type == AST_VAR_REF) {
+            Type left_type = sym_lookup_type(n->left->name);
+            is_ptr_left = type_is_array(left_type) || type_is_ptr(left_type);
+        } else if (n->left->type == AST_ADDR) {
+            is_ptr_left = 1;
+        }
+
         gen_expr(n->left);
         int my_off = spill_depth * 4;
         spill_depth++;
@@ -143,9 +211,13 @@ static void gen_expr(ASTNode *n)
         emit("    mv t1, t0\n");
         emit("    lw t0, %d(sp)\n", my_off);
 
-        if (n->op == TOK_PLUS)
+        if (n->op == TOK_PLUS) {
+            if (is_ptr_left) {
+                /* Pointer arithmetic: p + n → p + n*4 */
+                emit("    slli t1, t1, 2\n");  /* t1 = n * 4 */
+            }
             emit("    add t0, t0, t1\n");
-        else if (n->op == TOK_MINUS)
+        } else if (n->op == TOK_MINUS)
             emit("    sub t0, t0, t1\n");
         else if (n->op == TOK_STAR) {
             emit("    mv a0, t0\n");
@@ -233,9 +305,25 @@ static void gen_stmt(ASTNode *n)
     case AST_ASSIGN:
         gen_expr(n->expr);  /* Evaluate right side, result in t0 */
 
-        if (n->is_deref_assign) {
+        if (n->is_array_assign) {
+            /* Array assignment: arr[i] = value */
+            int my_off = spill_depth * 4;
+            emit("    sw t0, %d(sp)\n", my_off);  /* save value */
+
+            int base = sym_lookup(n->array_name);
+            if (base < 0) {
+                fprintf(stderr, "codegen error: undefined array '%s'\n", n->array_name);
+                return;
+            }
+
+            gen_expr(n->array_index);  /* index in t0 */
+            emit("    slli t0, t0, 2\n");  /* t0 = index * 4 */
+            emit("    addi t1, sp, %d\n", base);  /* t1 = base */
+            emit("    add t0, t1, t0\n");  /* t0 = &arr[i] */
+            emit("    lw t1, %d(sp)\n", my_off);  /* t1 = value */
+            emit("    sw t1, 0(t0)\n");  /* arr[i] = value */
+        } else if (n->is_deref_assign) {
             /* Dereference assignment: *p = expr */
-            /* Need to save t0 first, then evaluate pointer */
             int my_off = spill_depth * 4;
             emit("    sw t0, %d(sp)\n", my_off);  /* Save value */
             gen_expr(n->deref_target);  /* Evaluate pointer, get address in t0 */
