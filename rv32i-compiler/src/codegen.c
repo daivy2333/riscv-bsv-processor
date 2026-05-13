@@ -182,6 +182,28 @@ static void gen_expr(ASTNode *n)
         break;
     }
 
+    case AST_ADDR: {
+        /* &x → get address of variable x (stack offset) */
+        if (n->left->type != AST_VAR_REF) {
+            fprintf(stderr, "codegen error: & operator requires variable\n");
+            return;
+        }
+        int off = sym_lookup(n->left->name);
+        if (off < 0) {
+            fprintf(stderr, "codegen error: undefined variable '%s'\n", n->left->name);
+            return;
+        }
+        emit("    addi t0, sp, %d\n", off);  /* t0 = address of x */
+        break;
+    }
+
+    case AST_DEREF: {
+        /* *p → load from address computed by p */
+        gen_expr(n->left);  /* Evaluate pointer expression, result in t0 */
+        emit("    lw t0, 0(t0)\n");  /* t0 = *t0 (load from address) */
+        break;
+    }
+
     default:
         break;
     }
