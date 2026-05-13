@@ -19,7 +19,9 @@ OBJS = $(BUILDDIR)/main.o $(BUILDDIR)/lexer.o $(BUILDDIR)/parser.o \
         test-phase3-if-else test-phase3-while test-phase3-for \
         test-phase4 test-phase4-fib test-phase4-add test-phase4-call test-phase4-multi \
         test-phase5 test-phase5-swap \
-        test-phase6 test-phase6-array
+        test-phase6 test-phase6-array \
+        test-phase7 test-phase7-global-int test-phase7-global-write \
+        test-phase7-global-expr test-phase7-string-arg test-phase7-string-assign
 
 all: $(BUILDDIR)/microcc
 
@@ -163,6 +165,35 @@ test-phase6-array: build/phase6_array.hex
 
 test-phase6: test-phase6-array
 	@echo "=== All Phase 6 tests done ==="
+
+# ----- Phase 7 test hex targets -----
+HEX7 = build/phase7_global_int.hex build/phase7_global_write.hex \
+       build/phase7_global_expr.hex build/phase7_string_arg.hex \
+       build/phase7_string_assign.hex
+
+$(HEX7): build/phase7_%.hex: tests/phase7/test_%.c $(BUILDDIR)/microcc $(RTDIR)/crt0.s $(RTDIR)/lib.S
+	@mkdir -p $(BUILDDIR)
+	./$(BUILDDIR)/microcc $< $@ $(RTDIR)/crt0.s $(BUILDDIR)/_phase7_$*.s $(RTDIR)/lib.S
+
+# ----- Phase 7 test execution targets -----
+test-phase7-global-int: build/phase7_global_int.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x0000002a" && echo "✓ PASSED (tohost=42)" || echo "✗ FAILED (expected tohost=42)"
+
+test-phase7-global-write: build/phase7_global_write.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x00000064" && echo "✓ PASSED (tohost=100)" || echo "✗ FAILED (expected tohost=100)"
+
+test-phase7-global-expr: build/phase7_global_expr.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x0000000f" && echo "✓ PASSED (tohost=15)" || echo "✗ FAILED (expected tohost=15)"
+
+test-phase7-string-arg: build/phase7_string_arg.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x00000005" && echo "✓ PASSED (tohost=5)" || echo "✗ FAILED (expected tohost=5)"
+
+test-phase7-string-assign: build/phase7_string_assign.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x00000005" && echo "✓ PASSED (tohost=5)" || echo "✗ FAILED (expected tohost=5)"
+
+test-phase7: test-phase7-global-int test-phase7-global-write test-phase7-global-expr \
+             test-phase7-string-arg test-phase7-string-assign
+	@echo "=== All Phase 7 tests done ==="
 
 clean:
 	rm -rf $(BUILDDIR)
