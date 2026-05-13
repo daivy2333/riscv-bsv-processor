@@ -11,6 +11,8 @@ const char *tok_name(TokenType t)
 {
     switch (t) {
     case TOK_INT:    return "int";
+    case TOK_CHAR:   return "char";      /* NEW */
+    case TOK_STRING: return "string";    /* NEW */
     case TOK_ID:     return "identifier";
     case TOK_NUM:    return "number";
     case TOK_RETURN: return "return";
@@ -73,6 +75,8 @@ static Token *lex_keyword_or_id(const char *s, int len, int line, int col)
 {
     if (len == 3 && strncmp(s, "int", 3) == 0)
         return new_token(TOK_INT, s, len, line, col);
+    if (len == 4 && strncmp(s, "char", 4) == 0)
+        return new_token(TOK_CHAR, s, len, line, col);  /* NEW */
     if (len == 6 && strncmp(s, "return", 6) == 0)
         return new_token(TOK_RETURN, s, len, line, col);
     if (len == 2 && strncmp(s, "if", 2) == 0)
@@ -138,6 +142,42 @@ Token *tokenize(const char *filename)
                 p++;
             }
             if (*p) { p += 2; col += 2; }
+            continue;
+        }
+
+        /* string literals: "..." with escape handling */
+        if (c == '"') {
+            int start_col = col;
+            p++; col++;  /* skip opening quote */
+            char *str_buf = malloc(256);
+            int str_len = 0;
+            while (*p && *p != '"' && str_len < 255) {
+                if (*p == '\\' && p[1]) {
+                    /* escape sequences */
+                    p++; col++;
+                    switch (*p) {
+                        case 'n': str_buf[str_len++] = '\n'; break;
+                        case 't': str_buf[str_len++] = '\t'; break;
+                        case '0': str_buf[str_len++] = '\0'; break;
+                        case '\\': str_buf[str_len++] = '\\'; break;
+                        case '"': str_buf[str_len++] = '"'; break;
+                        default: str_buf[str_len++] = *p; break;
+                    }
+                    p++; col++;
+                } else {
+                    str_buf[str_len++] = *p;
+                    p++; col++;
+                }
+            }
+            if (*p != '"') {
+                lex_error(line, start_col, "unterminated string literal");
+            } else {
+                p++; col++;  /* skip closing quote */
+            }
+            str_buf[str_len] = '\0';
+            tail->next = new_token(TOK_STRING, str_buf, str_len, line, start_col);
+            tail = tail->next;
+            free(str_buf);
             continue;
         }
 
