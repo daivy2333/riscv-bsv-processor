@@ -17,7 +17,8 @@ typedef enum {
     AST_NOOP,         /* empty statement placeholder */
     AST_FUNC_CALL,    /* .name=func name, .left=args chain via .next */
     AST_ADDR,         /* address-of operator (&x) */
-    AST_DEREF         /* dereference operator (*p) */
+    AST_DEREF,        /* dereference operator (*p) */
+    AST_ARRAY_ACCESS  /* array subscript arr[i] */
 } ASTNodeType;
 
 /* Generic AST node */
@@ -33,6 +34,9 @@ typedef struct ASTNode {
     char *name;            /* for VAR_DECL, VAR_REF, ASSIGN: variable name */
     Type  var_type;        /* for VAR_DECL: variable type (int, int*, etc.) */
     int   is_deref_assign; /* for ASSIGN: 1 if assigning to *p */
+    int   is_array_assign;   /* for ASSIGN: 1 if assigning to arr[i] */
+    char  *array_name;       /* for ASSIGN/ARRAY_ACCESS: array variable name */
+    struct ASTNode *array_index; /* for ASSIGN/ARRAY_ACCESS: subscript expression */
     struct ASTNode *deref_target; /* for ASSIGN: pointer expr for *p = */
     struct ASTNode *init;  /* for VAR_DECL: optional initializer (NULL if none) */
     struct ASTNode *expr;  /* for ASSIGN: right-hand side expression */
