@@ -33,7 +33,7 @@ static int expect(TokenType t)
     return 1;
 }
 
-/* primary = integer-literal | identifier | "&" primary | "*" primary | "(" expression ")" */
+/* primary = integer-literal | string-literal | identifier | "&" primary | "*" primary | "(" expression ")" */
 static ASTNode *parse_primary(void)
 {
     /* Address-of operator: &x */
@@ -57,6 +57,13 @@ static ASTNode *parse_primary(void)
     if (cur->type == TOK_NUM) {
         ASTNode *n = ast_new(AST_INT_LIT);
         n->int_val = atoi(cur->text);
+        cur = cur->next;
+        return n;
+    }
+    if (cur->type == TOK_STRING) {
+        ASTNode *n = ast_new(AST_STRING_LIT);
+        n->str_val = strdup(cur->text);
+        n->str_label = -1;  /* assigned later by codegen */
         cur = cur->next;
         return n;
     }
@@ -607,17 +614,120 @@ static ASTNode *parse_func_def(void)
     return n;
 }
 
-/* program = func-def* */
+/* global-decl = ("int" | "char") ["*"] identifier ["[" num "]"] ["=" (expr | string-lit)] ";" */
+static ASTNode *parse_global_decl(void)
+{
+    Type var_type;
+    if (cur->type == TOK_INT) {
+        var_type = type_make_int();
+        cur = cur->next; /* skip "int" */
+    } else if (cur->type == TOK_CHAR) {
+        var_type = type_make_char();
+        cur = cur->next; /* skip "char" */
+    } else {
+        parse_error(cur->line, cur->col, "expected 'int' or 'char' for declaration");
+        return NULL;
+    }
+
+    /* Pointer declaration */
+    if (cur->type == TOK_STAR) {
+        if (var_type.base_type == TYPE_INT)
+            var_type = type_make_int_ptr();
+        else
+            var_type = type_make_char_ptr();
+        cur = cur->next; /* skip '*' */
+    }
+
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected identifier");
+        return NULL;
+    }
+    ASTNode *n = ast_new(AST_GLOBAL_DECL);
+    n->name = strdup(cur->text);
+    n->var_type = var_type;
+    n->is_global = 1;
+    n->init = NULL;
+    n->str_val = NULL;
+    cur = cur->next;
+
+    /* Array declaration: int arr[n] */
+    if (cur->type == TOK_LBRACKET) {
+        cur = cur->next; /* skip '[' */
+        if (cur->type != TOK_NUM) {
+            parse_error(cur->line, cur->col, "expected array size");
+            return NULL;
+        }
+        int size = atoi(cur->text);
+        if (var_type.base_type == TYPE_INT)
+            var_type = type_make_array(size);
+        else
+            var_type = type_make_char_array(size);
+        n->var_type = var_type;
+        cur = cur->next; /* skip size */
+        if (cur->type != TOK_RBRACKET) {
+            parse_error(cur->line, cur->col, "expected ']' after array size");
+            return NULL;
+        }
+        cur = cur->next; /* skip ']' */
+    }
+
+    /* Initializer */
+    if (cur->type == TOK_ASSIGN) {
+        cur = cur->next; /* skip '=' */
+        if (cur->type == TOK_STRING) {
+            /* char *s = "hello" or char arr[] = "hello" */
+            n->str_val = strdup(cur->text);
+            cur = cur->next;
+        } else {
+            /* int x = 42 or int x = 10+5 */
+            n->init = parse_expr();
+        }
+    }
+
+    if (cur->type != TOK_SEMI) {
+        parse_error(cur->line, cur->col, "expected ';' after global declaration");
+    } else {
+        cur = cur->next;
+    }
+    return n;
+}
+
+/* program = (global-decl | func-def)* */
 static ASTNode *parse_program(void)
 {
     ASTNode dummy = {0};
     ASTNode *tail = &dummy;
 
     while (cur->type != TOK_EOF) {
-        ASTNode *f = parse_func_def();
-        if (!f) break;
-        tail->next = f;
-        tail = f;
+        ASTNode *node = NULL;
+
+        /* Check if this is a global declaration or function definition */
+        if (cur->type == TOK_INT || cur->type == TOK_CHAR) {
+            /* Look ahead to distinguish global decl from func def */
+            Token *next = cur->next;
+            int is_func = 0;
+
+            /* Skip pointer marker if present */
+            if (next && next->type == TOK_STAR)
+                next = next->next;
+
+            /* If next is identifier followed by '(' → function definition */
+            if (next && next->type == TOK_ID && next->next && next->next->type == TOK_LPAREN)
+                is_func = 1;
+
+            if (is_func) {
+                node = parse_func_def();
+            } else {
+                node = parse_global_decl();
+            }
+        } else {
+            parse_error(cur->line, cur->col, "expected declaration or function definition");
+            break;
+        }
+
+        if (!node) break;
+        tail->next = node;
+        tail = node;
     }
     return dummy.next;
 }
