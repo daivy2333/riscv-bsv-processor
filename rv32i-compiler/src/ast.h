@@ -5,9 +5,11 @@
 
 /* AST node types */
 typedef enum {
+    AST_GLOBAL_DECL,   /* NEW: global variable declaration */
     AST_FUNC_DEF,
     AST_RETURN,
     AST_INT_LIT,
+    AST_STRING_LIT,    /* NEW: string literal expression */
     AST_BIN_OP,
     AST_VAR_DECL,
     AST_VAR_REF,
@@ -30,16 +32,21 @@ typedef struct ASTNode {
     int int_val;           /* for INT_LIT */
     int op;                /* for BIN_OP: TokenType (PLUS/MINUS/STAR/SLASH) */
     struct ASTNode *left;  /* for BIN_OP: left operand */
-    struct ASTNode *right; /* for BIN_OP: right operand */
-    char *name;            /* for VAR_DECL, VAR_REF, ASSIGN: variable name */
-    Type  var_type;        /* for VAR_DECL: variable type (int, int*, etc.) */
+    struct ASTNode *right; /* for BIN_OP: right operand / FUNC_DEF: params */
+    char *name;            /* for VAR_DECL, VAR_REF, ASSIGN, GLOBAL_DECL: variable name */
+    Type  var_type;        /* for VAR_DECL, GLOBAL_DECL: variable type (int, int*, etc.) */
     int   is_deref_assign; /* for ASSIGN: 1 if assigning to *p */
     int   is_array_assign;   /* for ASSIGN: 1 if assigning to arr[i] */
     char  *array_name;       /* for ASSIGN/ARRAY_ACCESS: array variable name */
     struct ASTNode *array_index; /* for ASSIGN/ARRAY_ACCESS: subscript expression */
     struct ASTNode *deref_target; /* for ASSIGN: pointer expr for *p = */
-    struct ASTNode *init;  /* for VAR_DECL: optional initializer (NULL if none) */
+    struct ASTNode *init;  /* for VAR_DECL, GLOBAL_DECL: optional initializer (NULL if none) */
     struct ASTNode *expr;  /* for ASSIGN: right-hand side expression */
+    /* NEW: global declaration fields */
+    int   is_global;       /* for GLOBAL_DECL: marker (1) */
+    /* NEW: string literal fields */
+    char *str_val;         /* for STRING_LIT: string content / GLOBAL_DECL: string initializer */
+    int   str_label;       /* for STRING_LIT: assigned label index */
     struct ASTNode *next;  /* linked-list chain for statements */
 } ASTNode;
 
