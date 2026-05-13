@@ -183,10 +183,20 @@ static void gen_expr(ASTNode *n)
             fprintf(stderr, "codegen error: undefined array '%s'\n", n->name);
             return;
         }
+        Type arr_type = sym_lookup_type(n->name);
+
+        /* Get array base address */
+        if (type_is_array(arr_type)) {
+            /* Local array: base address is stack offset */
+            emit("    addi t1, sp, %d\n", base);  /* t1 = &arr[0] */
+        } else {
+            /* Pointer parameter: load pointer value first */
+            emit("    lw t1, %d(sp)\n", base);  /* t1 = arr (pointer value) */
+        }
+
         /* Evaluate index expression */
         gen_expr(n->array_index);  /* index in t0 */
         emit("    slli t0, t0, 2\n");  /* t0 = index * 4 (byte offset) */
-        emit("    addi t1, sp, %d\n", base);  /* t1 = base address */
         emit("    add t0, t1, t0\n");  /* t0 = &arr[i] */
         emit("    lw t0, 0(t0)\n");  /* t0 = arr[i] */
         break;
@@ -315,10 +325,17 @@ static void gen_stmt(ASTNode *n)
                 fprintf(stderr, "codegen error: undefined array '%s'\n", n->array_name);
                 return;
             }
+            Type arr_type = sym_lookup_type(n->array_name);
+
+            /* Get array base address */
+            if (type_is_array(arr_type)) {
+                emit("    addi t1, sp, %d\n", base);  /* t1 = &arr[0] */
+            } else {
+                emit("    lw t1, %d(sp)\n", base);  /* t1 = arr (pointer value) */
+            }
 
             gen_expr(n->array_index);  /* index in t0 */
             emit("    slli t0, t0, 2\n");  /* t0 = index * 4 */
-            emit("    addi t1, sp, %d\n", base);  /* t1 = base */
             emit("    add t0, t1, t0\n");  /* t0 = &arr[i] */
             emit("    lw t1, %d(sp)\n", my_off);  /* t1 = value */
             emit("    sw t1, 0(t0)\n");  /* arr[i] = value */
