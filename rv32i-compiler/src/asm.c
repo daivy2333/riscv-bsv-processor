@@ -8,6 +8,11 @@
 #define MAX_LINES  4096
 #define MAX_LABELS 1024
 
+/* Global state for la pseudo-instruction expansion */
+int la_addi_pending = 0;
+int la_addi_rd = 0;
+int la_addi_imm = 0;
+
 struct AsmLine {
     int kind;       /* 0:skip  1:label  2:instruction */
     int addr;
@@ -252,6 +257,28 @@ static int assemble_line(const char *line, int current_addr,
             offset = target - current_addr;
         }
         *word_out = encode_btype(offset, 0, rs, 1);  /* rs2=x0, funct3=1 (BNE) */
+        return 1;
+    }
+    if (strcmp(mnemonic, "la") == 0) {       /* la rd, label  →  lui rd, upper; addi rd, rd, lower */
+        char rd_str[16], label_str[128];
+        if (sscanf(p, "%15[^,], %127s", rd_str, label_str) != 2) {
+            *errmsg = "la: expected rd, label"; return 0;
+        }
+        int rd = reg_num(rd_str);
+        if (rd < 0) { *errmsg = "la: unknown reg"; return 0; }
+        int target = lookup_label(label_str, labels, label_count);
+        if (target < 0) { *errmsg = "la: undefined label"; return 0; }
+
+        /* la expands to: lui rd, upper_20_bits; addi rd, rd, lower_12_bits */
+        int upper = (target >> 12) & 0xFFFFF;
+        int lower = target & 0xFFF;
+        *word_out = encode_utype(upper, rd, 0x37);  /* lui */
+
+        /* Signal that an addi follows */
+        la_addi_pending = 1;
+        la_addi_rd = rd;
+        la_addi_imm = lower;
+
         return 1;
     }
 
@@ -710,6 +737,9 @@ int asm_assemble(const char *input, uint32_t **out_words, size_t *out_count)
     int label_count = 0;
     int has_error   = 0;
 
+    /* Reset la expansion state */
+    la_addi_pending = 0;
+
     /* ================================================================
      *  PASS 1 — collect lines and labels
      * ================================================================ */
@@ -769,7 +799,7 @@ int asm_assemble(const char *input, uint32_t **out_words, size_t *out_count)
                 addr += 4;
              }
             }
- 
+
              line_text = strtok_r(NULL, "\n", &saveptr);
         }
     }
@@ -801,6 +831,18 @@ int asm_assemble(const char *input, uint32_t **out_words, size_t *out_count)
             }
             words[count++] = w;
             addr += 4;
+
+            /* Handle pending la addi */
+            if (la_addi_pending) {
+                la_addi_pending = 0;
+                uint32_t addi_w = encode_itype(la_addi_imm, la_addi_rd, 0, la_addi_rd, 0x13);
+                if (count >= cap) {
+                    cap *= 2;
+                    words = realloc(words, cap * sizeof(uint32_t));
+                }
+                words[count++] = addi_w;
+                addr += 4;
+            }
         } else if (rc == 0) {
             fprintf(stderr, "asm error at addr 0x%x: %s\n  %s\n",
                     addr, errmsg, lines[i].text);
