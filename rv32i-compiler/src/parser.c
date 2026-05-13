@@ -82,6 +82,20 @@ static ASTNode *parse_primary(void)
             call->left = args;
             return call;
         }
+        /* Array subscript: arr[i] */
+        if (cur->type == TOK_LBRACKET) {
+            cur = cur->next; /* skip '[' */
+            ASTNode *index = parse_expr();
+            if (cur->type != TOK_RBRACKET) {
+                parse_error(cur->line, cur->col, "expected ']' after array index");
+            } else {
+                cur = cur->next; /* skip ']' */
+            }
+            ASTNode *n = ast_new(AST_ARRAY_ACCESS);
+            n->name = name;
+            n->array_index = index;
+            return n;
+        }
         /* Variable reference */
         ASTNode *n = ast_new(AST_VAR_REF);
         n->name = name;
@@ -174,7 +188,7 @@ static ASTNode *parse_return(void)
     return n;
 }
 
-/* var-decl = "int" ["*"] identifier ["=" expr] ";" */
+/* var-decl = "int" ["*"] identifier ["[" number "]"] ["=" expr] ";" */
 static ASTNode *parse_var_decl(void)
 {
     cur = cur->next; /* skip "int" */
@@ -192,10 +206,31 @@ static ASTNode *parse_var_decl(void)
     }
     ASTNode *n = ast_new(AST_VAR_DECL);
     n->name = strdup(cur->text);
-    n->var_type = var_type;
     cur = cur->next;
 
+    /* Check for array declaration: int arr[n] */
+    if (cur->type == TOK_LBRACKET) {
+        cur = cur->next; /* skip '[' */
+        if (cur->type != TOK_NUM) {
+            parse_error(cur->line, cur->col, "expected array size number");
+            return NULL;
+        }
+        int size = atoi(cur->text);
+        var_type = type_make_array(size);
+        cur = cur->next; /* skip size */
+        if (cur->type != TOK_RBRACKET) {
+            parse_error(cur->line, cur->col, "expected ']' after array size");
+            return NULL;
+        }
+        cur = cur->next; /* skip ']' */
+    }
+    n->var_type = var_type;
+
     if (cur->type == TOK_ASSIGN) {
+        if (type_is_array(n->var_type)) {
+            parse_error(cur->line, cur->col, "array initializer not supported");
+            return NULL;
+        }
         cur = cur->next; /* skip '=' */
         n->init = parse_expr();
     }
@@ -208,21 +243,50 @@ static ASTNode *parse_var_decl(void)
     return n;
 }
 
-/* assign-stmt = identifier "=" expression ";" OR "*" primary "=" expression ";" */
+/* assign-stmt = identifier "[" expr "]" "=" expr ";" OR identifier "=" expr ";" OR "*" primary "=" expr ";" */
 static ASTNode *parse_assign(void)
 {
     ASTNode *n = ast_new(AST_ASSIGN);
-    n->is_deref_assign = 0;  /* default: normal assignment */
+    n->is_deref_assign = 0;
+    n->is_array_assign = 0;
 
     /* Check for dereference assignment: *p = expr */
     if (cur->type == TOK_STAR) {
         n->is_deref_assign = 1;
         cur = cur->next; /* skip '*' */
-        n->deref_target = parse_primary();  /* Get pointer expression */
-        n->name = NULL;  /* no name for deref assignment */
+        n->deref_target = parse_primary();
+        n->name = NULL;
 
         if (cur->type != TOK_ASSIGN) {
             parse_error(cur->line, cur->col, "expected '=' after dereference");
+            return NULL;
+        }
+        cur = cur->next; /* skip '=' */
+        n->expr = parse_expr();
+
+        if (cur->type != TOK_SEMI) {
+            parse_error(cur->line, cur->col, "expected ';' after assignment");
+        } else {
+            cur = cur->next;
+        }
+        return n;
+    }
+
+    /* Check for array assignment: arr[i] = expr */
+    if (cur->type == TOK_ID && cur->next && cur->next->type == TOK_LBRACKET) {
+        n->is_array_assign = 1;
+        n->array_name = strdup(cur->text);
+        cur = cur->next; /* skip identifier */
+        cur = cur->next; /* skip '[' */
+        n->array_index = parse_expr();
+        if (cur->type != TOK_RBRACKET) {
+            parse_error(cur->line, cur->col, "expected ']' after array index");
+            return NULL;
+        }
+        cur = cur->next; /* skip ']' */
+
+        if (cur->type != TOK_ASSIGN) {
+            parse_error(cur->line, cur->col, "expected '=' after array subscript");
             return NULL;
         }
         cur = cur->next; /* skip '=' */
