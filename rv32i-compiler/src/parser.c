@@ -448,19 +448,28 @@ static ASTNode *parse_func_def(void)
     n->func_name = strdup(cur->text);
     cur = cur->next; /* skip identifier */
     expect(TOK_LPAREN);
-    /* Parse parameter list: (int name, int name, ...) */
+    /* Parse parameter list: (int name, int name, ...) OR (int *name, ...) */
     ASTNode *params = NULL, *tail = NULL;
     if (cur->type != TOK_RPAREN) {
         do {
             if (cur->type == TOK_COMMA)
                 cur = cur->next;
             expect(TOK_INT);
+
+            /* Check for pointer parameter: int *p */
+            Type param_type = type_make_int();
+            if (cur->type == TOK_STAR) {
+                param_type = type_make_int_ptr();
+                cur = cur->next; /* skip '*' */
+            }
+
             if (cur->type != TOK_ID) {
                 parse_error(cur->line, cur->col, "expected parameter name");
                 break;
             }
             ASTNode *p = ast_new(AST_VAR_DECL);
             p->name = strdup(cur->text);
+            p->var_type = param_type;
             cur = cur->next; /* skip identifier */
             if (!params) params = tail = p;
             else { tail->next = p; tail = p; }
