@@ -32,6 +32,8 @@ const char *tok_name(TokenType t)
     case TOK_INC:    return "++";
     case TOK_COMMA:  return ",";
     case TOK_AND:    return "&";
+    case TOK_LBRACKET: return "[";
+    case TOK_RBRACKET: return "]";
     case TOK_EOF:    return "EOF";
     default:         return "?";
     }
@@ -175,6 +177,8 @@ Token *tokenize(const char *filename)
         case '/': t = TOK_SLASH; break;
         case '<': t = TOK_LT; break;
         case '&': t = TOK_AND; break;
+        case '[': t = TOK_LBRACKET; break;
+        case ']': t = TOK_RBRACKET; break;
         case ',': t = TOK_COMMA; break;
         default:
             lex_error(line, col, "unexpected character");

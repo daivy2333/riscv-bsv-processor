@@ -8,6 +8,8 @@ typedef enum {
     TOK_IF, TOK_ELSE, TOK_WHILE, TOK_FOR, TOK_LT, TOK_INC,
     TOK_COMMA,
     TOK_AND,
+    TOK_LBRACKET,
+    TOK_RBRACKET,
     TOK_EOF
 } TokenType;
 
