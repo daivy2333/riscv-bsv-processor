@@ -3,12 +3,15 @@
 main:
     addi sp, sp, -64
     sw ra, 60(sp)
-    la t0, .global_g_count
-    lw t0, 0(t0)
+    li t0, 10
+    sw t0, 0(sp)
+    li t0, 3
+    mv t1, t0
+    lw t0, 0(sp)
+    sub t0, t0, t1
+    sw t0, 16(sp)
+    lw t0, 16(sp)
     mv a0, t0
     lw ra, 60(sp)
     addi sp, sp, 64
     jalr x0, x1, 0
-    .data
-.global_g_count:
-    .word 42

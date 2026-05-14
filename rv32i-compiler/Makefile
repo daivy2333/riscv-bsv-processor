@@ -23,7 +23,7 @@ OBJS = $(BUILDDIR)/main.o $(BUILDDIR)/lexer.o $(BUILDDIR)/parser.o \
         test-phase7 test-phase7-global-int test-phase7-global-write \
         test-phase7-global-expr test-phase7-string-arg test-phase7-string-assign \
         test-phase8 test-phase8-member-access test-phase8-linked-list \
-        test-phase9 test-phase9-multifile
+        test-phase9 test-phase9-multifile test-phase9-full
 
 all: $(BUILDDIR)/microcc
 
@@ -222,7 +222,15 @@ build/phase9_multifile.hex: $(BUILDDIR)/microcc tests/phase9/multifile_main.c te
 test-phase9-multifile: build/phase9_multifile.hex
 	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x0000000f" && echo "✓ PASSED (tohost=15)" || echo "✗ FAILED (expected tohost=15)"
 
-test-phase9: test-phase9-multifile
+# ----- Phase 9 full integration test -----
+build/phase9_full.hex: $(BUILDDIR)/microcc tests/phase9/full_test.c tests/phase9/full_helper.c $(RTDIR)/crt0.s $(RTDIR)/lib.S
+	@mkdir -p $(BUILDDIR)
+	./$(BUILDDIR)/microcc $@ tests/phase9/full_test.c tests/phase9/full_helper.c
+
+test-phase9-full: build/phase9_full.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x00000037" && echo "✓ PASSED (tohost=55)" || echo "✗ FAILED (expected tohost=55)"
+
+test-phase9: test-phase9-multifile test-phase9-full
 	@echo "=== All Phase 9 tests done ==="
 
 clean:
