@@ -23,9 +23,11 @@ typedef struct {
 
 /* 条件编译栈结构 */
 typedef struct {
-    int cond_was_true;  /* #ifdef/#ifndef 条件是否为真 */
-    int in_else;        /* 是否在 #else 分支 */
-    int else_seen;      /* 是否已遇到 #else（防止重复 #else） */
+    int orig_cond_was_true;  /* 原始 #ifdef/#ifndef 条件值 */
+    int cond_was_true;       /* 当前条件值（#elif 可能修改） */
+    int in_else;             /* 是否在 #else 分支 */
+    int else_seen;           /* 是否已遇到 #else（防止重复 #else） */
+    int elif_seen;           /* 是否已遇到 #elif */
 } CondStack;
 
 /* 宏定义表 */
@@ -88,10 +90,12 @@ static void clear_cond_stack(void) {
 static int is_active(void) {
     for (int i = 0; i < cond_depth; i++) {
         if (cond_stack[i].in_else) {
-            /* 在 else 分支中，只有原条件为假时才输出 */
-            if (cond_stack[i].cond_was_true) return 0;
+            /* 在 else/elif 分支中，原始条件为假且当前条件也为假时激活 */
+            /* 对于 #else: orig_cond_was_true = false 时激活 */
+            /* 对于 #elif: cond_was_true = true 时跳过（简化实现） */
+            if (cond_stack[i].orig_cond_was_true || cond_stack[i].cond_was_true) return 0;
         } else {
-            /* 在 if 分支中，只有原条件为真时才输出 */
+            /* 在 if 分支中，当前条件为真时激活 */
             if (!cond_stack[i].cond_was_true) return 0;
         }
     }
@@ -106,9 +110,11 @@ static void handle_ifdef(const char *name) {
     }
 
     int defined = (find_macro(name) != NULL);
+    cond_stack[cond_depth].orig_cond_was_true = defined;
     cond_stack[cond_depth].cond_was_true = defined;
     cond_stack[cond_depth].in_else = 0;
     cond_stack[cond_depth].else_seen = 0;
+    cond_stack[cond_depth].elif_seen = 0;
     cond_depth++;
 }
 
@@ -120,9 +126,11 @@ static void handle_ifndef(const char *name) {
     }
 
     int defined = (find_macro(name) != NULL);
-    cond_stack[cond_depth].cond_was_true = !defined;  /* 注意：#ifndef 条件为真是"未定义" */
+    cond_stack[cond_depth].orig_cond_was_true = !defined;  /* #ifndef 条件为真是"未定义" */
+    cond_stack[cond_depth].cond_was_true = !defined;
     cond_stack[cond_depth].in_else = 0;
     cond_stack[cond_depth].else_seen = 0;
+    cond_stack[cond_depth].elif_seen = 0;
     cond_depth++;
 }
 
@@ -140,6 +148,32 @@ static int handle_else(const char *filename) {
 
     cond_stack[cond_depth - 1].in_else = 1;
     cond_stack[cond_depth - 1].else_seen = 1;
+    /* 恢复 cond_was_true 为原始值，让 #else 分支根据原条件判断 */
+    cond_stack[cond_depth - 1].cond_was_true = cond_stack[cond_depth - 1].orig_cond_was_true;
+
+    return 1;
+}
+
+/* 处理 #elif 指令 (简化实现: 不支持表达式求值，总是跳过) */
+static int handle_elif(const char *filename) {
+    if (cond_depth == 0) {
+        fprintf(stderr, "preprocessor: #elif without matching #ifdef/#ifndef in '%s'\n", filename);
+        return 0;
+    }
+
+    if (cond_stack[cond_depth - 1].else_seen) {
+        fprintf(stderr, "preprocessor: #elif after #else in '%s'\n", filename);
+        return 0;
+    }
+
+    /* 标记已遇到 #elif */
+    cond_stack[cond_depth - 1].elif_seen = 1;
+
+    /* 简化实现: #elif 分支总是跳过（不支持表达式求值） */
+    /* 设置 in_else = true 和 cond_was_true = true 使 is_active() 跳过 */
+    cond_stack[cond_depth - 1].in_else = 1;
+    cond_stack[cond_depth - 1].cond_was_true = 1;
+
     return 1;
 }
 
@@ -364,6 +398,16 @@ static char *process_file(const char *filename, int depth) {
         /* 处理 #else 指令（总是处理，不受 is_active() 影响） */
         if (strncmp(stripped, "#else", 5) == 0 && (stripped[5] == ' ' || stripped[5] == '\t' || stripped[5] == '\0' || stripped[5] == '\n')) {
             if (!handle_else(filename)) {
+                free(content);
+                free(output);
+                return NULL;
+            }
+            continue;
+        }
+
+        /* 处理 #elif 指令（总是处理，不受 is_active() 影响） */
+        if (strncmp(stripped, "#elif", 5) == 0 && (stripped[5] == ' ' || stripped[5] == '\t')) {
+            if (!handle_elif(filename)) {
                 free(content);
                 free(output);
                 return NULL;
