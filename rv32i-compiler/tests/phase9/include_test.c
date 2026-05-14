@@ -1,5 +1,5 @@
 #include "header.h"
 
-int main(void) {
+int main() {
     return helper_value;
 }

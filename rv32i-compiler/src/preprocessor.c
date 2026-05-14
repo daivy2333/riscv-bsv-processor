@@ -10,10 +10,121 @@
 #define MAX_INCLUDED_FILES 32
 #define MAX_LINE_LEN 1024
 #define MAX_FILE_SIZE 65536
+#define MAX_MACROS 64
+#define MAX_MACRO_NAME_LEN 128
+#define MAX_MACRO_VALUE_LEN 256
+
+/* 宏定义结构 */
+typedef struct {
+    char name[MAX_MACRO_NAME_LEN];
+    char value[MAX_MACRO_VALUE_LEN];
+} Macro;
+
+/* 宏定义表 */
+static Macro macro_table[MAX_MACROS];
+static int macro_count = 0;
 
 /* 已包含文件列表 */
 static char *included_files[MAX_INCLUDED_FILES];
 static int included_count = 0;
+
+/* 添加宏定义 */
+static void add_macro(const char *name, const char *value) {
+    if (macro_count >= MAX_MACROS) {
+        fprintf(stderr, "preprocessor: too many macros (max %d)\n", MAX_MACROS);
+        return;
+    }
+
+    /* 检查是否已定义，如果是则覆盖 */
+    for (int i = 0; i < macro_count; i++) {
+        if (strcmp(macro_table[i].name, name) == 0) {
+            strncpy(macro_table[i].value, value, MAX_MACRO_VALUE_LEN - 1);
+            macro_table[i].value[MAX_MACRO_VALUE_LEN - 1] = '\0';
+            return;
+        }
+    }
+
+    /* 添加新宏 */
+    strncpy(macro_table[macro_count].name, name, MAX_MACRO_NAME_LEN - 1);
+    macro_table[macro_count].name[MAX_MACRO_NAME_LEN - 1] = '\0';
+    strncpy(macro_table[macro_count].value, value, MAX_MACRO_VALUE_LEN - 1);
+    macro_table[macro_count].value[MAX_MACRO_VALUE_LEN - 1] = '\0';
+    macro_count++;
+}
+
+/* 查找宏定义 */
+static Macro *find_macro(const char *name) {
+    for (int i = 0; i < macro_count; i++) {
+        if (strcmp(macro_table[i].name, name) == 0) {
+            return &macro_table[i];
+        }
+    }
+    return NULL;
+}
+
+/* 清空宏表 */
+static void clear_macros(void) {
+    macro_count = 0;
+}
+
+/* 检查字符是否为标识符字符 */
+static int is_identifier_char(char c) {
+    return isalnum(c) || c == '_';
+}
+
+/* 宏展开：替换行中的宏名称（完整标识符匹配） */
+static void expand_macros(char *line) {
+    char result[MAX_LINE_LEN * 2];
+    result[0] = '\0';
+
+    int i = 0;
+    int result_pos = 0;
+
+    while (line[i]) {
+        /* 跳过空白 */
+        if (!is_identifier_char(line[i])) {
+            result[result_pos++] = line[i++];
+            continue;
+        }
+
+        /* 提取标识符 */
+        int ident_start = i;
+        while (is_identifier_char(line[i])) {
+            i++;
+        }
+
+        char identifier[MAX_MACRO_NAME_LEN];
+        int ident_len = i - ident_start;
+        if (ident_len >= MAX_MACRO_NAME_LEN) {
+            ident_len = MAX_MACRO_NAME_LEN - 1;
+        }
+        strncpy(identifier, line + ident_start, ident_len);
+        identifier[ident_len] = '\0';
+
+        /* 查找是否为宏 */
+        Macro *macro = find_macro(identifier);
+        if (macro) {
+            /* 替换为宏值 */
+            int value_len = strlen(macro->value);
+            if (result_pos + value_len >= MAX_LINE_LEN * 2 - 1) {
+                /* 防止溢出 */
+                break;
+            }
+            strcpy(result + result_pos, macro->value);
+            result_pos += value_len;
+        } else {
+            /* 保留原标识符 */
+            if (result_pos + ident_len >= MAX_LINE_LEN * 2 - 1) {
+                break;
+            }
+            strncpy(result + result_pos, identifier, ident_len);
+            result_pos += ident_len;
+        }
+    }
+
+    result[result_pos] = '\0';
+    strcpy(line, result);
+}
 
 /* 检查文件是否已包含 */
 static int is_already_included(const char *filepath) {
@@ -111,6 +222,45 @@ static char *process_file(const char *filename, int depth) {
             line = NULL;
         }
 
+        /* 处理 #define 指令 */
+        if (strncmp(linebuf, "#define", 7) == 0) {
+            char *p = linebuf + 7;
+            while (*p && isspace(*p)) p++;
+
+            /* 提取宏名 */
+            char name[MAX_MACRO_NAME_LEN];
+            int name_len = 0;
+            while (*p && is_identifier_char(*p) && name_len < MAX_MACRO_NAME_LEN - 1) {
+                name[name_len++] = *p++;
+            }
+            name[name_len] = '\0';
+
+            if (name_len == 0) {
+                fprintf(stderr, "preprocessor: empty macro name in '%s'\n", filename);
+                continue;
+            }
+
+            /* 跳过空格 */
+            while (*p && isspace(*p)) p++;
+
+            /* 提取宏值（剩余内容） */
+            char value[MAX_MACRO_VALUE_LEN];
+            if (*p) {
+                strncpy(value, p, MAX_MACRO_VALUE_LEN - 1);
+                value[MAX_MACRO_VALUE_LEN - 1] = '\0';
+                /* 去除尾部空白 */
+                int val_len = strlen(value);
+                while (val_len > 0 && isspace(value[val_len - 1])) {
+                    value[--val_len] = '\0';
+                }
+            } else {
+                value[0] = '\0';
+            }
+
+            add_macro(name, value);
+            continue;  /* #define 行不输出 */
+        }
+
         /* 处理 #include 指令 */
         if (strncmp(linebuf, "#include", 8) == 0) {
             char *p = linebuf + 8;
@@ -155,6 +305,8 @@ static char *process_file(const char *filename, int depth) {
                 return NULL;
             }
         } else {
+            /* 非指令行：进行宏展开后输出 */
+            expand_macros(linebuf);
             strcat(output, linebuf);
             strcat(output, "\n");
         }
@@ -167,5 +319,6 @@ static char *process_file(const char *filename, int depth) {
 /* 预处理入口 */
 char *pp_process(const char *filename) {
     clear_included_files();
+    clear_macros();
     return process_file(filename, 0);
 }

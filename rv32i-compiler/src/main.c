@@ -3,6 +3,7 @@
 #include "codegen.h"
 #include "linker.h"
 #include "ast.h"
+#include "preprocess.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,8 +22,27 @@ int main(int argc, char **argv)
     if (argc >= 5) tmpasm  = argv[4];
     if (argc >= 6) libfile = argv[5];
 
+    /* 0. Preprocess */
+    char *pp_content = pp_process(infile);
+    if (!pp_content) {
+        fprintf(stderr, "preprocess failed\n");
+        return 1;
+    }
+
+    /* Write preprocessed content to temp file for lexer */
+    const char *tmp_pp_file = "build/_preprocessed.c";
+    FILE *f = fopen(tmp_pp_file, "w");
+    if (!f) {
+        fprintf(stderr, "cannot write temp file\n");
+        free(pp_content);
+        return 1;
+    }
+    fprintf(f, "%s", pp_content);
+    fclose(f);
+    free(pp_content);
+
     /* 1. Lex */
-    Token *tokens = tokenize(infile);
+    Token *tokens = tokenize(tmp_pp_file);
     if (!tokens) { fprintf(stderr, "lex failed\n"); return 1; }
 
     /* 2. Parse */
