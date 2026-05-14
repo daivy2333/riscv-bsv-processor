@@ -325,6 +325,91 @@ static ASTNode *parse_member_decl(void)
     return n;
 }
 
+/* struct 定义: struct Name { member-list }; */
+static ASTNode *parse_struct_def(void)
+{
+    cur = cur->next;  /* skip "struct" */
+
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected struct name");
+        return NULL;
+    }
+    char *name = strdup(cur->text);
+    cur = cur->next;
+
+    expect(TOK_LBRACE);
+
+    /* 解析成员列表 */
+    ASTNode *members = NULL, *tail = NULL;
+    int member_count = 0;
+
+    while (cur->type != TOK_RBRACE) {
+        ASTNode *member = parse_member_decl();
+        if (!member) break;
+        member_count++;
+        if (!members) members = tail = member;
+        else { tail->next = member; tail = member; }
+    }
+
+    expect(TOK_RBRACE);
+    expect(TOK_SEMI);
+
+    /* 注册结构体 */
+    int struct_id = register_struct_parser(name, member_count);
+
+    ASTNode *n = ast_new(AST_STRUCT_DEF);
+    n->struct_name = name;
+    n->members = members;
+    n->struct_id = struct_id;
+    return n;
+}
+
+/* struct 变量声明: struct Name* var 或 struct Name var (仅全局) */
+static ASTNode *parse_struct_decl(int is_global)
+{
+    cur = cur->next;  /* skip "struct" */
+
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected struct name");
+        return NULL;
+    }
+    char *struct_name = strdup(cur->text);
+    cur = cur->next;
+
+    int struct_id = lookup_struct(struct_name);
+    if (struct_id < 0) {
+        parse_error(cur->line, cur->col, "undefined struct type");
+        return NULL;
+    }
+
+    Type var_type;
+    if (cur->type == TOK_STAR) {
+        var_type = type_make_struct_ptr(struct_id);
+        cur = cur->next;
+    } else {
+        /* 值类型 struct 变量 */
+        if (!is_global) {
+            parse_error(cur->line, cur->col, "local struct value type not supported");
+            return NULL;
+        }
+        var_type = type_make_struct_val(struct_id);
+    }
+
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected variable name");
+        return NULL;
+    }
+
+    ASTNode *n = ast_new(is_global ? AST_GLOBAL_DECL : AST_VAR_DECL);
+    n->name = strdup(cur->text);
+    n->var_type = var_type;
+    n->is_global = is_global;
+    cur = cur->next;
+    expect(TOK_SEMI);
+
+    return n;
+}
+
 /* assign-stmt = identifier "[" expr "]" "=" expr ";" OR identifier "=" expr ";" OR "*" primary "=" expr ";" */
 static ASTNode *parse_assign(void)
 {
