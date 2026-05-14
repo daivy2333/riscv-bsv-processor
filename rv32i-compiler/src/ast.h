@@ -7,6 +7,7 @@
 typedef enum {
     AST_GLOBAL_DECL,   /* NEW: global variable declaration */
     AST_FUNC_DEF,
+    AST_FUNC_DECL,     /* NEW: function prototype declaration */
     AST_RETURN,
     AST_INT_LIT,
     AST_STRING_LIT,    /* NEW: string literal expression */

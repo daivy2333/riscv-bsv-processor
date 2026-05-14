@@ -923,6 +923,79 @@ static ASTNode *parse_func_def(void)
     return n;
 }
 
+/* func-decl = "int" identifier "(" [param-list] ")" ";"  (function prototype) */
+static ASTNode *parse_func_decl(void)
+{
+    /* Support int and char return types */
+    Type ret_type;
+    if (cur->type == TOK_INT) {
+        ret_type = type_make_int();
+        cur = cur->next; /* skip "int" */
+    } else if (cur->type == TOK_CHAR) {
+        ret_type = type_make_char();
+        cur = cur->next; /* skip "char" */
+    } else {
+        parse_error(cur->line, cur->col, "expected 'int' or 'char' for function return type");
+        return NULL;
+    }
+
+    ASTNode *n = ast_new(AST_FUNC_DECL);
+    n->func_name = strdup(cur->text);
+    n->var_type = ret_type;  /* store return type */
+    cur = cur->next; /* skip identifier */
+    expect(TOK_LPAREN);
+    /* Parse parameter list: (int name, int name, ...) OR (char *name, ...) */
+    ASTNode *params = NULL, *tail = NULL;
+    if (cur->type != TOK_RPAREN) {
+        do {
+            if (cur->type == TOK_COMMA)
+                cur = cur->next;
+
+            Type param_type;
+            if (cur->type == TOK_INT) {
+                param_type = type_make_int();
+                cur = cur->next; /* skip "int" */
+            } else if (cur->type == TOK_CHAR) {
+                param_type = type_make_char();
+                cur = cur->next; /* skip "char" */
+            } else {
+                parse_error(cur->line, cur->col, "expected 'int' or 'char' for parameter type");
+                break;
+            }
+
+            /* Check for pointer parameter */
+            if (cur->type == TOK_STAR) {
+                if (param_type.base_type == TYPE_INT)
+                    param_type = type_make_int_ptr();
+                else
+                    param_type = type_make_char_ptr();
+                cur = cur->next; /* skip '*' */
+            }
+
+            /* Parameter name (optional in prototypes, but we require it for simplicity) */
+            if (cur->type == TOK_ID) {
+                ASTNode *p = ast_new(AST_VAR_DECL);
+                p->name = strdup(cur->text);
+                p->var_type = param_type;
+                cur = cur->next;
+                if (!params) params = tail = p;
+                else { tail->next = p; tail = p; }
+            } else {
+                /* Anonymous parameter - still track the type */
+                ASTNode *p = ast_new(AST_VAR_DECL);
+                p->name = strdup("_anon");
+                p->var_type = param_type;
+                if (!params) params = tail = p;
+                else { tail->next = p; tail = p; }
+            }
+        } while (cur->type == TOK_COMMA);
+    }
+    expect(TOK_RPAREN);
+    n->right = params; /* params chain stored in .right */
+    expect(TOK_SEMI);
+    return n;
+}
+
 /* global-decl = ("int" | "char") ["*"] identifier ["[" num "]"] ["=" (expr | string-lit)] ";" */
 static ASTNode *parse_global_decl(void)
 {
@@ -1074,20 +1147,38 @@ static ASTNode *parse_program(void)
         }
         /* 函数定义或 int/char 全局声明 */
         else if (cur->type == TOK_INT || cur->type == TOK_CHAR) {
-            /* Look ahead to distinguish global decl from func def */
+            /* Look ahead to distinguish global decl from func def/decl */
             Token *next = cur->next;
             int is_func = 0;
+            int is_proto = 0;
 
             /* Skip pointer marker if present */
             if (next && next->type == TOK_STAR)
                 next = next->next;
 
-            /* If next is identifier followed by '(' → function definition */
-            if (next && next->type == TOK_ID && next->next && next->next->type == TOK_LPAREN)
+            /* If next is identifier followed by '(' → function definition or prototype */
+            if (next && next->type == TOK_ID && next->next && next->next->type == TOK_LPAREN) {
                 is_func = 1;
+                /* Look further ahead to find '{' or ';' after parameters */
+                Token *scan = next->next->next; /* skip '(' */
+                /* Scan through parameters to find closing ')' */
+                while (scan && scan->type != TOK_RPAREN) {
+                    scan = scan->next;
+                }
+                if (scan) {
+                    scan = scan->next; /* skip ')' */
+                    if (scan && scan->type == TOK_SEMI) {
+                        is_proto = 1;  /* function prototype */
+                    }
+                }
+            }
 
             if (is_func) {
-                node = parse_func_def();
+                if (is_proto) {
+                    node = parse_func_decl();
+                } else {
+                    node = parse_func_def();
+                }
             } else {
                 node = parse_global_decl();
             }

@@ -913,6 +913,8 @@ int codegen_gen(ASTNode *prog, const char *outfile)
     for (ASTNode *fn = prog; fn; fn = fn->next) {
         if (fn->type == AST_FUNC_DEF)
             gen_func_def(fn);
+        else if (fn->type == AST_FUNC_DECL)
+            ;  /* function prototype: no code generation */
     }
 
     /* Emit .data segment AFTER .text (data at 0x80000000 + text_size) */
