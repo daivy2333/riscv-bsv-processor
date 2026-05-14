@@ -13,6 +13,7 @@
 #define MAX_MACROS 64
 #define MAX_MACRO_NAME_LEN 128
 #define MAX_MACRO_VALUE_LEN 256
+#define MAX_COND_DEPTH 16
 
 /* 宏定义结构 */
 typedef struct {
@@ -20,9 +21,20 @@ typedef struct {
     char value[MAX_MACRO_VALUE_LEN];
 } Macro;
 
+/* 条件编译栈结构 */
+typedef struct {
+    int cond_was_true;  /* #ifdef/#ifndef 条件是否为真 */
+    int in_else;        /* 是否在 #else 分支 */
+    int else_seen;      /* 是否已遇到 #else（防止重复 #else） */
+} CondStack;
+
 /* 宏定义表 */
 static Macro macro_table[MAX_MACROS];
 static int macro_count = 0;
+
+/* 条件编译栈 */
+static CondStack cond_stack[MAX_COND_DEPTH];
+static int cond_depth = 0;
 
 /* 已包含文件列表 */
 static char *included_files[MAX_INCLUDED_FILES];
@@ -65,6 +77,81 @@ static Macro *find_macro(const char *name) {
 /* 清空宏表 */
 static void clear_macros(void) {
     macro_count = 0;
+}
+
+/* 清空条件编译栈 */
+static void clear_cond_stack(void) {
+    cond_depth = 0;
+}
+
+/* 检查当前代码是否应该输出 */
+static int is_active(void) {
+    for (int i = 0; i < cond_depth; i++) {
+        if (cond_stack[i].in_else) {
+            /* 在 else 分支中，只有原条件为假时才输出 */
+            if (cond_stack[i].cond_was_true) return 0;
+        } else {
+            /* 在 if 分支中，只有原条件为真时才输出 */
+            if (!cond_stack[i].cond_was_true) return 0;
+        }
+    }
+    return 1;
+}
+
+/* 处理 #ifdef 指令 */
+static void handle_ifdef(const char *name) {
+    if (cond_depth >= MAX_COND_DEPTH) {
+        fprintf(stderr, "preprocessor: conditional nesting too deep (max %d)\n", MAX_COND_DEPTH);
+        return;
+    }
+
+    int defined = (find_macro(name) != NULL);
+    cond_stack[cond_depth].cond_was_true = defined;
+    cond_stack[cond_depth].in_else = 0;
+    cond_stack[cond_depth].else_seen = 0;
+    cond_depth++;
+}
+
+/* 处理 #ifndef 指令 */
+static void handle_ifndef(const char *name) {
+    if (cond_depth >= MAX_COND_DEPTH) {
+        fprintf(stderr, "preprocessor: conditional nesting too deep (max %d)\n", MAX_COND_DEPTH);
+        return;
+    }
+
+    int defined = (find_macro(name) != NULL);
+    cond_stack[cond_depth].cond_was_true = !defined;  /* 注意：#ifndef 条件为真是"未定义" */
+    cond_stack[cond_depth].in_else = 0;
+    cond_stack[cond_depth].else_seen = 0;
+    cond_depth++;
+}
+
+/* 处理 #else 指令 */
+static int handle_else(const char *filename) {
+    if (cond_depth == 0) {
+        fprintf(stderr, "preprocessor: #else without matching #ifdef/#ifndef in '%s'\n", filename);
+        return 0;
+    }
+
+    if (cond_stack[cond_depth - 1].else_seen) {
+        fprintf(stderr, "preprocessor: duplicate #else in '%s'\n", filename);
+        return 0;
+    }
+
+    cond_stack[cond_depth - 1].in_else = 1;
+    cond_stack[cond_depth - 1].else_seen = 1;
+    return 1;
+}
+
+/* 处理 #endif 指令 */
+static int handle_endif(const char *filename) {
+    if (cond_depth == 0) {
+        fprintf(stderr, "preprocessor: #endif without matching #ifdef/#ifndef in '%s'\n", filename);
+        return 0;
+    }
+
+    cond_depth--;
+    return 1;
 }
 
 /* 检查字符是否为标识符字符 */
@@ -222,9 +309,86 @@ static char *process_file(const char *filename, int depth) {
             line = NULL;
         }
 
+        /* 跳过行首空白，用于识别指令 */
+        char *stripped = linebuf;
+        while (*stripped && isspace(*stripped)) stripped++;
+
+        /* 处理 #ifdef 指令（总是处理，不受 is_active() 影响） */
+        if (strncmp(stripped, "#ifdef", 6) == 0 && (stripped[6] == ' ' || stripped[6] == '\t' || stripped[6] == '\0')) {
+            char *p = stripped + 6;
+            while (*p && isspace(*p)) p++;
+
+            /* 提取宏名 */
+            char name[MAX_MACRO_NAME_LEN];
+            int name_len = 0;
+            while (*p && is_identifier_char(*p) && name_len < MAX_MACRO_NAME_LEN - 1) {
+                name[name_len++] = *p++;
+            }
+            name[name_len] = '\0';
+
+            if (name_len == 0) {
+                fprintf(stderr, "preprocessor: empty macro name in #ifdef in '%s'\n", filename);
+                free(content);
+                free(output);
+                return NULL;
+            }
+
+            handle_ifdef(name);
+            continue;
+        }
+
+        /* 处理 #ifndef 指令（总是处理，不受 is_active() 影响） */
+        if (strncmp(stripped, "#ifndef", 7) == 0 && (stripped[7] == ' ' || stripped[7] == '\t' || stripped[7] == '\0')) {
+            char *p = stripped + 7;
+            while (*p && isspace(*p)) p++;
+
+            /* 提取宏名 */
+            char name[MAX_MACRO_NAME_LEN];
+            int name_len = 0;
+            while (*p && is_identifier_char(*p) && name_len < MAX_MACRO_NAME_LEN - 1) {
+                name[name_len++] = *p++;
+            }
+            name[name_len] = '\0';
+
+            if (name_len == 0) {
+                fprintf(stderr, "preprocessor: empty macro name in #ifndef in '%s'\n", filename);
+                free(content);
+                free(output);
+                return NULL;
+            }
+
+            handle_ifndef(name);
+            continue;
+        }
+
+        /* 处理 #else 指令（总是处理，不受 is_active() 影响） */
+        if (strncmp(stripped, "#else", 5) == 0 && (stripped[5] == ' ' || stripped[5] == '\t' || stripped[5] == '\0' || stripped[5] == '\n')) {
+            if (!handle_else(filename)) {
+                free(content);
+                free(output);
+                return NULL;
+            }
+            continue;
+        }
+
+        /* 处理 #endif 指令（总是处理，不受 is_active() 影响） */
+        if (strncmp(stripped, "#endif", 6) == 0 && (stripped[6] == ' ' || stripped[6] == '\t' || stripped[6] == '\0' || stripped[6] == '\n')) {
+            if (!handle_endif(filename)) {
+                free(content);
+                free(output);
+                return NULL;
+            }
+            continue;
+        }
+
+        /* 非条件编译指令：检查是否在活动块中 */
+        if (!is_active()) {
+            continue;  /* 跳过非活动块中的所有内容 */
+        }
+
         /* 处理 #define 指令 */
-        if (strncmp(linebuf, "#define", 7) == 0) {
-            char *p = linebuf + 7;
+        if (strncmp(stripped, "#define", 7) == 0) {
+            char *p = stripped + 7;
             while (*p && isspace(*p)) p++;
 
             /* 提取宏名 */
@@ -262,8 +426,8 @@ static char *process_file(const char *filename, int depth) {
         }
 
         /* 处理 #include 指令 */
-        if (strncmp(linebuf, "#include", 8) == 0) {
-            char *p = linebuf + 8;
+        if (strncmp(stripped, "#include", 8) == 0) {
+            char *p = stripped + 8;
             while (*p && isspace(*p)) p++;
 
             if (*p == '"') {
@@ -312,6 +476,14 @@ static char *process_file(const char *filename, int depth) {
         }
     }
 
+    /* 检查未匹配的条件编译指令 */
+    if (cond_depth > 0) {
+        fprintf(stderr, "preprocessor: unmatched #ifdef/#ifndef in '%s'\n", filename);
+        free(content);
+        free(output);
+        return NULL;
+    }
+
     free(content);
     return output;
 }
@@ -320,5 +492,6 @@ static char *process_file(const char *filename, int depth) {
 char *pp_process(const char *filename) {
     clear_included_files();
     clear_macros();
+    clear_cond_stack();
     return process_file(filename, 0);
 }
