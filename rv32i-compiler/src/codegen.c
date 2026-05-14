@@ -32,6 +32,7 @@ static void emit(const char *fmt, ...)
  * ================================================================ */
 
 #define MAX_LOCALS 64
+#define MAX_STRUCTS 32
 
 static struct {
     char *name;
@@ -41,6 +42,24 @@ static struct {
 
 static int sym_count;
 static int frame_used;
+
+/* Struct table for struct definitions */
+static StructInfo struct_table[MAX_STRUCTS];
+static int struct_count;
+
+/* Calculate type size in bytes */
+static int get_type_size(Type t)
+{
+    if (t.ptr_level > 0)
+        return 4;  /* All pointers are 4 bytes */
+    if (t.base_type == TYPE_INT)
+        return 4;
+    if (t.base_type == TYPE_CHAR)
+        return 1;
+    if (t.base_type == TYPE_STRUCT)
+        return struct_table[t.struct_id].total_size;
+    return 4;  /* Default */
+}
 
 static int sym_lookup(const char *name)
 {
@@ -138,6 +157,74 @@ static int register_string_literal(const char *str)
     string_lits[string_lit_count].label = label;
     string_lit_count++;
     return label;
+}
+
+/* Pass 0.5: Register all struct definitions to struct_table */
+static void register_structs(ASTNode *prog)
+{
+    struct_count = 0;
+
+    for (ASTNode *n = prog; n; n = n->next) {
+        if (n->type == AST_STRUCT_DEF) {
+            StructInfo *si = &struct_table[struct_count];
+            si->name = strdup(n->struct_name);
+            si->member_count = 0;
+
+            /* Count members */
+            for (ASTNode *m = n->members; m; m = m->next)
+                si->member_count++;
+
+            /* Allocate member array */
+            si->members = malloc(si->member_count * sizeof(MemberInfo));
+            if (!si->members) {
+                fprintf(stderr, "error: malloc failed for struct members\n");
+                return;
+            }
+
+            /* Register members and calculate offsets */
+            int offset = 0;
+            int idx = 0;
+            for (ASTNode *m = n->members; m; m = m->next, idx++) {
+                si->members[idx].name = strdup(m->name);
+                si->members[idx].type = m->var_type;
+                si->members[idx].offset = offset;
+
+                int size = get_type_size(m->var_type);
+                offset += size;
+            }
+
+            si->total_size = offset;
+            n->struct_id = struct_count;
+            struct_count++;
+        }
+    }
+}
+
+static StructInfo *get_struct_info(int struct_id)
+{
+    if (struct_id < 0 || struct_id >= struct_count)
+        return NULL;
+    return &struct_table[struct_id];
+}
+
+static MemberInfo *find_member(int struct_id, const char *member_name)
+{
+    StructInfo *si = get_struct_info(struct_id);
+    if (!si) return NULL;
+    for (int i = 0; i < si->member_count; i++)
+        if (strcmp(si->members[i].name, member_name) == 0)
+            return &si->members[i];
+    return NULL;
+}
+
+static int get_member_offset(int struct_id, const char *member_name)
+{
+    MemberInfo *mi = find_member(struct_id, member_name);
+    if (!mi) {
+        fprintf(stderr, "error: member '%s' not found in struct\n", member_name);
+        return 0;
+    }
+    return mi->offset;
 }
 
 /* Pass 0: collect global declarations */
@@ -704,6 +791,9 @@ int codegen_gen(ASTNode *prog, const char *outfile)
         fprintf(stderr, "cannot open %s for output\n", outfile);
         return 1;
     }
+
+    /* Pass 0.5: Register struct definitions */
+    register_structs(prog);
 
     /* Pass 0: collect global declarations */
     collect_globals(prog);
