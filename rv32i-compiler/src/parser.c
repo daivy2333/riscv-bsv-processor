@@ -455,12 +455,43 @@ static ASTNode *parse_member_access(ASTNode *target)
     return n;
 }
 
-/* assign-stmt = identifier "[" expr "]" "=" expr ";" OR identifier "=" expr ";" OR "*" primary "=" expr ";" */
+/* assign-stmt = identifier "[" expr "]" "=" expr ";" OR identifier "=" expr ";" OR "*" primary "=" expr ";" OR member-access "=" expr ";" */
 static ASTNode *parse_assign(void)
 {
     ASTNode *n = ast_new(AST_ASSIGN);
     n->is_deref_assign = 0;
     n->is_array_assign = 0;
+    n->target_expr = NULL;  /* for member assignment: p->member = value or n.member = value */
+
+    /* Member assignment: p->member = value or n.member = value */
+    if (cur->type == TOK_ID && cur->next &&
+        (cur->next->type == TOK_ARROW || cur->next->type == TOK_DOT)) {
+        /* Parse variable reference */
+        ASTNode *ref = ast_new(AST_VAR_REF);
+        ref->name = strdup(cur->text);
+        cur = cur->next;  /* skip identifier, now cur is -> or . */
+
+        /* Parse member access */
+        n->target_expr = parse_member_access(ref);
+
+        /* Expect '=' */
+        if (cur->type != TOK_ASSIGN) {
+            parse_error(cur->line, cur->col, "expected '=' after member access");
+            return NULL;
+        }
+        cur = cur->next;  /* skip '=' */
+
+        /* Parse assignment expression */
+        n->expr = parse_expr();
+        n->name = NULL;  /* no simple variable name for member assignment */
+
+        if (cur->type != TOK_SEMI) {
+            parse_error(cur->line, cur->col, "expected ';' after assignment");
+        } else {
+            cur = cur->next;
+        }
+        return n;
+    }
 
     /* Check for dereference assignment: *p = expr */
     if (cur->type == TOK_STAR) {
