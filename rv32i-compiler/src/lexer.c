@@ -13,6 +13,9 @@ const char *tok_name(TokenType t)
     case TOK_INT:    return "int";
     case TOK_CHAR:   return "char";      /* NEW */
     case TOK_STRING: return "string";    /* NEW */
+    case TOK_STRUCT: return "struct";    /* NEW */
+    case TOK_ARROW:  return "->";         /* NEW */
+    case TOK_DOT:    return ".";          /* NEW */
     case TOK_ID:     return "identifier";
     case TOK_NUM:    return "number";
     case TOK_RETURN: return "return";
@@ -87,6 +90,8 @@ static Token *lex_keyword_or_id(const char *s, int len, int line, int col)
         return new_token(TOK_WHILE, s, len, line, col);
     if (len == 3 && strncmp(s, "for", 3) == 0)
         return new_token(TOK_FOR, s, len, line, col);
+    if (len == 6 && strncmp(s, "struct", 6) == 0)
+        return new_token(TOK_STRUCT, s, len, line, col);
     return new_token(TOK_ID, s, len, line, col);
 }
 
@@ -212,7 +217,10 @@ Token *tokenize(const char *filename)
             if (p[1] == '+') { t = TOK_INC; p++; col++; }
             else { t = TOK_PLUS; }
             break;
-        case '-': t = TOK_MINUS; break;
+        case '-':
+            if (p[1] == '>') { t = TOK_ARROW; p++; col++; }
+            else { t = TOK_MINUS; }
+            break;
         case '*': t = TOK_STAR;  break;
         case '/': t = TOK_SLASH; break;
         case '<': t = TOK_LT; break;
@@ -220,6 +228,7 @@ Token *tokenize(const char *filename)
         case '[': t = TOK_LBRACKET; break;
         case ']': t = TOK_RBRACKET; break;
         case ',': t = TOK_COMMA; break;
+        case '.': t = TOK_DOT; break;
         default:
             lex_error(line, col, "unexpected character");
             p++; col++;
