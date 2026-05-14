@@ -1,75 +1,68 @@
 # 学习记忆
 
-> 最后更新：2026-05-13
+> 最后更新：2026-05-14
 > 记录探索发现、API 路径、技巧、踩坑经验
 
 ---
 
 ## 编译器实现记录
 
-### Micro-C 编译器架构（阶段3）
+### Micro-C 编译器架构（阶段7）
 
 | 文件 | 职责 | 关键函数 |
 |------|------|----------|
-| `lexer.c` | 字符→Token流（含控制流关键字） | `tokenize()` 新增 `if/else/while/for` 关键字 + `++`/`<` 标记 |
-| `parser.c` | Token→AST（三级优先级 + 控制流） | `parse_term(*/)` / `parse_addsub(+-)` / `parse_expr(<)` / `parse_if/while/for_stmt()` |
-| `ast.c/h` | AST节点定义 | 新增 `AST_IF`(left=cond,body=then,right=else) / `AST_WHILE`(left=cond,body=body) / `AST_NOOP`(空语句) |
-| `codegen.c` | AST→汇编（标签生成 + 分支 + 多级溢出槽） | `fresh_label()` / `gen_stmt(AST_IF/WHILE)` / `spill_depth` 深度溢出 |
-| `asm.c` | 二遍汇编器，全RV32I指令集 | `beqz`/`bnez`/`j` 伪指令 + `slt` R-type |
-| `linker.c` | 拼接 crt0+lib+用户→hex | `read_file()` 拼接 + 一次 `asm_assemble()` |
+| `lexer.c` | 字符→Token流 | `tokenize()` 新增 `char` 关键字 + `TOK_CHAR`/`TOK_STRING` 标记 |
+| `parser.c` | Token→AST | `parse_global_decl()` / `parse_func_def()` 支持 char 返回类型和 char* 参数 |
+| `ast.c/h` | AST节点定义 | 新增 `AST_GLOBAL_DECL` / `AST_STRING_LIT` 节点类型 |
+| `codegen.c` | AST→汇编 | `collect_globals()` / `emit_data_segment()` / `la` + `lb` 指令生成 |
+| `asm.c` | 二遍汇编器 | 新增 `.data`/`.word`/`.byte`/`.align` 处理 + `lb` 指令 |
+| `types.c/h` | 类型系统 | 新增 `TYPE_CHAR` / `type_make_char()` / `type_make_char_ptr()` |
 
-### 阶段3新增架构模式
+### 阶段7新增架构模式
 
-#### 表达式优先级三级层次
+#### 双段内存布局
 ```
-parse_expr()       → <          (loops on TOK_LT, calls parse_addsub)
-parse_addsub()     → + -        (loops on TOK_PLUS/MINUS, calls parse_term)
-parse_term()       → * /        (loops on TOK_STAR/SLASH, calls parse_primary)
-parse_primary()    → int-lit, id, (expr)
-```
+.text 段: 代码段（从 0x80000000 开始）
+  ├─ 所有函数代码
+  └─ jalr 返回指令
 
-#### 控制流语法糖展开
-```
-for(init; cond; inc) body  →   { init; while(cond) { body; inc; } }
-i++                        →   i = i + 1
+.data 段: 数据段（紧接 .text 结束）
+  ├─ 全局变量（.word 初始值）
+  ├─ 字符串字面量（.byte 序列 + \0）
+  └─ .align 4 对齐
 ```
 
-#### 代码生成—分支模式
+#### la 伪指令展开（关键修复）
 ```
-// if-then-else
-gen_expr(cond) → t0
-beqz t0, .L_else
-gen_stmt(then_body)
-j .L_end
-.L_else:
-gen_stmt(else_body)
-.L_end:
+// Pass 1 需要额外 addr += 4！
+la t0, label    →    lui t0, upper     // addr += 4
+                      addi t0, t0, lower  // addr += 4
 
-// while loop
-.L_loop:
-gen_expr(cond) → t0
-beqz t0, .L_end
-gen_stmt(body)
-j .L_loop
-.L_end:
+// Pass 2 编码
+target = label_addr + BASE_ADDR (0x80000000)
+upper = (target >> 12) & 0xFFFFF
+lower = target & 0xFFF
 ```
 
-#### 多级溢出槽系统
-- 旧：单个 sp+0 临时槽（嵌套表达式溢出冲突）
-- 新：4 个槽位 sp+0~sp+12，`spill_depth` 计数器跟踪嵌套级别
-- 局部变量起始偏移改为 sp+16（为溢出槽腾空间）
+#### char* 指针算术（shift 0）
+```
+// int* 算术: p + n → p + n*4 (slli t1, t1, 2)
+// char* 算术: s + 1 → s + 1 (无 shift)
+if (ptr_base_type == TYPE_CHAR) {
+    // sizeof(char) = 1, 无需 shift
+} else {
+    emit("    slli t1, t1, 2\n");
+}
+```
 
-```c
-case AST_BIN_OP: {
-    gen_expr(n->left);                          // left → t0
-    int my_off = spill_depth * 4;
-    spill_depth++;
-    emit("    sw t0, %d(sp)\n", my_off);        // spill left
-    gen_expr(n->right);                         // right → t0
-    spill_depth--;
-    emit("    mv t1, t0\n");                    // t1 = right
-    emit("    lw t0, %d(sp)\n", my_off);        // restore left
-    // emit operation (add/sub/mul/div/slt)
+#### char* 解引用
+```
+// int* 解引用: lw t0, 0(t0)
+// char* 解引用: lb t0, 0(t0)
+if (ptr_type.base_type == TYPE_CHAR) {
+    emit("    lb t0, 0(t0)\n");
+} else {
+    emit("    lw t0, 0(t0)\n");
 }
 ```
 
@@ -279,10 +272,36 @@ main() sp=0x7FF0
   return 2+1=3
 ```
 
-## 待探索（阶段5+）
+## 待探索（阶段8+）
 
-- [ ] 指针与数组（load/store 地址计算）
-- [ ] 全局变量与多文件编译
-- [ ] 结构体与高级类型
-- [ ] 寄存器分配（线性扫描）
-- [ ] 指针与数组（load/store 地址计算）
+- [ ] 结构体定义与成员访问
+- [ ] 多文件编译链接
+- [ ] 寄存器分配优化
+
+---
+
+## 阶段7踩坑记录
+
+| 问题 | 原因 | 解决方案 | 发现时间 |
+|------|------|----------|----------|
+| 汇编器跳过 `.data`/`.word` 指令 | asm.c 对所有 `.` 开头的行返回 -1 跳过 | 新增 line.kind 3/4/5 处理 .word/.byte/.align，Pass 1 解析并分配地址 | 2026-05-14 |
+| la 指令地址偏移 4 字节 | Pass 1 只 addr+=4，但 la 展开为 lui+addi 占 8 字节 | Pass 1 检测 `la` 伪指令额外 addr+=4 | 2026-05-14 |
+| la 地址使用相对地址 | lookup_label 返回相对地址，但 linker 在输出时才加基地址 | 在 la 处理时直接加上 BASE_ADDR (0x80000000) | 2026-05-14 |
+| char* 参数解析失败 | parse_func_def 只支持 `int` 类型参数 | 扩展支持 `char` 和 `char*` 参数类型 | 2026-05-14 |
+| char* 解引用用 `lw` | AST_DEREF 总是生成 `lw`，应区分类型 | 检查指针类型，char* 用 `lb`，int* 用 `lw` | 2026-05-14 |
+| char* 算术 shift 2 | 指针算术总是 slli 2，但 sizeof(char)=1 | 检查 ptr_base_type，char 无 shift，int shift 2 | 2026-05-14 |
+| 全局 char* 返回地址而非值 | AST_VAR_REF 对全局指针返回地址 | 全局非数组变量都用 `lw` 加载值 | 2026-05-14 |
+| 汇编器不支持 `lb` 指令 | asm.c 未实现 lb 编码 | 新增 lb 处理（funct3=0, opcode=0x03） | 2026-05-14 |
+
+## 阶段7已完成
+
+- [x] char 类型支持 (TYPE_CHAR)
+- [x] 全局变量声明与初始化
+- [x] 字符串字面量解析与存储
+- [x] 全局符号表与 .data 段输出
+- [x] la 伪指令正确展开（地址计算修复）
+- [x] lb 指令（char* 解引用）
+- [x] char* 指针算术（shift 0）
+- [x] Parser 支持 char 返回类型和 char* 参数
+- [x] 汇编器数据指令处理
+- [x] 5 个 Phase 7 CPU 测试全部通过
