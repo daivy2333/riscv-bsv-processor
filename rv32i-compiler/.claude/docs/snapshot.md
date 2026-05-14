@@ -35,7 +35,8 @@ rv32i-compiler/
 │   ├── phase4/            阶段4测试 (4个)
 │   ├── phase5/            阶段5测试 (swap, 1个)
 │   ├── phase6/            阶段6测试 (array, 1个)
-│   └── phase7/            阶段7测试 (5个)
+│   ├── phase7/            阶段7测试 (5个)
+│   └── phase8/            阶段8测试 (struct, 2个)
 └── build/
     ├── microcc            编译器可执行文件
     ├── test.hex           编译产出hex
@@ -54,7 +55,9 @@ rv32i-compiler/
 | 函数调用 | RISC-V ABI (a0-a7, jal, a0返回) | 递归支持，独立栈帧 |
 | 栈空间 | crt0.s 4096 字节 | 支持 fib(10) 递归 90+ 深度 |
 | 汇编器 | 二遍 + 标签解析 | 支持R/I/S/B/U/J全指令格式 |
-| 类型系统 | base_type + ptr_level + array_size | 支持指针和数组类型 |
+| 类型系统 | base_type + ptr_level + array_size + struct_id | 支持指针、数组、结构体类型 |
+| 结构体 | StructInfo + MemberInfo | 全局结构体表 + 成员偏移计算 |
+| 比较运算 | slt/slti + xor/sub | 支持 <, <=, >, >=, ==, != |
 | 测试验证 | CPU TestBench | tohost机制 (0x80001000) |
 | 编译器输出 | Verilog hex | 小端字节序，用于hex_to_bsv.py |
 
@@ -62,16 +65,16 @@ rv32i-compiler/
 
 - **当前分支**: main
 - **父项目**: ../ (riscv-bsv-processor)
-- **状态**: 阶段1-6完成，18个测试全部通过
+- **状态**: 阶段1-8完成，27个测试全部通过
 
 ## 编译器流水线
 
 ```
 源文件(.c)
   ↓ Lexer (tokenize + 关键字识别 + ++多字符检测 + 括号)
-Token流 (含 if/else/while/for/++/lt/and/bracket 等共22种标记)
-  ↓ Parser (三级递归下降 + 控制流语法糖展开 + 指针 + 数组)
-AST (FUNC_DEF, RETURN, INT_LIT, BIN_OP, VAR_DECL, VAR_REF, ASSIGN, IF, WHILE, NOOP, ADDR, DEREF, ARRAY_ACCESS)
+Token流 (含 if/else/while/for/++/lt/and/bracket/struct/arrow 等共28种标记)
+  ↓ Parser (三级递归下降 + 控制流语法糖展开 + 指针 + 数组 + 结构体)
+AST (FUNC_DEF, RETURN, INT_LIT, BIN_OP, VAR_DECL, VAR_REF, ASSIGN, IF, WHILE, NOOP, ADDR, DEREF, ARRAY_ACCESS, STRUCT_DEF, MEMBER_ACCESS)
   ↓ Codegen (符号表 + 标签生成 + 多级溢出槽 + 分支/跳转 + 指针操作 + 数组访问)
 RV32I汇编文本 (含 .L0/.L1 标签和 beqz/j 分支)
   ↓ Assembler (二遍：标签解析+指令编码)
@@ -86,11 +89,11 @@ Flat binary (小端)
 
 | 文件 | 作用 | 状态 |
 |------|------|------|
-| `src/lexer.c` | 字符流 → Token 流 | ✅ 阶段6 |
-| `src/parser.c` | Token 流 → AST（指针+数组解析） | ✅ 阶段6 |
-| `src/ast.h` | AST 节点类型定义 | ✅ 阶段6 |
-| `src/codegen.c` | AST → 汇编（指针+数组代码生成） | ✅ 阶段6 |
-| `src/types.h` | 类型系统定义 | ✅ 阶段6 |
+| `src/lexer.c` | 字符流 → Token 流 | ✅ 阶段8 |
+| `src/parser.c` | Token 流 → AST（指针+数组+结构体解析） | ✅ 阶段8 |
+| `src/ast.h` | AST 节点类型定义 | ✅ 阶段8 |
+| `src/codegen.c` | AST → 汇编（指针+数组+结构体代码生成） | ✅ 阶段8 |
+| `src/types.h` | 类型系统定义 | ✅ 阶段8 |
 | `src/asm.c` | 二遍汇编器 | ✅ 阶段2 |
 | `src/linker.c` | 拼接 crt0+lib+用户代码→hex | ✅ 阶段2 |
 | `runtime/crt0.s` | 启动代码 | ✅ 阶段1 |
