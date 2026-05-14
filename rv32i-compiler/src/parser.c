@@ -8,6 +8,30 @@
 static Token *cur;
 static int has_errors;
 
+#define MAX_STRUCTS 32
+
+static StructInfo parser_struct_table[MAX_STRUCTS];
+static int parser_struct_count;
+
+/* 在 Parser 中查找结构体定义 */
+static int lookup_struct(const char *name)
+{
+    for (int i = 0; i < parser_struct_count; i++)
+        if (strcmp(parser_struct_table[i].name, name) == 0)
+            return i;
+    return -1;
+}
+
+/* 在 Parser 中注册结构体（简化版） */
+static int register_struct_parser(const char *name, int member_count)
+{
+    parser_struct_table[parser_struct_count].name = strdup(name);
+    parser_struct_table[parser_struct_count].member_count = member_count;
+    parser_struct_table[parser_struct_count].total_size = 0;  /* Codegen 计算实际大小 */
+    parser_struct_table[parser_struct_count].members = NULL;  /* Codegen 从 AST 获取 */
+    return parser_struct_count++;
+}
+
 static ASTNode *parse_term(void);
 static ASTNode *parse_addsub(void);
 static ASTNode *parse_expr(void);
@@ -247,6 +271,57 @@ static ASTNode *parse_var_decl(void)
     } else {
         cur = cur->next;
     }
+    return n;
+}
+
+/* 成员声明: int name 或 struct Name* name */
+static ASTNode *parse_member_decl(void)
+{
+    Type member_type;
+
+    if (cur->type == TOK_INT) {
+        member_type = type_make_int();
+        cur = cur->next;
+    } else if (cur->type == TOK_CHAR) {
+        member_type = type_make_char();
+        cur = cur->next;
+    } else if (cur->type == TOK_STRUCT) {
+        cur = cur->next;  /* skip "struct" */
+        if (cur->type != TOK_ID) {
+            parse_error(cur->line, cur->col, "expected struct name");
+            return NULL;
+        }
+        char *struct_name = strdup(cur->text);
+        cur = cur->next;
+
+        int struct_id = lookup_struct(struct_name);
+        if (struct_id < 0) {
+            parse_error(cur->line, cur->col, "undefined struct type");
+            return NULL;
+        }
+
+        if (cur->type == TOK_STAR) {
+            member_type = type_make_struct_ptr(struct_id);
+            cur = cur->next;
+        } else {
+            member_type = type_make_struct_val(struct_id);
+        }
+    } else {
+        parse_error(cur->line, cur->col, "expected member type (int/char/struct)");
+        return NULL;
+    }
+
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected member name");
+        return NULL;
+    }
+
+    ASTNode *n = ast_new(AST_VAR_DECL);
+    n->name = strdup(cur->text);
+    n->var_type = member_type;
+    cur = cur->next;
+    expect(TOK_SEMI);
+
     return n;
 }
 
@@ -762,6 +837,7 @@ ASTNode *parse(Token *tokens)
 {
     cur = tokens;
     has_errors = 0;
+    parser_struct_count = 0;
     ASTNode *prog = parse_program();
     if (has_errors) {
         ast_free_all(prog);
