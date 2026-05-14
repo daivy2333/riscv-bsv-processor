@@ -227,6 +227,24 @@ static int get_member_offset(int struct_id, const char *member_name)
     return mi->offset;
 }
 
+/* 获取表达式类型（用于成员访问类型推导） */
+static Type get_expr_type(ASTNode *n)
+{
+    if (n->type == AST_VAR_REF) {
+        int global_off = global_lookup(n->name);
+        if (global_off >= 0) return global_lookup_type(n->name);
+        return sym_lookup_type(n->name);
+    }
+    if (n->type == AST_MEMBER_ACCESS) {
+        Type target_type = get_expr_type(n->target_expr);
+        if (target_type.base_type == TYPE_STRUCT) {
+            MemberInfo *mi = find_member(target_type.struct_id, n->member_name);
+            if (mi) return mi->type;
+        }
+    }
+    return type_make_int();  /* 默认 */
+}
+
 /* Pass 0: collect global declarations */
 static void collect_globals(ASTNode *prog)
 {
@@ -270,7 +288,12 @@ static void collect_globals(ASTNode *prog)
                 data_offset += 4;  /* int takes 4 bytes */
             } else {
                 /* No initializer - default to 0, allocate space */
-                if (n->var_type.array_size > 0) {
+                /* 处理 struct 类型全局变量 */
+                if (n->var_type.base_type == TYPE_STRUCT && n->var_type.ptr_level == 0) {
+                    StructInfo *si = get_struct_info(n->var_type.struct_id);
+                    if (si) data_offset += si->total_size;
+                    else data_offset += 4;  /* fallback */
+                } else if (n->var_type.array_size > 0) {
                     data_offset += n->var_type.array_size * 4;
                 } else {
                     data_offset += 4;
@@ -291,8 +314,17 @@ static void emit_data_segment(void)
     /* Output global variables */
     for (int i = 0; i < global_count; i++) {
         emit(".global_%s:\n", globals[i].name);
-        if (globals[i].init_str) {
-            /* Output string bytes */
+
+        if (globals[i].type.base_type == TYPE_STRUCT && globals[i].type.ptr_level == 0) {
+            /* struct 值类型全局变量 - 输出 total_size 字节的 0 */
+            StructInfo *si = get_struct_info(globals[i].type.struct_id);
+            if (si) {
+                int words = (si->total_size + 3) / 4;  /* 向上取整到 word */
+                for (int j = 0; j < words; j++)
+                    emit("    .word 0\n");
+            }
+        } else if (globals[i].init_str) {
+            /* 字符串初始化 */
             emit("    .byte ");
             for (int j = 0; j < globals[i].str_len; j++) {
                 unsigned char c = (unsigned char)globals[i].init_str[j];
@@ -302,7 +334,6 @@ static void emit_data_segment(void)
             emit("\n");
             emit("    .align 4\n");
         } else {
-            /* Output integer word */
             emit("    .word %d\n", globals[i].init_val);
         }
     }
@@ -609,6 +640,29 @@ static void gen_expr(ASTNode *n)
             /* int* or other → load word */
             emit("    lw t0, 0(t0)\n");  /* t0 = *t0 (load from address) */
         }
+        break;
+    }
+
+    case AST_MEMBER_ACCESS: {
+        /* 1. 计算目标地址 */
+        gen_expr(n->target_expr);  /* t0 = p (指针值) 或 &n (地址) */
+
+        /* 2. 查询成员偏移 */
+        Type target_type = get_expr_type(n->target_expr);
+        int struct_id = target_type.struct_id;
+        int offset = get_member_offset(struct_id, n->member_name);
+
+        /* 3. 计算成员地址 */
+        emit("    addi t0, t0, %d\n", offset);  /* t0 = &target.member */
+
+        /* 4. 加载成员值 */
+        MemberInfo *mi = find_member(struct_id, n->member_name);
+        if (mi && (mi->type.ptr_level > 0 || mi->type.base_type == TYPE_INT)) {
+            emit("    lw t0, 0(t0)\n");  /* 加载指针或 int */
+        } else if (mi && mi->type.base_type == TYPE_CHAR) {
+            emit("    lb t0, 0(t0)\n");  /* 加载 char */
+        }
+        /* struct 值类型成员返回地址（用于赋值） */
         break;
     }
 
