@@ -164,11 +164,16 @@ static void register_structs(ASTNode *prog)
 {
     struct_count = 0;
 
+    fprintf(stderr, "=== DEBUG register_structs ===\n");
+
     for (ASTNode *n = prog; n; n = n->next) {
         if (n->type == AST_STRUCT_DEF) {
             StructInfo *si = &struct_table[struct_count];
             si->name = strdup(n->struct_name);
             si->member_count = 0;
+
+            fprintf(stderr, "Registering struct '%s' (parser struct_id=%d) -> codegen struct_id=%d\n",
+                    n->struct_name, n->struct_id, struct_count);
 
             /* Count members */
             for (ASTNode *m = n->members; m; m = m->next)
@@ -189,12 +194,17 @@ static void register_structs(ASTNode *prog)
                 si->members[idx].type = m->var_type;
                 si->members[idx].offset = offset;
 
+                fprintf(stderr, "  member '%s': base=%d ptr=%d struct_id=%d offset=%d size=%d\n",
+                        m->name, m->var_type.base_type, m->var_type.ptr_level,
+                        m->var_type.struct_id, offset, get_type_size(m->var_type));
+
                 int size = get_type_size(m->var_type);
                 offset += size;
             }
 
             si->total_size = offset;
             n->struct_id = struct_count;
+            fprintf(stderr, "  total_size=%d\n", offset);
             struct_count++;
         }
     }
@@ -221,9 +231,11 @@ static int get_member_offset(int struct_id, const char *member_name)
 {
     MemberInfo *mi = find_member(struct_id, member_name);
     if (!mi) {
+        fprintf(stderr, "DEBUG: get_member_offset - member '%s' NOT FOUND in struct_id=%d\n", member_name, struct_id);
         fprintf(stderr, "error: member '%s' not found in struct\n", member_name);
         return 0;
     }
+    fprintf(stderr, "DEBUG: get_member_offset - struct_id=%d member='%s' offset=%d\n", struct_id, member_name, mi->offset);
     return mi->offset;
 }
 
@@ -253,6 +265,8 @@ static void collect_globals(ASTNode *prog)
     string_lit_count = 0;
     string_label_counter = 0;
 
+    fprintf(stderr, "=== DEBUG collect_globals ===\n");
+
     for (ASTNode *n = prog; n; n = n->next) {
         if (n->type == AST_GLOBAL_DECL) {
             globals[global_count].name = strdup(n->name);
@@ -261,6 +275,9 @@ static void collect_globals(ASTNode *prog)
             globals[global_count].init_val = 0;
             globals[global_count].init_str = NULL;
             globals[global_count].str_len = 0;
+
+            fprintf(stderr, "Global '%s': base=%d ptr=%d struct_id=%d\n",
+                    n->name, n->var_type.base_type, n->var_type.ptr_level, n->var_type.struct_id);
 
             /* Handle initializer */
             if (n->str_val) {
@@ -291,7 +308,11 @@ static void collect_globals(ASTNode *prog)
                 /* 处理 struct 类型全局变量 */
                 if (n->var_type.base_type == TYPE_STRUCT && n->var_type.ptr_level == 0) {
                     StructInfo *si = get_struct_info(n->var_type.struct_id);
-                    if (si) data_offset += si->total_size;
+                    fprintf(stderr, "  struct global: struct_id=%d, si=%p\n", n->var_type.struct_id, si);
+                    if (si) {
+                        fprintf(stderr, "  struct total_size=%d\n", si->total_size);
+                        data_offset += si->total_size;
+                    }
                     else data_offset += 4;  /* fallback */
                 } else if (n->var_type.array_size > 0) {
                     data_offset += n->var_type.array_size * 4;
@@ -448,11 +469,11 @@ static void gen_expr(ASTNode *n)
             /* Global variable - use la instruction */
             emit("    la t0, .global_%s\n", n->name);
             Type t = global_lookup_type(n->name);
-            if (!type_is_array(t)) {
-                /* For non-array (int, int*, char*, etc.), load the value */
+            if (!type_is_array(t) && t.base_type != TYPE_STRUCT) {
+                /* For non-array/non-struct (int, int*, char*, etc.), load the value */
                 emit("    lw t0, 0(t0)\n");  /* load value */
             }
-            /* For array, t0 already holds address */
+            /* For array or struct value type, t0 already holds address */
         } else {
             /* Local variable */
             int off = sym_lookup(n->name);
@@ -461,8 +482,8 @@ static void gen_expr(ASTNode *n)
                 return;
             }
             Type t = sym_lookup_type(n->name);
-            if (type_is_array(t)) {
-                emit("    addi t0, sp, %d\n", off);  /* t0 = &arr[0] */
+            if (type_is_array(t) || (t.base_type == TYPE_STRUCT && t.ptr_level == 0)) {
+                emit("    addi t0, sp, %d\n", off);  /* t0 = &arr[0] or &struct */
             } else {
                 emit("    lw t0, %d(sp)\n", off);  /* t0 = value */
             }
@@ -573,6 +594,20 @@ static void gen_expr(ASTNode *n)
             emit("    mv t0, a0\n");
         } else if (n->op == TOK_LT) {
             emit("    slt t0, t0, t1\n");
+        } else if (n->op == TOK_LE) {
+            emit("    slt t0, t1, t0\n");  /* a <= b  <=>  !(b < a)  <=>  b >= a (use sltu for unsigned) */
+            emit("    xori t0, t0, 1\n");  /* invert: a <= b = !(b < a) */
+        } else if (n->op == TOK_GT) {
+            emit("    slt t0, t1, t0\n");  /* a > b  <=>  b < a */
+        } else if (n->op == TOK_GE) {
+            emit("    slt t0, t0, t1\n");  /* a >= b  <=>  !(a < b) */
+            emit("    xori t0, t0, 1\n");  /* invert */
+        } else if (n->op == TOK_EQ) {
+            emit("    sub t0, t0, t1\n");
+            emit("    sltiu t0, t0, 1\n");  /* t0 = (t0 == 0) ? 1 : 0, i.e., t0 == t1 */
+        } else if (n->op == TOK_NE) {
+            emit("    sub t0, t0, t1\n");
+            emit("    sltu t0, x0, t0\n");   /* t0 = (t0 != 0) ? 1 : 0, i.e., t0 != t1 */
         }
         break;
     }
@@ -644,11 +679,14 @@ static void gen_expr(ASTNode *n)
     }
 
     case AST_MEMBER_ACCESS: {
+        fprintf(stderr, "DEBUG: gen_expr AST_MEMBER_ACCESS - is_arrow=%d member='%s'\n", n->is_arrow, n->member_name);
         /* 1. 计算目标地址 */
         gen_expr(n->target_expr);  /* t0 = p (指针值) 或 &n (地址) */
 
         /* 2. 查询成员偏移 */
         Type target_type = get_expr_type(n->target_expr);
+        fprintf(stderr, "DEBUG: target_type: base=%d ptr=%d struct_id=%d\n",
+                target_type.base_type, target_type.ptr_level, target_type.struct_id);
         int struct_id = target_type.struct_id;
         int offset = get_member_offset(struct_id, n->member_name);
 
@@ -695,7 +733,23 @@ static void gen_stmt(ASTNode *n)
     case AST_ASSIGN:
         gen_expr(n->expr);  /* Evaluate right side, result in t0 */
 
-        if (n->is_array_assign) {
+        if (n->target_expr) {
+            /* Member assignment: p->member = value or n.member = value */
+            int my_off = spill_depth * 4;
+            emit("    sw t0, %d(sp)\n", my_off);  /* Save value */
+
+            /* Get member address */
+            ASTNode *member_access = n->target_expr;
+            gen_expr(member_access->target_expr);  /* t0 = p (pointer) or &n (address) */
+
+            Type target_type = get_expr_type(member_access->target_expr);
+            int struct_id = target_type.struct_id;
+            int offset = get_member_offset(struct_id, member_access->member_name);
+
+            emit("    addi t0, t0, %d\n", offset);  /* t0 = &target.member */
+            emit("    lw t1, %d(sp)\n", my_off);  /* t1 = value */
+            emit("    sw t1, 0(t0)\n");  /* target.member = value */
+        } else if (n->is_array_assign) {
             /* Array assignment: arr[i] = value */
             int my_off = spill_depth * 4;
             emit("    sw t0, %d(sp)\n", my_off);  /* save value */

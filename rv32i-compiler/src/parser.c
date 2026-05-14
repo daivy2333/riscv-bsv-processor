@@ -195,13 +195,15 @@ static ASTNode *parse_addsub(void)
     return left;
 }
 
-/* expression = addsub { "<" addsub } */
+/* expression = addsub { ("<" | "<=" | ">" | ">=" | "==" | "!=") addsub } */
 static ASTNode *parse_expr(void)
 {
     ASTNode *left = parse_addsub();
     if (!left) return NULL;
 
-    while (cur->type == TOK_LT) {
+    while (cur->type == TOK_LT || cur->type == TOK_LE ||
+           cur->type == TOK_GT || cur->type == TOK_GE ||
+           cur->type == TOK_EQ || cur->type == TOK_NE) {
         TokenType op = cur->type;
         cur = cur->next;
         ASTNode *right = parse_addsub();
@@ -299,8 +301,9 @@ static ASTNode *parse_var_decl(void)
     return n;
 }
 
-/* 成员声明: int name 或 struct Name* name */
-static ASTNode *parse_member_decl(void)
+/* 成员声明: int name 或 struct Name* name
+ * current_struct_name: 当前正在定义的 struct 名称（用于支持自引用） */
+static ASTNode *parse_member_decl(const char *current_struct_name)
 {
     Type member_type;
 
@@ -320,6 +323,11 @@ static ASTNode *parse_member_decl(void)
         cur = cur->next;
 
         int struct_id = lookup_struct(struct_name);
+        /* 支持自引用：如果找不到，但名字与当前定义的 struct 相同，则先注册 */
+        if (struct_id < 0 && current_struct_name && strcmp(struct_name, current_struct_name) == 0) {
+            /* 前向声明：先注册一个空 struct，稍后填充成员 */
+            struct_id = register_struct_parser(struct_name, 0);
+        }
         if (struct_id < 0) {
             parse_error(cur->line, cur->col, "undefined struct type");
             return NULL;
@@ -364,12 +372,12 @@ static ASTNode *parse_struct_def(void)
 
     expect(TOK_LBRACE);
 
-    /* 解析成员列表 */
+    /* 解析成员列表，传递当前 struct 名称以支持自引用 */
     ASTNode *members = NULL, *tail = NULL;
     int member_count = 0;
 
     while (cur->type != TOK_RBRACE) {
-        ASTNode *member = parse_member_decl();
+        ASTNode *member = parse_member_decl(name);
         if (!member) break;
         member_count++;
         if (!members) members = tail = member;
@@ -380,7 +388,14 @@ static ASTNode *parse_struct_def(void)
     expect(TOK_SEMI);
 
     /* 注册结构体 */
-    int struct_id = register_struct_parser(name, member_count);
+    int struct_id = lookup_struct(name);
+    if (struct_id < 0) {
+        /* 如果之前没有注册（无自引用），现在注册 */
+        struct_id = register_struct_parser(name, member_count);
+    } else {
+        /* 已注册（自引用情况），更新成员数 */
+        parser_struct_table[struct_id].member_count = member_count;
+    }
 
     ASTNode *n = ast_new(AST_STRUCT_DEF);
     n->struct_name = name;
@@ -429,7 +444,15 @@ static ASTNode *parse_struct_decl(int is_global)
     n->name = strdup(cur->text);
     n->var_type = var_type;
     n->is_global = is_global;
+    n->init = NULL;  /* 初始化 */
     cur = cur->next;
+
+    /* 支持初始化: struct Name* p = expr; */
+    if (cur->type == TOK_ASSIGN) {
+        cur = cur->next;  /* skip '=' */
+        n->init = parse_expr();
+    }
+
     expect(TOK_SEMI);
 
     return n;
@@ -775,6 +798,9 @@ static ASTNode *parse_stmt(void)
         /* Array assignment: arr[i] = val */
         if (next && next->type == TOK_LBRACKET)
             return parse_assign();
+        /* Member assignment: p->member = val or n.member = val */
+        if (next && (next->type == TOK_ARROW || next->type == TOK_DOT))
+            return parse_assign();
         /* Function call statement: func(args); */
         if (next && next->type == TOK_LPAREN) {
             /* Parse function call expression, then expect ';' */
@@ -829,14 +855,14 @@ static ASTNode *parse_func_def(void)
     n->func_name = strdup(cur->text);
     cur = cur->next; /* skip identifier */
     expect(TOK_LPAREN);
-    /* Parse parameter list: (int name, int name, ...) OR (char *name, ...) */
+    /* Parse parameter list: (int name, int name, ...) OR (char *name, ...) OR (struct Name *name) */
     ASTNode *params = NULL, *tail = NULL;
     if (cur->type != TOK_RPAREN) {
         do {
             if (cur->type == TOK_COMMA)
                 cur = cur->next;
 
-            /* Support int and char parameter types */
+            /* Support int, char, and struct pointer parameter types */
             Type param_type;
             if (cur->type == TOK_INT) {
                 param_type = type_make_int();
@@ -844,13 +870,31 @@ static ASTNode *parse_func_def(void)
             } else if (cur->type == TOK_CHAR) {
                 param_type = type_make_char();
                 cur = cur->next; /* skip "char" */
+            } else if (cur->type == TOK_STRUCT) {
+                cur = cur->next; /* skip "struct" */
+                if (cur->type != TOK_ID) {
+                    parse_error(cur->line, cur->col, "expected struct name");
+                    break;
+                }
+                /* Look up struct by name */
+                int struct_id = lookup_struct(cur->text);
+                if (struct_id < 0) {
+                    parse_error(cur->line, cur->col, "undefined struct");
+                    break;
+                }
+                param_type = type_make_struct_ptr(struct_id);
+                cur = cur->next; /* skip struct name */
+                /* struct pointer parameter must have '*' */
+                if (cur->type == TOK_STAR) {
+                    cur = cur->next; /* skip '*' (already a pointer from type_make_struct_ptr) */
+                }
             } else {
-                parse_error(cur->line, cur->col, "expected 'int' or 'char' for parameter type");
+                parse_error(cur->line, cur->col, "expected 'int', 'char', or 'struct Name' for parameter type");
                 break;
             }
 
-            /* Check for pointer parameter: int *p or char *s */
-            if (cur->type == TOK_STAR) {
+            /* Check for pointer parameter: int *p or char *s (struct already handled above) */
+            if (cur->type == TOK_STAR && (param_type.base_type == TYPE_INT || param_type.base_type == TYPE_CHAR)) {
                 if (param_type.base_type == TYPE_INT)
                     param_type = type_make_int_ptr();
                 else if (param_type.base_type == TYPE_CHAR)

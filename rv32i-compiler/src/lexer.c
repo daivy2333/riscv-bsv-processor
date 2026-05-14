@@ -34,6 +34,11 @@ const char *tok_name(TokenType t)
     case TOK_WHILE:  return "while";
     case TOK_FOR:    return "for";
     case TOK_LT:     return "<";
+    case TOK_LE:     return "<=";
+    case TOK_GT:     return ">";
+    case TOK_GE:     return ">=";
+    case TOK_EQ:     return "==";
+    case TOK_NE:     return "!=";
     case TOK_INC:    return "++";
     case TOK_COMMA:  return ",";
     case TOK_AND:    return "&";
@@ -212,7 +217,6 @@ Token *tokenize(const char *filename)
         case '{': t = TOK_LBRACE; break;
         case '}': t = TOK_RBRACE; break;
         case ';': t = TOK_SEMI;   break;
-        case '=': t = TOK_ASSIGN; break;
         case '+':
             if (p[1] == '+') { t = TOK_INC; p++; col++; }
             else { t = TOK_PLUS; }
@@ -223,7 +227,26 @@ Token *tokenize(const char *filename)
             break;
         case '*': t = TOK_STAR;  break;
         case '/': t = TOK_SLASH; break;
-        case '<': t = TOK_LT; break;
+        case '<':
+            if (p[1] == '=') { t = TOK_LE; p++; col++; }
+            else { t = TOK_LT; }
+            break;
+        case '>':
+            if (p[1] == '=') { t = TOK_GE; p++; col++; }
+            else { t = TOK_GT; }
+            break;
+        case '=':
+            if (p[1] == '=') { t = TOK_EQ; p++; col++; }
+            else { t = TOK_ASSIGN; }
+            break;
+        case '!':
+            if (p[1] == '=') { t = TOK_NE; p++; col++; }
+            else {
+                lex_error(line, col, "unexpected character");
+                p++; col++;
+                continue;
+            }
+            break;
         case '&': t = TOK_AND; break;
         case '[': t = TOK_LBRACKET; break;
         case ']': t = TOK_RBRACKET; break;
