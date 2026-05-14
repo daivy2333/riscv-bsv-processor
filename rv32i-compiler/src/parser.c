@@ -41,6 +41,7 @@ static ASTNode *parse_if_stmt(void);
 static ASTNode *parse_while_stmt(void);
 static ASTNode *parse_for_stmt(void);
 static ASTNode *parse_member_access(ASTNode *target);
+static ASTNode *parse_extern_decl(void);
 
 static void parse_error(int line, int col, const char *msg)
 {
@@ -1000,6 +1001,59 @@ static ASTNode *parse_global_decl(void)
     return n;
 }
 
+/* extern-decl = "extern" ("int" | "char" | "struct" Name) ["*"] identifier ["[" num "]"] ";"
+ * Extern declarations are skipped - they just declare external linkage */
+static ASTNode *parse_extern_decl(void)
+{
+    cur = cur->next; /* skip "extern" */
+
+    /* Skip type specifier: int, char, or struct Name */
+    if (cur->type == TOK_INT || cur->type == TOK_CHAR) {
+        cur = cur->next; /* skip "int" or "char" */
+    } else if (cur->type == TOK_STRUCT) {
+        cur = cur->next; /* skip "struct" */
+        if (cur->type == TOK_ID) {
+            cur = cur->next; /* skip struct name */
+        }
+    } else {
+        parse_error(cur->line, cur->col, "expected type after 'extern'");
+        return NULL;
+    }
+
+    /* Skip pointer marker */
+    if (cur->type == TOK_STAR) {
+        cur = cur->next; /* skip '*' */
+    }
+
+    /* Skip identifier */
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected identifier after 'extern'");
+        return NULL;
+    }
+    cur = cur->next; /* skip identifier */
+
+    /* Skip array size if present */
+    if (cur->type == TOK_LBRACKET) {
+        cur = cur->next; /* skip '[' */
+        if (cur->type == TOK_NUM) {
+            cur = cur->next; /* skip size */
+        }
+        if (cur->type == TOK_RBRACKET) {
+            cur = cur->next; /* skip ']' */
+        }
+    }
+
+    /* Expect semicolon */
+    if (cur->type != TOK_SEMI) {
+        parse_error(cur->line, cur->col, "expected ';' after extern declaration");
+        return NULL;
+    }
+    cur = cur->next; /* skip ';' */
+
+    /* Return NOOP - extern declarations don't generate code */
+    return ast_new(AST_NOOP);
+}
+
 /* program = (struct-def | struct-decl | global-decl | func-def)* */
 static ASTNode *parse_program(void)
 {
@@ -1037,6 +1091,10 @@ static ASTNode *parse_program(void)
             } else {
                 node = parse_global_decl();
             }
+        }
+        /* extern declaration */
+        else if (cur->type == TOK_EXTERN) {
+            node = parse_extern_decl();
         } else {
             parse_error(cur->line, cur->col, "expected declaration or function definition");
             break;
