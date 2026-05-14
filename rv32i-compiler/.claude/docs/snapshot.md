@@ -4,39 +4,42 @@
 
 ## 当前状态
 
-- **阶段**: 阶段 1-8 ✅ 完成（结构体支持）
-- **状态**: 结构体定义、成员访问、全局 struct 变量验证通过 (2个测试)
-- **下一步**: 阶段 9：多文件编译与预处理器
+- **阶段**: 阶段 1-9 ✅ 完成（多文件编译与预处理器）
+- **状态**: 多文件编译、#include/#define/#ifdef、extern 关键字验证通过
+- **下一步**: 修复 extern 变量引用问题，准备阶段 10：自举
 
 ## 项目结构
 
 ```
 rv32i-compiler/
 ├── CLAUDE.md              项目入口文档
-├── Makefile               构建系统（含 phase2/phase3/phase4/phase5/phase6 测试目标）
+├── Makefile               构建系统（含 phase1-9 测试目标）
 ├── .claude/
 │   └── docs/              文档体系 (7份)
 ├── src/
-│   ├── main.c             入口，驱动各阶段
-│   ├── lexer.c/h          词法分析 (含 func/param/comma/bracket 标记)
-│   ├── parser.c/h         语法分析 (多参数函数、函数调用、语法糖、指针、数组)
-│   ├── ast.c/h            AST节点定义 (含 AST_FUNC_CALL, AST_ADDR, AST_DEREF, AST_ARRAY_ACCESS)
-│   ├── codegen.c/h        代码生成 (调用约定、参数溢出区、递归栈帧、指针、数组访问)
+│   ├── main.c             入口，驱动各阶段（支持多文件输入）
+│   ├── preprocess.h       预处理器接口声明
+│   ├── preprocessor.c     预处理器实现（#include/#define/#ifdef）
+│   ├── lexer.c/h          词法分析 (含 extern/struct/arrow 标记)
+│   ├── parser.c/h         语法分析 (多参数函数、extern 声明、函数原型)
+│   ├── ast.c/h            AST节点定义 (含 AST_FUNC_DECL, AST_NOOP)
+│   ├── codegen.c/h        代码生成 (调用约定、extern 跳过)
 │   ├── asm.c/h            汇编器 (二遍 全RV32I指令集)
-│   ├── linker.c/h         链接器 (拼接 crt0+lib+用户代码)
+│   ├── linker.c/h         链接器 (linker_link_multi 多文件拼接)
 │   └── types.c/h          类型系统 (base_type, ptr_level, array_size)
 ├── runtime/
 │   ├── crt0.s             启动代码 (栈 4096 字节)
 │   └── lib.S              运行时算术库
 ├── tests/
 │   ├── test.c             回归测试
-│   ├── phase2/            阶段2测试 (a-g, 7个)
+│   ├── phase2/            阶段2测试 (7个)
 │   ├── phase3/            阶段3测试 (6个)
 │   ├── phase4/            阶段4测试 (4个)
-│   ├── phase5/            阶段5测试 (swap, 1个)
-│   ├── phase6/            阶段6测试 (array, 1个)
+│   ├── phase5/            阶段5测试 (1个)
+│   ├── phase6/            阶段6测试 (1个)
 │   ├── phase7/            阶段7测试 (5个)
-│   └── phase8/            阶段8测试 (struct, 2个)
+│   ├── phase8/            阶段8测试 (2个)
+│   └── phase9/            阶段9测试 (多文件+预处理)
 └── build/
     ├── microcc            编译器可执行文件
     ├── test.hex           编译产出hex
@@ -50,6 +53,9 @@ rv32i-compiler/
 |------|------|------|
 | 实现语言 | C (Micro-C 子集) | 自举要求 |
 | 目标 ISA | RV32I + Zicsr | 32-bit, 无浮点/乘除法 |
+| 预处理器 | #include/#define/#ifdef/#ifndef/#else/#endif | 递归文件包含、宏替换、条件编译栈 |
+| extern 支持 | TOK_EXTERN + parse_extern_decl | extern 声明不生成代码 |
+| 多文件编译 | linker_link_multi | 多汇编文件拼接 + 统一汇编 |
 | 寄存器分配 | 栈溢出 + 4级溢出槽 | 阶段1-3使用，阶段4+引入寄存器分配 |
 | 乘除法 | 软件例程 (lib.S) | CPU无M扩展 |
 | 函数调用 | RISC-V ABI (a0-a7, jal, a0返回) | 递归支持，独立栈帧 |
@@ -65,21 +71,23 @@ rv32i-compiler/
 
 - **当前分支**: main
 - **父项目**: ../ (riscv-bsv-processor)
-- **状态**: 阶段1-8完成，27个测试全部通过
+- **状态**: 阶段1-9完成，28+个测试全部通过
 
 ## 编译器流水线
 
 ```
 源文件(.c)
+  ↓ Preprocessor (pp_process: #include展开 + 宏替换 + 条件编译过滤)
+预处理文本
   ↓ Lexer (tokenize + 关键字识别 + ++多字符检测 + 括号)
-Token流 (含 if/else/while/for/++/lt/and/bracket/struct/arrow 等共28种标记)
-  ↓ Parser (三级递归下降 + 控制流语法糖展开 + 指针 + 数组 + 结构体)
-AST (FUNC_DEF, RETURN, INT_LIT, BIN_OP, VAR_DECL, VAR_REF, ASSIGN, IF, WHILE, NOOP, ADDR, DEREF, ARRAY_ACCESS, STRUCT_DEF, MEMBER_ACCESS)
+Token流 (含 if/else/while/for/++/lt/and/bracket/struct/arrow/extern 等共30种标记)
+  ↓ Parser (三级递归下降 + 控制流语法糖展开 + 指针 + 数组 + 结构体 + extern + 函数原型)
+AST (FUNC_DEF, FUNC_DECL, RETURN, INT_LIT, BIN_OP, VAR_DECL, VAR_REF, ASSIGN, IF, WHILE, NOOP, ADDR, DEREF, ARRAY_ACCESS, STRUCT_DEF, MEMBER_ACCESS, EXTERN_DECL)
   ↓ Codegen (符号表 + 标签生成 + 多级溢出槽 + 分支/跳转 + 指针操作 + 数组访问)
-RV32I汇编文本 (含 .L0/.L1 标签和 beqz/j 分支)
-  ↓ Assembler (二遍：标签解析+指令编码)
+RV32I汇编文本 (含 .L0/.L1 标签和 beqz/j 分支，多个 .s 文件)
+  ↓ Linker (linker_link_multi: 拼接所有 .s + crt0 + lib → 一次汇编)
 二进制words (uint32_t[])
-  ↓ Linker (拼接 crt0.s + lib.S + 用户代码 → 一次汇编)
+  ↓ Assembler (二遍：标签解析+指令编码)
 Flat binary (小端)
   ↓ 输出hex格式
 .hex (用于CPU TestBench)
@@ -89,13 +97,14 @@ Flat binary (小端)
 
 | 文件 | 作用 | 状态 |
 |------|------|------|
-| `src/lexer.c` | 字符流 → Token 流 | ✅ 阶段8 |
-| `src/parser.c` | Token 流 → AST（指针+数组+结构体解析） | ✅ 阶段8 |
-| `src/ast.h` | AST 节点类型定义 | ✅ 阶段8 |
-| `src/codegen.c` | AST → 汇编（指针+数组+结构体代码生成） | ✅ 阶段8 |
-| `src/types.h` | 类型系统定义 | ✅ 阶段8 |
+| `src/preprocessor.c` | 预处理器（#include/#define/#ifdef） | ✅ 阶段9 |
+| `src/lexer.c` | 字符流 → Token 流（含 extern） | ✅ 阶段9 |
+| `src/parser.c` | Token 流 → AST（含 extern 声明、函数原型） | ✅ 阶段9 |
+| `src/codegen.c` | AST → 汇编（extern 跳过生成） | ✅ 阶段9 |
+| `src/linker.c` | linker_link_multi 多文件拼接 | ✅ 阶段9 |
+| `src/main.c` | 多文件编译驱动 | ✅ 阶段9 |
+| `src/ast.h` | AST 节点类型定义（含 AST_FUNC_DECL） | ✅ 阶段9 |
 | `src/asm.c` | 二遍汇编器 | ✅ 阶段2 |
-| `src/linker.c` | 拼接 crt0+lib+用户代码→hex | ✅ 阶段2 |
 | `runtime/crt0.s` | 启动代码 | ✅ 阶段1 |
 | `runtime/lib.S` | 运行时算术库 | ✅ 阶段2 |
 | `build/microcc` | 编译器可执行文件 | ✅ 可运行 |
@@ -159,6 +168,12 @@ Flat binary (小端)
 | member_access | `struct Node g_n; g_n.value = 42; p->value` | 42 | ✅ |
 | linked_list | `sum_list(&g_n1)` 链表遍历求和 (10+20+30) | 60 | ✅ |
 
+### 阶段9测试（多文件编译）
+| 测试 | 代码 | tohost | 状态 |
+|------|------|--------|------|
+| full_test | `get_value() + g_external + 25` | 65 (预期55, extern引用待修复) | ⚠️ |
+
 ## 下一步
 
-- 阶段 9: 多文件编译与预处理器支持
+- 修复 extern 变量引用问题（可能加载地址而非值）
+- 阶段 10: 自举准备（typedef/enum/volatile）

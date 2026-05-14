@@ -4,119 +4,32 @@
 
 ## 进行中
 
-- （无）
+- 修复 extern 变量引用问题（阶段9遗留）
 
 ## 已完成
 
-### 阶段 1：最小可运行 ✅
+### 阶段 1-8 ✅（见 snapshot.md）
 
-- [x] 创建项目目录结构 (src/, runtime/, tests/, build/)
-- [x] 创建 Makefile 构建系统
-- [x] 实现词法分析器（int, 标识符, 数字, 括号, 花括号, return）
-- [x] 实现语法分析器（函数定义, return 语句, 整数字面量）
-- [x] 实现代码生成器（函数入口/出口, return 值放入 a0）
-- [x] 实现汇编器（RV32I 指令编码）
-- [x] 实现链接器（crt0 + 单目标文件 → flat binary → hex）
-- [x] 编写启动代码 crt0.s
-- [x] 验证: `int main() { return 42; }` → CPU tohost = 42 ✅
+### 阶段 9：多文件与预处理器 ✅
 
-### 阶段 2：算术与变量 ✅
-
-- [x] 添加变量声明 (`int x;`) 和赋值 (`x = 42;`)
-- [x] 添加加法 (`+`)、减法 (`-`)、乘法 (`*`)、除法 (`/`) 运算符
-- [x] 完善表达式解析（左结合，同级优先级）
-- [x] 汇编器升级：二遍汇编 + 标签解析 + R/B/J 型指令 + 伪指令
-- [x] 运行时库：`__mulsi3` (shift-add乘) / `__udivsi3` (减法除)
-- [x] 链接器重构：拼接 crt0 + lib + 用户代码，二遍汇编一次完成
-- [x] 验证 A-G: 7 个测试全部通过 ✅
-
-### 阶段 3：控制流 ✅
-
-- [x] 完善表达式优先级（`*/` 高于 `+-`，三级层次）
-- [x] 添加 if 语句（支持 else 可选、复合语句体、嵌套控制流）
-- [x] 添加 while 循环（条件判断 + 循环体 + 嵌套控制流）
-- [x] 添加 for 循环（语法糖展开为 while + 赋值）
-- [x] 添加 ++ 后自增操作符（语法糖展开为赋值）
-- [x] 添加 `<` 比较操作符（slt 指令）
-- [x] 支持空语句 `;`（AST_NOOP 节点）
-- [x] 表达式临时变量多级溢出槽（4 槽位栈式分配）
-- [x] 验证: `int main() { int i; for(i=0;i<3;i++); return i; }` → tohost = 3 ✅
-- [x] 验证: `int main() { return 1+2*3; }` → tohost = 7 ✅
-
-### 阶段 4：函数调用 ✅
-
-- [x] 添加多参数函数定义 (`int fib(int n) { ... }`)
-- [x] 添加函数调用表达式 (`fib(n - 1)`)
-- [x] 添加 RISC-V 调用约定 (a0-a7 传参, a0 返回值, jal ra)
-- [x] 添加传入参数溢出区（8 槽位, frame+32 字节）
-- [x] 增加 crt0.s 栈空间 (256 → 4096 字节)
-- [x] 支持递归调用（每个调用独立栈帧）
-- [x] 验证: `fib(10)` → tohost = 55 ✅
-- [x] 验证: `add(3, 5)` → tohost = 8 ✅
-- [x] 验证: `get42()` → tohost = 42 ✅
-- [x] 验证: `sum3(1, 2, 3)` → tohost = 6 ✅
-
-### 阶段 5：指针基础 ✅
-
-- [x] 添加指针类型声明 (`int *p`)
-- [x] 添加取地址操作符 (`&x`)
-- [x] 添加解引用操作符 (`*p`)
-- [x] 添加指针参数传递
-- [x] 添加函数调用语句支持
-- [x] 验证: `swap(&x, &y)` 交换两个整数 → tohost = 2 ✅
-
-### 阶段 6：数组 ✅
-
-- [x] 添加数组声明 (`int arr[n]`)
-- [x] 添加数组下标访问 (`arr[i]`)
-- [x] 添加数组地址计算
-- [x] 添加指针算术 (`p + n`)
-- [x] 修复数组访问对指针参数的处理
-- [x] 验证: `arr_sum(arr, 5)` 数组求和 → tohost = 15 ✅
-
-### 阶段 7：全局变量与字符串 ✅
-
-- [x] 添加 char 类型支持 (TYPE_CHAR)
-- [x] 添加全局变量声明（函数体外）
-- [x] 添加全局变量初始化（常量表达式）
-- [x] 添加字符串字面量 (`"hello"`)
-- [x] 添加全局符号表（与局部符号表分离）
-- [x] 添加 .data 数据段输出
-- [x] 添加 la 伪指令展开 (lui + addi)
-- [x] 添加 lb 指令（char* 解引用）
-- [x] 添加 char* 指针算术（shift 0）
-- [x] Parser 支持 char 返回类型和 char* 参数
-- [x] 汇编器修复：数据指令处理 (.data, .word, .byte, .align)
-- [x] 汇编器修复：la 地址计算（Pass 1 额外 addr）
-- [x] Codegen 修复：全局指针变量值加载
-- [x] 验证: `int g_count = 42; return g_count;` → tohost = 42 ✅
-- [x] 验证: `int g_val; g_val = 100; return g_val;` → tohost = 100 ✅
-- [x] 验证: `int g_base = 10 + 5; return g_base;` → tohost = 15 ✅
-- [x] 验证: `strlen("hello")` → tohost = 5 ✅
-- [x] 验证: `char *g_msg = "world"; strlen(g_msg)` → tohost = 5 ✅
-
-### 阶段 8：结构体 ✅
-
-- [x] 添加 struct 定义 (`struct Node { int value; struct Node* next; }`)
-- [x] 添加 struct 类型支持 (TYPE_STRUCT)
-- [x] 添加成员访问 (`.` 操作符)
-- [x] 添加指针成员访问 (`->` 操作符)
-- [x] 添加全局 struct 变量支持
-- [x] 添加 struct_table 全局结构体信息表
-- [x] 验证: `g_n.value = 42; p->value` → tohost = 42 ✅
-- [x] 验证: 链表遍历求和 `sum_list(&g_n1)` → tohost = 60 ✅
+- [x] 添加预处理器框架（pp_process 入口）
+- [x] 添加 #include "file" 文件包含（递归、循环检测）
+- [x] 添加 #define NAME VAL 常量宏替换
+- [x] 添加 #ifdef/#ifndef/#endif 条件编译栈
+- [x] 添加 #else/#elif 分支支持
+- [x] 添加 extern 关键字（Lexer TOK_EXTERN + Parser parse_extern_decl）
+- [x] 添加函数原型解析（int foo();）
+- [x] 添加多文件编译（linker_link_multi）
+- [x] 验证: 多文件编译成功，生成 hex 文件
+- ⚠️ extern 变量引用值偏差（待修复）
 
 ## 待办
 
-### 阶段 9：多文件与预处理器
-
-- [ ] 添加多文件编译链接
-- [ ] 添加 #include / #define
-- [ ] 验证: 跨文件调用 + 头文件
-
 ### 阶段 10：自举准备
 
-- [ ] 添加 typedef / enum / volatile
+- [ ] 添加 typedef 支持
+- [ ] 添加 enum 支持
+- [ ] 添加 volatile 支持
 - [ ] 验证: 编译器编译自身
 
 ## 阻塞项
@@ -125,4 +38,4 @@
 
 ## 下一步
 
-- 设计阶段 9 多文件编译和预处理器支持
+- 调查 extern 变量引用 codegen 问题

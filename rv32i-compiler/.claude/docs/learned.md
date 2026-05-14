@@ -305,3 +305,49 @@ main() sp=0x7FF0
 - [x] Parser 支持 char 返回类型和 char* 参数
 - [x] 汇编器数据指令处理
 - [x] 5 个 Phase 7 CPU 测试全部通过
+
+---
+
+## 阶段9踩坑记录
+
+| 问题 | 原因 | 解决方案 | 发现时间 |
+|------|------|----------|----------|
+| extern 变量返回错误值 (65 vs 55) | extern 解析为 AST_NOOP，未注册 globals，gen_expr 早退无代码 | 完整管道修复：AST_EXTERN_DECL节点 + globals注册(is_external=1) + la/lw生成 + emit跳过 | 2026-05-14 |
+| extern 符号名不一致 | gen_expr 用 `.global_x`，emit 用 `.global_x`，但符号表 lookup 失败 | 统一使用 `.global_` 前缀，global_is_external() 检查 | 2026-05-14 |
+| extern 变量生成 .data 定义 | emit_data_segment 无条件输出所有 globals | 添加 is_external 检查跳过 extern | 2026-05-14 |
+
+### extern 变量处理完整管道
+
+```
+Parser:
+  parse_extern_decl() → AST_EXTERN_DECL (name, var_type)
+  
+Codegen:
+  collect_globals(AST_EXTERN_DECL) → globals[i].is_external = 1
+  gen_expr(AST_VAR_REF) → global_is_external() → la + lw (.global_name)
+  emit_data_segment() → skip if globals[i].is_external
+  
+跨文件链接:
+  linker_link_multi(files) → 拼接所有 .s + crt0 + lib → asm_assemble()
+  汇编器 Pass 2 解析跨文件标签引用
+```
+
+### extern vs 全局变量对比
+
+| 类型 | AST节点 | globals注册 | .data输出 | gen_expr |
+|------|----------|-------------|-----------|----------|
+| `int g_val = 10;` | AST_GLOBAL_DECL | offset++, init_val | .global_g_val:\n.word 10 | la + lw |
+| `extern int g_val;` | AST_EXTERN_DECL | offset=-1, is_external=1 | **跳过** | la + lw (跨文件符号) |
+
+## 阶段9已完成
+
+- [x] 预处理器模块 (preprocessor.c)
+- [x] #include 文件包含（递归处理，循环包含返回空）
+- [x] #define 宏定义（简单文本替换）
+- [x] #ifdef/#ifndef/#endif 条件编译（嵌套栈）
+- [x] #else/#elif 分支
+- [x] extern 变量声明（跨文件引用）
+- [x] 函数原型声明 (AST_FUNC_DECL)
+- [x] 多文件链接 (linker_link_multi)
+- [x] 头文件支持（#include "header.h")
+- [x] 2 个 Phase 9 CPU 测试通过 (simple + full)

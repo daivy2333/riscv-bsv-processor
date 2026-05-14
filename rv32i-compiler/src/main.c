@@ -81,7 +81,7 @@ int main(int argc, char **argv)
         if (argc >= 4) crt0    = argv[3];
         if (argc >= 6) libfile = argv[5];
 
-        const char *tmpasm  = "build/_user.s";
+        const char *tmpasm  = (argc >= 5) ? argv[4] : "build/_user.s";
 
         /* 0. Preprocess */
         char *pp_content = pp_process(infile);
