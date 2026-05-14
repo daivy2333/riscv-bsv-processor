@@ -7,6 +7,9 @@
 
 #define MAX_LINES  4096
 #define MAX_LABELS 1024
+#define MAX_DATA_BYTES 4096
+
+#define BASE_ADDR 0x80000000
 
 /* Global state for la pseudo-instruction expansion */
 int la_addi_pending = 0;
@@ -14,9 +17,13 @@ int la_addi_rd = 0;
 int la_addi_imm = 0;
 
 struct AsmLine {
-    int kind;       /* 0:skip  1:label  2:instruction */
+    int kind;       /* 0:skip  1:label  2:instruction  3:data_word  4:data_bytes  5:align */
     int addr;
     char text[256];
+    int data_word_val;      /* for kind=3 */
+    int data_bytes[64];     /* for kind=4 */
+    int data_bytes_count;   /* for kind=4 */
+    int align_val;          /* for kind=5 */
 };
 
 struct Label {
@@ -25,7 +32,7 @@ struct Label {
 };
 
 /* ================================================================
- *  RV32I instruction encoding helpers (EXISTING — unchanged)
+ *  RV32I instruction encoding helpers
  * ================================================================ */
 
 static uint32_t encode_itype(int32_t imm12, int rs1, int funct3, int rd, int opcode)
@@ -48,10 +55,6 @@ static uint32_t encode_utype(int32_t imm20, int rd, int opcode)
            ((rd & 0x1F) << 7) | (opcode & 0x7F);
 }
 
-/* ================================================================
- *  NEW encoding helpers: R-type, B-type, J-type
- * ================================================================ */
-
 static uint32_t encode_rtype(int funct7, int rs2, int rs1, int funct3, int rd, int opcode)
 {
     return ((funct7 & 0x7F) << 25) | ((rs2 & 0x1F) << 20) |
@@ -59,34 +62,32 @@ static uint32_t encode_rtype(int funct7, int rs2, int rs1, int funct3, int rd, i
            ((rd & 0x1F) << 7) | (opcode & 0x7F);
 }
 
-/* B-type: [imm12|imm10:5][rs2][rs1][funct3][imm4:1|imm11][opcode=0x63] */
 static uint32_t encode_btype(int32_t offset, int rs2, int rs1, int funct3)
 {
-    uint32_t imm = (uint32_t)(offset & 0x1FFE);  /* clear bit 0, ensure even */
-    return ((imm >> 12) & 0x1)  << 31 |    /* imm[12]     */
-           ((imm >>  5) & 0x3F) << 25 |    /* imm[10:5]   */
+    uint32_t imm = (uint32_t)(offset & 0x1FFE);
+    return ((imm >> 12) & 0x1)  << 31 |
+           ((imm >>  5) & 0x3F) << 25 |
            ((rs2 & 0x1F)        << 20) |
            ((rs1 & 0x1F)        << 15) |
            ((funct3 & 0x7)      << 12) |
-           ((imm >>  1) & 0xF)  <<  8 |    /* imm[4:1]    */
-           ((imm >> 11) & 0x1)  <<  7 |    /* imm[11]     */
+           ((imm >>  1) & 0xF)  <<  8 |
+           ((imm >> 11) & 0x1)  <<  7 |
            0x63;
 }
 
-/* J-type: [imm20|imm10:1|imm11|imm19:12][rd][opcode=0x6F] */
 static uint32_t encode_jtype(int32_t offset, int rd)
 {
-    uint32_t imm = (uint32_t)(offset & 0x1FFFFE);  /* clear bit 0 */
-    return ((imm >> 20) & 0x1)   << 31 |    /* imm[20]     */
-           ((imm >>  1) & 0x3FF) << 21 |    /* imm[10:1]   */
-           ((imm >> 11) & 0x1)   << 20 |    /* imm[11]     */
-           ((imm >> 12) & 0xFF)  << 12 |    /* imm[19:12]  */
+    uint32_t imm = (uint32_t)(offset & 0x1FFFFE);
+    return ((imm >> 20) & 0x1)   << 31 |
+           ((imm >>  1) & 0x3FF) << 21 |
+           ((imm >> 11) & 0x1)   << 20 |
+           ((imm >> 12) & 0xFF)  << 12 |
            ((rd & 0x1F)          <<  7) |
            0x6F;
 }
 
 /* ================================================================
- *  Support helpers (EXISTING — unchanged)
+ *  Support helpers
  * ================================================================ */
 
 static int reg_num(const char *s)
@@ -132,10 +133,6 @@ static void trim_newline(char *line)
         line[--len] = '\0';
 }
 
-/* ================================================================
- *  NEW support helpers
- * ================================================================ */
-
 static int is_numeric_str(const char *s)
 {
     if (*s == '-') s++;
@@ -152,8 +149,35 @@ static int lookup_label(const char *name,
     return -1;
 }
 
+/* Parse .byte directive: .byte N,N,N,... */
+static int parse_byte_directive(const char *p, int *bytes, int *count)
+{
+    *count = 0;
+    p = skip_space(p);
+
+    while (*p && *count < 64) {
+        /* Parse number */
+        char num_str[32];
+        int nlen = 0;
+        while (*p && *p != ',' && *p != ' ' && *p != '\t' && nlen < 31) {
+            num_str[nlen++] = *p++;
+        }
+        num_str[nlen] = '\0';
+
+        if (nlen > 0) {
+            bytes[*count] = parse_int(num_str);
+            (*count)++;
+        }
+
+        /* Skip comma and spaces */
+        while (*p == ',' || *p == ' ' || *p == '\t') p++;
+    }
+
+    return *count > 0 ? 0 : -1;
+}
+
 /* ================================================================
- *  assemble_line — MODIFIED: new signature, all existing + new insns
+ *  assemble_line — instruction encoding
  * ================================================================ */
 
 static int assemble_line(const char *line, int current_addr,
@@ -162,20 +186,19 @@ static int assemble_line(const char *line, int current_addr,
 {
     const char *p = skip_space(line);
     if (*p == '\0' || *p == '#' || *p == ';')
-        return -1;  /* empty/comment: skip */
+        return -1;
 
-    /* Check for label FIRST (before directive check).
-     * A line like ".L1:" should be detected as a label, not skipped. */
+    /* Check for label */
     {
         const char *q = p;
         while (*q && *q != ':' && *q != ' ' && *q != '\t') q++;
-        if (*q == ':') return -1;  /* label line — handled in pass 1 */
+        if (*q == ':') return -1;
     }
 
-    /* Directive: skip */
+    /* Skip directives (handled separately) */
     if (*p == '.') return -1;
 
-    /* === parse mnemonic === */
+    /* Parse mnemonic */
     char mnemonic[16];
     int mlen = 0;
     while (*p && *p != ' ' && *p != '\t' && mlen < 15)
@@ -183,11 +206,8 @@ static int assemble_line(const char *line, int current_addr,
     mnemonic[mlen] = '\0';
     p = skip_space(p);
 
-    /* ================================================================
-     *  Pseudo-instructions (expand to real instructions)
-     * ================================================================ */
-
-    if (strcmp(mnemonic, "mv") == 0) {       /* mv rd, rs  →  addi rd, rs, 0 */
+    /* Pseudo-instructions */
+    if (strcmp(mnemonic, "mv") == 0) {
         char rd_str[16], rs_str[16];
         if (sscanf(p, "%15[^,], %15s", rd_str, rs_str) != 2) {
             *errmsg = "mv: expected rd, rs"; return 0;
@@ -197,7 +217,7 @@ static int assemble_line(const char *line, int current_addr,
         *word_out = encode_itype(0, rs, 0, rd, 0x13);
         return 1;
     }
-    if (strcmp(mnemonic, "neg") == 0) {      /* neg rd, rs  →  sub rd, x0, rs */
+    if (strcmp(mnemonic, "neg") == 0) {
         char rd_str[16], rs_str[16];
         if (sscanf(p, "%15[^,], %15s", rd_str, rs_str) != 2) {
             *errmsg = "neg: expected rd, rs"; return 0;
@@ -207,7 +227,7 @@ static int assemble_line(const char *line, int current_addr,
         *word_out = encode_rtype(0x20, rs, 0, 0, rd, 0x33);
         return 1;
     }
-    if (strcmp(mnemonic, "j") == 0) {        /* j label  →  jal x0, label */
+    if (strcmp(mnemonic, "j") == 0) {
         char offset_str[128];
         if (sscanf(p, "%127s", offset_str) != 1) {
             *errmsg = "j: expected label"; return 0;
@@ -220,10 +240,10 @@ static int assemble_line(const char *line, int current_addr,
             if (target < 0) { *errmsg = "j: undefined label"; return 0; }
             offset = target - current_addr;
         }
-        *word_out = encode_jtype(offset, 0);  /* rd = x0 */
+        *word_out = encode_jtype(offset, 0);
         return 1;
     }
-    if (strcmp(mnemonic, "beqz") == 0) {     /* beqz rs, label  →  beq rs, x0, label */
+    if (strcmp(mnemonic, "beqz") == 0) {
         char rs_str[16], offset_str[128];
         if (sscanf(p, "%15[^,], %127s", rs_str, offset_str) != 2) {
             *errmsg = "beqz: expected rs, label"; return 0;
@@ -238,10 +258,10 @@ static int assemble_line(const char *line, int current_addr,
             if (target < 0) { *errmsg = "beqz: undefined label"; return 0; }
             offset = target - current_addr;
         }
-        *word_out = encode_btype(offset, 0, rs, 0);  /* rs2=x0, funct3=0 (BEQ) */
+        *word_out = encode_btype(offset, 0, rs, 0);
         return 1;
     }
-    if (strcmp(mnemonic, "bnez") == 0) {     /* bnez rs, label  →  bne rs, x0, label */
+    if (strcmp(mnemonic, "bnez") == 0) {
         char rs_str[16], offset_str[128];
         if (sscanf(p, "%15[^,], %127s", rs_str, offset_str) != 2) {
             *errmsg = "bnez: expected rs, label"; return 0;
@@ -256,10 +276,10 @@ static int assemble_line(const char *line, int current_addr,
             if (target < 0) { *errmsg = "bnez: undefined label"; return 0; }
             offset = target - current_addr;
         }
-        *word_out = encode_btype(offset, 0, rs, 1);  /* rs2=x0, funct3=1 (BNE) */
+        *word_out = encode_btype(offset, 0, rs, 1);
         return 1;
     }
-    if (strcmp(mnemonic, "la") == 0) {       /* la rd, label  →  lui rd, upper; addi rd, rd, lower */
+    if (strcmp(mnemonic, "la") == 0) {
         char rd_str[16], label_str[128];
         if (sscanf(p, "%15[^,], %127s", rd_str, label_str) != 2) {
             *errmsg = "la: expected rd, label"; return 0;
@@ -269,12 +289,12 @@ static int assemble_line(const char *line, int current_addr,
         int target = lookup_label(label_str, labels, label_count);
         if (target < 0) { *errmsg = "la: undefined label"; return 0; }
 
-        /* la expands to: lui rd, upper_20_bits; addi rd, rd, lower_12_bits */
-        int upper = (target >> 12) & 0xFFFFF;
-        int lower = target & 0xFFF;
-        *word_out = encode_utype(upper, rd, 0x37);  /* lui */
+        /* Add base address for absolute addressing */
+        uint32_t abs_addr = (uint32_t)target + BASE_ADDR;
+        int upper = (abs_addr >> 12) & 0xFFFFF;
+        int lower = abs_addr & 0xFFF;
+        *word_out = encode_utype(upper, rd, 0x37);
 
-        /* Signal that an addi follows */
         la_addi_pending = 1;
         la_addi_rd = rd;
         la_addi_imm = lower;
@@ -282,15 +302,11 @@ static int assemble_line(const char *line, int current_addr,
         return 1;
     }
 
-    /* ================================================================
-     *  EXISTING instructions (unchanged)
-     * ================================================================ */
-
+    /* Standard instructions */
     if (strcmp(mnemonic, "addi") == 0) {
         char rd_str[16], rs1_str[16], imm_str[16];
         if (sscanf(p, "%15[^,], %15[^,], %15s", rd_str, rs1_str, imm_str) != 3) {
-            *errmsg = "addi: expected rd, rs1, imm";
-            return 0;
+            *errmsg = "addi: expected rd, rs1, imm"; return 0;
         }
         int rd = reg_num(rd_str), rs1 = reg_num(rs1_str);
         int imm = parse_int(imm_str);
@@ -302,8 +318,7 @@ static int assemble_line(const char *line, int current_addr,
         char rs2_str[16], offset_str[16], rs1_str[16];
         char lbracket[2];
         if (sscanf(p, "%15[^,], %15[^(]%1[(]%15[^)]", rs2_str, offset_str, lbracket, rs1_str) != 4) {
-            *errmsg = "sw: expected rs2, offset(rs1)";
-            return 0;
+            *errmsg = "sw: expected rs2, offset(rs1)"; return 0;
         }
         int rs2 = reg_num(rs2_str), rs1 = reg_num(rs1_str);
         int offset = parse_int(offset_str);
@@ -315,8 +330,7 @@ static int assemble_line(const char *line, int current_addr,
         char rd_str[16], offset_str[16], rs1_str[16];
         char lbracket[2];
         if (sscanf(p, "%15[^,], %15[^(]%1[(]%15[^)]", rd_str, offset_str, lbracket, rs1_str) != 4) {
-            *errmsg = "lw: expected rd, offset(rs1)";
-            return 0;
+            *errmsg = "lw: expected rd, offset(rs1)"; return 0;
         }
         int rd = reg_num(rd_str), rs1 = reg_num(rs1_str);
         int offset = parse_int(offset_str);
@@ -324,11 +338,22 @@ static int assemble_line(const char *line, int current_addr,
         *word_out = encode_itype(offset, rs1, 2, rd, 0x03);
         return 1;
     }
+    if (strcmp(mnemonic, "lb") == 0) {
+        char rd_str[16], offset_str[16], rs1_str[16];
+        char lbracket[2];
+        if (sscanf(p, "%15[^,], %15[^(]%1[(]%15[^)]", rd_str, offset_str, lbracket, rs1_str) != 4) {
+            *errmsg = "lb: expected rd, offset(rs1)"; return 0;
+        }
+        int rd = reg_num(rd_str), rs1 = reg_num(rs1_str);
+        int offset = parse_int(offset_str);
+        if (rd < 0 || rs1 < 0) { *errmsg = "lb: unknown reg"; return 0; }
+        *word_out = encode_itype(offset, rs1, 0, rd, 0x03);  /* funct3=0 for lb */
+        return 1;
+    }
     if (strcmp(mnemonic, "li") == 0) {
         char rd_str[16], imm_str[16];
         if (sscanf(p, "%15[^,], %15s", rd_str, imm_str) != 2) {
-            *errmsg = "li: expected rd, imm";
-            return 0;
+            *errmsg = "li: expected rd, imm"; return 0;
         }
         int rd = reg_num(rd_str);
         int imm = parse_int(imm_str);
@@ -339,8 +364,7 @@ static int assemble_line(const char *line, int current_addr,
     if (strcmp(mnemonic, "jalr") == 0) {
         char rd_str[16], rs1_str[16], imm_str[16];
         if (sscanf(p, "%15[^,], %15[^,], %15s", rd_str, rs1_str, imm_str) != 3) {
-            *errmsg = "jalr: expected rd, rs1, imm";
-            return 0;
+            *errmsg = "jalr: expected rd, rs1, imm"; return 0;
         }
         int rd = reg_num(rd_str), rs1 = reg_num(rs1_str);
         int imm = parse_int(imm_str);
@@ -349,14 +373,13 @@ static int assemble_line(const char *line, int current_addr,
         return 1;
     }
     if (strcmp(mnemonic, "ret") == 0) {
-        *word_out = encode_itype(0, 1, 0, 0, 0x67); /* jalr x0, x1, 0 */
+        *word_out = encode_itype(0, 1, 0, 0, 0x67);
         return 1;
     }
     if (strcmp(mnemonic, "lui") == 0) {
         char rd_str[16], imm_str[16];
         if (sscanf(p, "%15[^,], %15s", rd_str, imm_str) != 2) {
-            *errmsg = "lui: expected rd, imm";
-            return 0;
+            *errmsg = "lui: expected rd, imm"; return 0;
         }
         int rd = reg_num(rd_str);
         int imm = parse_int(imm_str);
@@ -367,8 +390,7 @@ static int assemble_line(const char *line, int current_addr,
     if (strcmp(mnemonic, "auipc") == 0) {
         char rd_str[16], imm_str[16];
         if (sscanf(p, "%15[^,], %15s", rd_str, imm_str) != 2) {
-            *errmsg = "auipc: expected rd, imm";
-            return 0;
+            *errmsg = "auipc: expected rd, imm"; return 0;
         }
         int rd = reg_num(rd_str);
         int imm = parse_int(imm_str);
@@ -377,10 +399,7 @@ static int assemble_line(const char *line, int current_addr,
         return 1;
     }
 
-    /* ================================================================
-     *  NEW R-type instructions
-     * ================================================================ */
-
+    /* R-type */
     if (strcmp(mnemonic, "add") == 0) {
         char rd_str[16], rs1_str[16], rs2_str[16];
         if (sscanf(p, "%15[^,], %15[^,], %15s", rd_str, rs1_str, rs2_str) != 3) {
@@ -482,10 +501,7 @@ static int assemble_line(const char *line, int current_addr,
         return 1;
     }
 
-    /* ================================================================
-     *  NEW I-type shift instructions (shamt in imm, funct7 in upper imm)
-     * ================================================================ */
-
+    /* I-type shift */
     if (strcmp(mnemonic, "slli") == 0) {
         char rd_str[16], rs1_str[16], imm_str[16];
         if (sscanf(p, "%15[^,], %15[^,], %15s", rd_str, rs1_str, imm_str) != 3) {
@@ -520,10 +536,7 @@ static int assemble_line(const char *line, int current_addr,
         return 1;
     }
 
-    /* ================================================================
-     *  NEW I-type ALU instructions
-     * ================================================================ */
-
+    /* I-type ALU */
     if (strcmp(mnemonic, "andi") == 0) {
         char rd_str[16], rs1_str[16], imm_str[16];
         if (sscanf(p, "%15[^,], %15[^,], %15s", rd_str, rs1_str, imm_str) != 3) {
@@ -580,10 +593,7 @@ static int assemble_line(const char *line, int current_addr,
         return 1;
     }
 
-    /* ================================================================
-     *  NEW B-type instructions
-     * ================================================================ */
-
+    /* B-type */
     if (strcmp(mnemonic, "beq") == 0) {
         char rs1_str[16], rs2_str[16], offset_str[128];
         if (sscanf(p, "%15[^,], %15[^,], %127s", rs1_str, rs2_str, offset_str) != 3) {
@@ -693,10 +703,7 @@ static int assemble_line(const char *line, int current_addr,
         return 1;
     }
 
-    /* ================================================================
-     *  NEW J-type instruction
-     * ================================================================ */
-
+    /* J-type */
     if (strcmp(mnemonic, "jal") == 0) {
         char rd_str[16], offset_str[128];
         if (sscanf(p, "%15[^,], %127s", rd_str, offset_str) != 2) {
@@ -721,7 +728,7 @@ static int assemble_line(const char *line, int current_addr,
 }
 
 /* ================================================================
- *  asm_assemble — REWRITTEN for two-pass assembly
+ *  asm_assemble — two-pass with data directive support
  * ================================================================ */
 
 int asm_assemble(const char *input, uint32_t **out_words, size_t *out_count)
@@ -737,14 +744,15 @@ int asm_assemble(const char *input, uint32_t **out_words, size_t *out_count)
     int label_count = 0;
     int has_error   = 0;
 
-    /* Reset la expansion state */
     la_addi_pending = 0;
 
     /* ================================================================
-     *  PASS 1 — collect lines and labels
+     *  PASS 1 — collect lines, labels, and data directives
      * ================================================================ */
 
     int addr = 0;
+    int in_data_section = 0;
+
     {
         char *saveptr;
         char *line_text = strtok_r(src, "\n", &saveptr);
@@ -761,51 +769,138 @@ int asm_assemble(const char *input, uint32_t **out_words, size_t *out_count)
                 end--;
             *(end + 1) = '\0';
 
-            /* Classification */
-            {
-                const char *p = skip_space(buf);
-                if (p[0] == '\0' || p[0] == '#' || p[0] == ';') {
-                    /* empty / comment → skip */
-                    lines[line_count].kind = 0;
-                    lines[line_count].addr = addr;
-                    { size_t slen = strlen(buf); if (slen > 255) slen = 255; memcpy(lines[line_count].text, buf, slen); lines[line_count].text[slen] = '\0'; }
-                    line_count++;
-                } else if (end >= buf && *end == ':') {
-                /* LABEL — ends with ':' (checked BEFORE directive prefix) */
-                *end = '\0';  /* strip the colon */
-                const char *label_name = skip_space(buf);  /* strip leading whitespace */
+            const char *p = skip_space(buf);
+
+            /* Empty/comment */
+            if (p[0] == '\0' || p[0] == '#' || p[0] == ';') {
+                lines[line_count].kind = 0;
+                lines[line_count].addr = addr;
+                strncpy(lines[line_count].text, buf, 255);
+                lines[line_count].text[255] = '\0';
+                line_count++;
+                line_text = strtok_r(NULL, "\n", &saveptr);
+                continue;
+            }
+
+            /* Label */
+            if (end >= buf && *end == ':') {
+                *end = '\0';
+                const char *label_name = skip_space(buf);
                 if (label_count < MAX_LABELS) {
-                    { size_t slen = strlen(label_name); if (slen > 127) slen = 127; memcpy(labels[label_count].name, label_name, slen); labels[label_count].name[slen] = '\0'; }
+                    strncpy(labels[label_count].name, label_name, 127);
+                    labels[label_count].name[127] = '\0';
                     labels[label_count].addr = addr;
                     label_count++;
                 }
                 lines[line_count].kind = 1;
                 lines[line_count].addr = addr;
-                { size_t slen = strlen(buf); if (slen > 255) slen = 255; memcpy(lines[line_count].text, buf, slen); lines[line_count].text[slen] = '\0'; }
+                strncpy(lines[line_count].text, buf, 255);
+                lines[line_count].text[255] = '\0';
                 line_count++;
-                /* Labels don't advance addr */
-            } else if (skip_space(buf)[0] == '.') {
-                /* Directive → skip */
-                lines[line_count].kind = 0;
-                lines[line_count].addr = addr;
-                { size_t slen = strlen(buf); if (slen > 255) slen = 255; memcpy(lines[line_count].text, buf, slen); lines[line_count].text[slen] = '\0'; }
-                line_count++;
-            } else {
-                /* Instruction */
-                lines[line_count].kind = 2;
-                lines[line_count].addr = addr;
-                { size_t slen = strlen(buf); if (slen > 255) slen = 255; memcpy(lines[line_count].text, buf, slen); lines[line_count].text[slen] = '\0'; }
-                line_count++;
-                addr += 4;
-             }
+                line_text = strtok_r(NULL, "\n", &saveptr);
+                continue;
             }
 
-             line_text = strtok_r(NULL, "\n", &saveptr);
+            /* Directive */
+            if (p[0] == '.') {
+                /* Parse directive name */
+                char directive[16];
+                int dlen = 0;
+                const char *d = p + 1;
+                while (*d && *d != ' ' && *d != '\t' && dlen < 15) {
+                    directive[dlen++] = *d++;
+                }
+                directive[dlen] = '\0';
+
+                if (strcmp(directive, "text") == 0 || strcmp(directive, "globl") == 0) {
+                    /* .text or .globl - just skip */
+                    lines[line_count].kind = 0;
+                    lines[line_count].addr = addr;
+                    strncpy(lines[line_count].text, buf, 255);
+                    lines[line_count].text[255] = '\0';
+                    line_count++;
+                }
+                else if (strcmp(directive, "data") == 0) {
+                    /* .data - switch to data section */
+                    in_data_section = 1;
+                    lines[line_count].kind = 0;
+                    lines[line_count].addr = addr;
+                    strncpy(lines[line_count].text, buf, 255);
+                    lines[line_count].text[255] = '\0';
+                    line_count++;
+                }
+                else if (strcmp(directive, "word") == 0) {
+                    /* .word N - emit 4 bytes */
+                    const char *rest = skip_space(d);
+                    int val = parse_int(rest);
+                    lines[line_count].kind = 3;  /* data_word */
+                    lines[line_count].addr = addr;
+                    lines[line_count].data_word_val = val;
+                    strncpy(lines[line_count].text, buf, 255);
+                    lines[line_count].text[255] = '\0';
+                    line_count++;
+                    addr += 4;
+                }
+                else if (strcmp(directive, "byte") == 0) {
+                    /* .byte N,N,N,... */
+                    const char *rest = skip_space(d);
+                    int bytes[64], count;
+                    parse_byte_directive(rest, bytes, &count);
+                    lines[line_count].kind = 4;  /* data_bytes */
+                    lines[line_count].addr = addr;
+                    memcpy(lines[line_count].data_bytes, bytes, count * sizeof(int));
+                    lines[line_count].data_bytes_count = count;
+                    strncpy(lines[line_count].text, buf, 255);
+                    lines[line_count].text[255] = '\0';
+                    line_count++;
+                    addr += count;
+                }
+                else if (strcmp(directive, "align") == 0) {
+                    /* .align N - pad to alignment */
+                    const char *rest = skip_space(d);
+                    int align_val = parse_int(rest);
+                    int align_bytes = 1 << align_val;  /* .align 4 = 16 bytes */
+                    int pad = (align_bytes - (addr % align_bytes)) % align_bytes;
+                    lines[line_count].kind = 5;  /* align */
+                    lines[line_count].addr = addr;
+                    lines[line_count].align_val = pad;
+                    strncpy(lines[line_count].text, buf, 255);
+                    lines[line_count].text[255] = '\0';
+                    line_count++;
+                    addr += pad;
+                }
+                else {
+                    /* Unknown directive - skip */
+                    lines[line_count].kind = 0;
+                    lines[line_count].addr = addr;
+                    strncpy(lines[line_count].text, buf, 255);
+                    lines[line_count].text[255] = '\0';
+                    line_count++;
+                }
+                line_text = strtok_r(NULL, "\n", &saveptr);
+                continue;
+            }
+
+            /* Instruction */
+            lines[line_count].kind = 2;
+            lines[line_count].addr = addr;
+            strncpy(lines[line_count].text, buf, 255);
+            lines[line_count].text[255] = '\0';
+            line_count++;
+            addr += 4;
+
+            /* la pseudo-instruction expands to 2 instructions (lui + addi) */
+            const char *inst_ptr = skip_space(buf);
+            if (strncmp(inst_ptr, "la ", 3) == 0 || strncmp(inst_ptr, "la\t", 3) == 0) {
+                addr += 4;  /* extra 4 bytes for addi */
+            }
+
+            line_text = strtok_r(NULL, "\n", &saveptr);
         }
     }
 
     /* ================================================================
-     *  PASS 2 — assemble with label resolution
+     *  PASS 2 — assemble and emit
      * ================================================================ */
 
     size_t cap = 256;
@@ -813,42 +908,81 @@ int asm_assemble(const char *input, uint32_t **out_words, size_t *out_count)
     size_t count = 0;
     const char *errmsg = NULL;
 
-    addr = 0;  /* reset address counter for pass 2 */
+    addr = 0;
 
     for (int i = 0; i < line_count; i++) {
         if (lines[i].kind == 0) continue;  /* skip */
         if (lines[i].kind == 1) continue;  /* label */
 
-        /* kind == 2: instruction */
-        uint32_t w;
-        int rc = assemble_line(lines[i].text, addr,
-                               labels, label_count,
-                               &w, &errmsg);
-        if (rc == 1) {
-            if (count >= cap) {
-                cap *= 2;
-                words = realloc(words, cap * sizeof(uint32_t));
-            }
-            words[count++] = w;
-            addr += 4;
-
-            /* Handle pending la addi */
-            if (la_addi_pending) {
-                la_addi_pending = 0;
-                uint32_t addi_w = encode_itype(la_addi_imm, la_addi_rd, 0, la_addi_rd, 0x13);
+        if (lines[i].kind == 2) {
+            /* Instruction */
+            uint32_t w;
+            int rc = assemble_line(lines[i].text, addr,
+                                   labels, label_count,
+                                   &w, &errmsg);
+            if (rc == 1) {
                 if (count >= cap) {
                     cap *= 2;
                     words = realloc(words, cap * sizeof(uint32_t));
                 }
-                words[count++] = addi_w;
+                words[count++] = w;
+                addr += 4;
+
+                if (la_addi_pending) {
+                    la_addi_pending = 0;
+                    uint32_t addi_w = encode_itype(la_addi_imm, la_addi_rd, 0, la_addi_rd, 0x13);
+                    if (count >= cap) {
+                        cap *= 2;
+                        words = realloc(words, cap * sizeof(uint32_t));
+                    }
+                    words[count++] = addi_w;
+                    addr += 4;
+                }
+            } else if (rc == 0) {
+                fprintf(stderr, "asm error at addr 0x%x: %s\n  %s\n",
+                        addr, errmsg, lines[i].text);
+                has_error = 1;
+            }
+        }
+        else if (lines[i].kind == 3) {
+            /* .word */
+            if (count >= cap) {
+                cap *= 2;
+                words = realloc(words, cap * sizeof(uint32_t));
+            }
+            words[count++] = (uint32_t)lines[i].data_word_val;
+            addr += 4;
+        }
+        else if (lines[i].kind == 4) {
+            /* .byte N,N,N,... - pack into words */
+            int byte_idx = 0;
+            while (byte_idx < lines[i].data_bytes_count) {
+                /* Pack 4 bytes into one word (little-endian) */
+                uint32_t w = 0;
+                for (int j = 0; j < 4 && byte_idx < lines[i].data_bytes_count; j++) {
+                    w |= ((uint32_t)(lines[i].data_bytes[byte_idx] & 0xFF)) << (j * 8);
+                    byte_idx++;
+                }
+                if (count >= cap) {
+                    cap *= 2;
+                    words = realloc(words, cap * sizeof(uint32_t));
+                }
+                words[count++] = w;
                 addr += 4;
             }
-        } else if (rc == 0) {
-            fprintf(stderr, "asm error at addr 0x%x: %s\n  %s\n",
-                    addr, errmsg, lines[i].text);
-            has_error = 1;
         }
-        /* rc == -1: shouldn't happen in pass 2, but skip silently */
+        else if (lines[i].kind == 5) {
+            /* .align - pad with zero words */
+            int pad_words = lines[i].align_val / 4;
+            for (int pw = 0; pw < pad_words; pw++) {
+                if (count >= cap) {
+                    cap *= 2;
+                    words = realloc(words, cap * sizeof(uint32_t));
+                }
+                words[count++] = 0;
+                addr += 4;
+            }
+        }
     }
 
     free(src);
@@ -858,14 +992,10 @@ int asm_assemble(const char *input, uint32_t **out_words, size_t *out_count)
         return 1;
     }
 
-    *out_words  = words;
-    *out_count  = count;
+    *out_words = words;
+    *out_count = count;
     return 0;
 }
-
-/* ================================================================
- *  asm_free_words (EXISTING — unchanged)
- * ================================================================ */
 
 void asm_free_words(uint32_t *words)
 {

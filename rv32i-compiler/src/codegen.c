@@ -330,10 +330,11 @@ static void gen_expr(ASTNode *n)
             /* Global variable - use la instruction */
             emit("    la t0, .global_%s\n", n->name);
             Type t = global_lookup_type(n->name);
-            if (!type_is_array(t) && !type_is_ptr(t)) {
+            if (!type_is_array(t)) {
+                /* For non-array (int, int*, char*, etc.), load the value */
                 emit("    lw t0, 0(t0)\n");  /* load value */
             }
-            /* For array/pointer, t0 already holds address */
+            /* For array, t0 already holds address */
         } else {
             /* Local variable */
             int off = sym_lookup(n->name);
@@ -393,6 +394,7 @@ static void gen_expr(ASTNode *n)
     case AST_BIN_OP: {
         /* Check if left operand is pointer (for arithmetic) */
         int is_ptr_left = 0;
+        BaseType ptr_base_type = TYPE_INT;  /* default: int pointer */
         if (n->left->type == AST_VAR_REF) {
             int global_off = global_lookup(n->left->name);
             Type left_type;
@@ -402,8 +404,21 @@ static void gen_expr(ASTNode *n)
                 left_type = sym_lookup_type(n->left->name);
             }
             is_ptr_left = type_is_array(left_type) || type_is_ptr(left_type);
+            if (is_ptr_left) {
+                ptr_base_type = left_type.base_type;  /* capture base type for pointer arithmetic */
+            }
         } else if (n->left->type == AST_ADDR) {
             is_ptr_left = 1;
+            /* For &expr, the pointer base type is the type of expr */
+            if (n->left->left && n->left->left->type == AST_VAR_REF) {
+                Type expr_type;
+                int global_off = global_lookup(n->left->left->name);
+                if (global_off >= 0)
+                    expr_type = global_lookup_type(n->left->left->name);
+                else
+                    expr_type = sym_lookup_type(n->left->left->name);
+                ptr_base_type = expr_type.base_type;
+            }
         }
 
         gen_expr(n->left);
@@ -417,8 +432,13 @@ static void gen_expr(ASTNode *n)
 
         if (n->op == TOK_PLUS) {
             if (is_ptr_left) {
-                /* Pointer arithmetic: p + n → p + n*4 */
-                emit("    slli t1, t1, 2\n");  /* t1 = n * 4 */
+                /* Pointer arithmetic: p + n → p + n*sizeof(*p) */
+                if (ptr_base_type == TYPE_CHAR) {
+                    /* char* arithmetic: no shift needed (sizeof(char) = 1) */
+                } else {
+                    /* int* arithmetic: shift by 2 (sizeof(int) = 4) */
+                    emit("    slli t1, t1, 2\n");  /* t1 = n * 4 */
+                }
             }
             emit("    add t0, t0, t1\n");
         } else if (n->op == TOK_MINUS)
@@ -482,7 +502,26 @@ static void gen_expr(ASTNode *n)
     case AST_DEREF: {
         /* *p → load from address computed by p */
         gen_expr(n->left);  /* Evaluate pointer expression, result in t0 */
-        emit("    lw t0, 0(t0)\n");  /* t0 = *t0 (load from address) */
+
+        /* Determine load width based on dereferenced pointer type */
+        Type ptr_type;
+        if (n->left->type == AST_VAR_REF) {
+            int global_off = global_lookup(n->left->name);
+            if (global_off >= 0)
+                ptr_type = global_lookup_type(n->left->name);
+            else
+                ptr_type = sym_lookup_type(n->left->name);
+        } else {
+            ptr_type = type_make_int_ptr();  /* default assumption */
+        }
+
+        if (ptr_type.ptr_level > 0 && ptr_type.base_type == TYPE_CHAR) {
+            /* char* dereference → load byte */
+            emit("    lb t0, 0(t0)\n");  /* t0 = (signed char)*t0 */
+        } else {
+            /* int* or other → load word */
+            emit("    lw t0, 0(t0)\n");  /* t0 = *t0 (load from address) */
+        }
         break;
     }
 

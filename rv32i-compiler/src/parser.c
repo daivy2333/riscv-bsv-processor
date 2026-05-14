@@ -574,23 +574,49 @@ static ASTNode *parse_compound(void)
 /* func-def = "int" identifier "(" [param-list] ")" compound-stmt */
 static ASTNode *parse_func_def(void)
 {
-    expect(TOK_INT);
+    /* Support int and char return types */
+    Type ret_type;
+    if (cur->type == TOK_INT) {
+        ret_type = type_make_int();
+        cur = cur->next; /* skip "int" */
+    } else if (cur->type == TOK_CHAR) {
+        ret_type = type_make_char();
+        cur = cur->next; /* skip "char" */
+    } else {
+        parse_error(cur->line, cur->col, "expected 'int' or 'char' for function return type");
+        return NULL;
+    }
+
     ASTNode *n = ast_new(AST_FUNC_DEF);
     n->func_name = strdup(cur->text);
     cur = cur->next; /* skip identifier */
     expect(TOK_LPAREN);
-    /* Parse parameter list: (int name, int name, ...) OR (int *name, ...) */
+    /* Parse parameter list: (int name, int name, ...) OR (char *name, ...) */
     ASTNode *params = NULL, *tail = NULL;
     if (cur->type != TOK_RPAREN) {
         do {
             if (cur->type == TOK_COMMA)
                 cur = cur->next;
-            expect(TOK_INT);
 
-            /* Check for pointer parameter: int *p */
-            Type param_type = type_make_int();
+            /* Support int and char parameter types */
+            Type param_type;
+            if (cur->type == TOK_INT) {
+                param_type = type_make_int();
+                cur = cur->next; /* skip "int" */
+            } else if (cur->type == TOK_CHAR) {
+                param_type = type_make_char();
+                cur = cur->next; /* skip "char" */
+            } else {
+                parse_error(cur->line, cur->col, "expected 'int' or 'char' for parameter type");
+                break;
+            }
+
+            /* Check for pointer parameter: int *p or char *s */
             if (cur->type == TOK_STAR) {
-                param_type = type_make_int_ptr();
+                if (param_type.base_type == TYPE_INT)
+                    param_type = type_make_int_ptr();
+                else if (param_type.base_type == TYPE_CHAR)
+                    param_type = type_make_char_ptr();
                 cur = cur->next; /* skip '*' */
             }
 
