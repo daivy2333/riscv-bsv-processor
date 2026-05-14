@@ -7,11 +7,11 @@ TSTDIR   = tests
 
 SRCS = $(SRCDIR)/main.c $(SRCDIR)/lexer.c $(SRCDIR)/parser.c \
        $(SRCDIR)/codegen.c $(SRCDIR)/asm.c $(SRCDIR)/linker.c \
-       $(SRCDIR)/ast.c $(SRCDIR)/types.c
+       $(SRCDIR)/ast.c $(SRCDIR)/types.c $(SRCDIR)/preprocessor.c
 
 OBJS = $(BUILDDIR)/main.o $(BUILDDIR)/lexer.o $(BUILDDIR)/parser.o \
        $(BUILDDIR)/codegen.o $(BUILDDIR)/asm.o $(BUILDDIR)/linker.o \
-       $(BUILDDIR)/ast.o $(BUILDDIR)/types.o
+       $(BUILDDIR)/ast.o $(BUILDDIR)/types.o $(BUILDDIR)/preprocessor.o
 
 .PHONY: all test clean test-phase2 test-phase2-a test-phase2-b test-phase2-c \
         test-phase2-d test-phase2-e test-phase2-f test-phase2-g \
