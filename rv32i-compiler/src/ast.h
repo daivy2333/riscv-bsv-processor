@@ -20,7 +20,9 @@ typedef enum {
     AST_FUNC_CALL,    /* .name=func name, .left=args chain via .next */
     AST_ADDR,         /* address-of operator (&x) */
     AST_DEREF,        /* dereference operator (*p) */
-    AST_ARRAY_ACCESS  /* array subscript arr[i] */
+    AST_ARRAY_ACCESS, /* array subscript arr[i] */
+    AST_STRUCT_DEF,   /* struct definition statement */
+    AST_MEMBER_ACCESS /* member access expression p->member or n.member */
 } ASTNodeType;
 
 /* Generic AST node */
@@ -47,6 +49,14 @@ typedef struct ASTNode {
     /* NEW: string literal fields */
     char *str_val;         /* for STRING_LIT: string content / GLOBAL_DECL: string initializer */
     int   str_label;       /* for STRING_LIT: assigned label index */
+    /* for AST_STRUCT_DEF */
+    char *struct_name;     /* struct name */
+    struct ASTNode *members; /* member chain (each member is AST_VAR_DECL) */
+    int struct_id;         /* registered struct ID */
+    /* for AST_MEMBER_ACCESS */
+    struct ASTNode *target_expr; /* target expression (p or n) */
+    char *member_name;     /* member name */
+    int is_arrow;          /* 1=p->member, 0=n.member */
     struct ASTNode *next;  /* linked-list chain for statements */
 } ASTNode;
 
