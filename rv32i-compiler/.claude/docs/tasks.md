@@ -4,7 +4,7 @@
 
 ## 进行中
 
-- 阶段 8：结构体支持（待设计）
+- （无）
 
 ## 已完成
 
@@ -95,13 +95,18 @@
 - [x] 验证: `strlen("hello")` → tohost = 5 ✅
 - [x] 验证: `char *g_msg = "world"; strlen(g_msg)` → tohost = 5 ✅
 
+### 阶段 8：结构体 ✅
+
+- [x] 添加 struct 定义 (`struct Node { int value; struct Node* next; }`)
+- [x] 添加 struct 类型支持 (TYPE_STRUCT)
+- [x] 添加成员访问 (`.` 操作符)
+- [x] 添加指针成员访问 (`->` 操作符)
+- [x] 添加全局 struct 变量支持
+- [x] 添加 struct_table 全局结构体信息表
+- [x] 验证: `g_n.value = 42; p->value` → tohost = 42 ✅
+- [x] 验证: 链表遍历求和 `sum_list(&g_n1)` → tohost = 60 ✅
+
 ## 待办
-
-### 阶段 8：结构体
-
-- [ ] 添加 struct 定义
-- [ ] 添加成员访问 (`s.field`, `p->field`)
-- [ ] 验证: 链表节点创建和遍历
 
 ### 阶段 9：多文件与预处理器
 
@@ -120,4 +125,4 @@
 
 ## 下一步
 
-- 设计阶段 8 结构体支持的类型系统和成员访问机制
+- 设计阶段 9 多文件编译和预处理器支持

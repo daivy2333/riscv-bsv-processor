@@ -21,7 +21,8 @@ OBJS = $(BUILDDIR)/main.o $(BUILDDIR)/lexer.o $(BUILDDIR)/parser.o \
         test-phase5 test-phase5-swap \
         test-phase6 test-phase6-array \
         test-phase7 test-phase7-global-int test-phase7-global-write \
-        test-phase7-global-expr test-phase7-string-arg test-phase7-string-assign
+        test-phase7-global-expr test-phase7-string-arg test-phase7-string-assign \
+        test-phase8 test-phase8-member-access test-phase8-linked-list
 
 all: $(BUILDDIR)/microcc
 
@@ -194,6 +195,23 @@ test-phase7-string-assign: build/phase7_string_assign.hex
 test-phase7: test-phase7-global-int test-phase7-global-write test-phase7-global-expr \
              test-phase7-string-arg test-phase7-string-assign
 	@echo "=== All Phase 7 tests done ==="
+
+# ----- Phase 8 test hex targets -----
+HEX8 = build/phase8_test1_member_access.hex build/phase8_test2_linked_list.hex
+
+$(HEX8): build/phase8_test%.hex: tests/phase8/test%.c $(BUILDDIR)/microcc $(RTDIR)/crt0.s $(RTDIR)/lib.S
+	@mkdir -p $(BUILDDIR)
+	./$(BUILDDIR)/microcc $< $@ $(RTDIR)/crt0.s $(BUILDDIR)/_phase8_$*.s $(RTDIR)/lib.S
+
+# ----- Phase 8 test execution targets -----
+test-phase8-member-access: build/phase8_test1_member_access.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x0000002a" && echo "✓ PASSED (tohost=42)" || echo "✗ FAILED (expected tohost=42)"
+
+test-phase8-linked-list: build/phase8_test2_linked_list.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x0000003c" && echo "✓ PASSED (tohost=60)" || echo "✗ FAILED (expected tohost=60)"
+
+test-phase8: test-phase8-member-access test-phase8-linked-list
+	@echo "=== All Phase 8 tests done ==="
 
 clean:
 	rm -rf $(BUILDDIR)
