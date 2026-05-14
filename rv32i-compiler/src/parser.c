@@ -40,6 +40,7 @@ static ASTNode *parse_compound(void);
 static ASTNode *parse_if_stmt(void);
 static ASTNode *parse_while_stmt(void);
 static ASTNode *parse_for_stmt(void);
+static ASTNode *parse_member_access(ASTNode *target);
 
 static void parse_error(int line, int col, const char *msg)
 {
@@ -126,6 +127,12 @@ static ASTNode *parse_primary(void)
             n->name = name;
             n->array_index = index;
             return n;
+        }
+        /* 成员访问: p->member 或 n.member */
+        if (cur->type == TOK_ARROW || cur->type == TOK_DOT) {
+            ASTNode *ref = ast_new(AST_VAR_REF);
+            ref->name = name;
+            return parse_member_access(ref);
         }
         /* Variable reference */
         ASTNode *n = ast_new(AST_VAR_REF);
@@ -219,20 +226,35 @@ static ASTNode *parse_return(void)
     return n;
 }
 
-/* var-decl = "int" ["*"] identifier ["[" number "]"] ["=" expr] ";" */
+/* var-decl = ("int" | "char") ["*"] identifier ["[" number "]"] ["=" expr] ";"
+ *           | struct Name ["*"] identifier ";"  (handled by parse_struct_decl) */
 static ASTNode *parse_var_decl(void)
 {
-    cur = cur->next; /* skip "int" */
+    /* 支持 int, char 类型；struct 类型由 parse_struct_decl 处理 */
+    Type var_type;
 
-    /* Check for pointer declaration: int *p */
-    Type var_type = type_make_int();
+    if (cur->type == TOK_INT) {
+        var_type = type_make_int();
+        cur = cur->next;
+    } else if (cur->type == TOK_CHAR) {
+        var_type = type_make_char();
+        cur = cur->next;
+    } else {
+        parse_error(cur->line, cur->col, "expected type (int/char)");
+        return NULL;
+    }
+
+    /* 指针声明检查 */
     if (cur->type == TOK_STAR) {
-        var_type = type_make_int_ptr();
-        cur = cur->next; /* skip '*' */
+        if (var_type.base_type == TYPE_INT)
+            var_type = type_make_int_ptr();
+        else if (var_type.base_type == TYPE_CHAR)
+            var_type = type_make_char_ptr();
+        cur = cur->next;
     }
 
     if (cur->type != TOK_ID) {
-        parse_error(cur->line, cur->col, "expected identifier after 'int'");
+        parse_error(cur->line, cur->col, "expected identifier");
         return NULL;
     }
     ASTNode *n = ast_new(AST_VAR_DECL);
@@ -247,7 +269,10 @@ static ASTNode *parse_var_decl(void)
             return NULL;
         }
         int size = atoi(cur->text);
-        var_type = type_make_array(size);
+        if (var_type.base_type == TYPE_INT)
+            var_type = type_make_array(size);
+        else if (var_type.base_type == TYPE_CHAR)
+            var_type = type_make_char_array(size);
         cur = cur->next; /* skip size */
         if (cur->type != TOK_RBRACKET) {
             parse_error(cur->line, cur->col, "expected ']' after array size");
@@ -406,6 +431,26 @@ static ASTNode *parse_struct_decl(int is_global)
     n->is_global = is_global;
     cur = cur->next;
     expect(TOK_SEMI);
+
+    return n;
+}
+
+/* 成员访问: p->member 或 n.member */
+static ASTNode *parse_member_access(ASTNode *target)
+{
+    int is_arrow = (cur->type == TOK_ARROW);
+    cur = cur->next;  /* skip "->" or "." */
+
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected member name");
+        return NULL;
+    }
+
+    ASTNode *n = ast_new(AST_MEMBER_ACCESS);
+    n->target_expr = target;
+    n->member_name = strdup(cur->text);
+    n->is_arrow = is_arrow;
+    cur = cur->next;
 
     return n;
 }
@@ -661,8 +706,10 @@ static ASTNode *parse_stmt(void)
         return parse_for_stmt();
     if (cur->type == TOK_RETURN)
         return parse_return();
-    if (cur->type == TOK_INT)
+    if (cur->type == TOK_INT || cur->type == TOK_CHAR)
         return parse_var_decl();
+    if (cur->type == TOK_STRUCT)
+        return parse_struct_decl(0);  /* is_global=0, 局部变量 */
     /* Dereference assignment: *p = expr */
     if (cur->type == TOK_STAR)
         return parse_assign();
@@ -878,7 +925,7 @@ static ASTNode *parse_global_decl(void)
     return n;
 }
 
-/* program = (global-decl | func-def)* */
+/* program = (struct-def | struct-decl | global-decl | func-def)* */
 static ASTNode *parse_program(void)
 {
     ASTNode dummy = {0};
@@ -887,8 +934,17 @@ static ASTNode *parse_program(void)
     while (cur->type != TOK_EOF) {
         ASTNode *node = NULL;
 
-        /* Check if this is a global declaration or function definition */
-        if (cur->type == TOK_INT || cur->type == TOK_CHAR) {
+        /* struct 定义: struct Name { ... }; */
+        if (cur->type == TOK_STRUCT && cur->next && cur->next->next &&
+            cur->next->next->type == TOK_LBRACE) {
+            node = parse_struct_def();
+        }
+        /* struct 全局声明: struct Name* var; 或 struct Name var; */
+        else if (cur->type == TOK_STRUCT) {
+            node = parse_struct_decl(1);  /* is_global=1 */
+        }
+        /* 函数定义或 int/char 全局声明 */
+        else if (cur->type == TOK_INT || cur->type == TOK_CHAR) {
             /* Look ahead to distinguish global decl from func def */
             Token *next = cur->next;
             int is_func = 0;
