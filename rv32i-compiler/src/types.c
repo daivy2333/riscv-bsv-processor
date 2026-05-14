@@ -58,3 +58,20 @@ void type_check_single_ptr(Type t)
         fprintf(stderr, "error: multi-level pointer not supported in phase 5\n");
     }
 }
+
+Type type_make_struct_ptr(int struct_id)
+{
+    Type t = { .base_type = TYPE_STRUCT, .ptr_level = 1, .array_size = 0, .struct_id = struct_id };
+    return t;
+}
+
+Type type_make_struct_val(int struct_id)
+{
+    Type t = { .base_type = TYPE_STRUCT, .ptr_level = 0, .array_size = 0, .struct_id = struct_id };
+    return t;
+}
+
+int type_is_struct(Type t)
+{
+    return t.base_type == TYPE_STRUCT;
+}
