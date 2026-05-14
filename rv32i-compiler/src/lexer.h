@@ -12,6 +12,9 @@ typedef enum {
     TOK_STRING,     /* NEW: string literal */
     TOK_LBRACKET,
     TOK_RBRACKET,
+    TOK_STRUCT,     /* "struct" 关键字 */
+    TOK_ARROW,       /* "->" 操作符 */
+    TOK_DOT,         /* "." 成员访问操作符 */
     TOK_EOF
 } TokenType;
 
