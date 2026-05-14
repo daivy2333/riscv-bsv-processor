@@ -1075,40 +1075,66 @@ static ASTNode *parse_global_decl(void)
 }
 
 /* extern-decl = "extern" ("int" | "char" | "struct" Name) ["*"] identifier ["[" num "]"] ";"
- * Extern declarations are skipped - they just declare external linkage */
+ * Extern declarations register symbol for codegen reference */
 static ASTNode *parse_extern_decl(void)
 {
     cur = cur->next; /* skip "extern" */
 
-    /* Skip type specifier: int, char, or struct Name */
-    if (cur->type == TOK_INT || cur->type == TOK_CHAR) {
-        cur = cur->next; /* skip "int" or "char" */
+    /* Parse type specifier */
+    Type var_type;
+    if (cur->type == TOK_INT) {
+        var_type = type_make_int();
+        cur = cur->next; /* skip "int" */
+    } else if (cur->type == TOK_CHAR) {
+        var_type = type_make_char();
+        cur = cur->next; /* skip "char" */
     } else if (cur->type == TOK_STRUCT) {
         cur = cur->next; /* skip "struct" */
-        if (cur->type == TOK_ID) {
-            cur = cur->next; /* skip struct name */
+        if (cur->type != TOK_ID) {
+            parse_error(cur->line, cur->col, "expected struct name after 'extern struct'");
+            return NULL;
+        }
+        int struct_id = lookup_struct(cur->text);
+        if (struct_id < 0) {
+            parse_error(cur->line, cur->col, "undefined struct");
+            return NULL;
+        }
+        var_type = type_make_struct_ptr(struct_id);
+        cur = cur->next; /* skip struct name */
+        /* struct pointer must have '*' */
+        if (cur->type == TOK_STAR) {
+            cur = cur->next; /* skip '*' */
         }
     } else {
         parse_error(cur->line, cur->col, "expected type after 'extern'");
         return NULL;
     }
 
-    /* Skip pointer marker */
+    /* Parse pointer marker */
     if (cur->type == TOK_STAR) {
+        if (var_type.base_type == TYPE_INT)
+            var_type = type_make_int_ptr();
+        else if (var_type.base_type == TYPE_CHAR)
+            var_type = type_make_char_ptr();
         cur = cur->next; /* skip '*' */
     }
 
-    /* Skip identifier */
+    /* Parse identifier */
     if (cur->type != TOK_ID) {
         parse_error(cur->line, cur->col, "expected identifier after 'extern'");
         return NULL;
     }
+
+    ASTNode *n = ast_new(AST_EXTERN_DECL);
+    n->name = strdup(cur->text);
+    n->var_type = var_type;
     cur = cur->next; /* skip identifier */
 
     /* Skip array size if present */
     if (cur->type == TOK_LBRACKET) {
         cur = cur->next; /* skip '[' */
         if (cur->type == TOK_NUM) {
+            var_type.array_size = atoi(cur->text);
             cur = cur->next; /* skip size */
         }
         if (cur->type == TOK_RBRACKET) {
@@ -1123,8 +1149,7 @@ static ASTNode *parse_extern_decl(void)
     }
     cur = cur->next; /* skip ';' */
 
-    /* Return NOOP - extern declarations don't generate code */
-    return ast_new(AST_NOOP);
+    return n;
 }
 
 /* program = (struct-def | struct-decl | global-decl | func-def)* */

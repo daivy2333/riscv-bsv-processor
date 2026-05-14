@@ -107,11 +107,12 @@ static Type sym_lookup_type(const char *name)
 
 static struct {
     char *name;
-    int   offset;       /* .data segment offset (bytes) */
+    int   offset;       /* .data segment offset (bytes), -1 for extern */
     Type  type;
     int   init_val;     /* integer initializer value */
     char *init_str;     /* string initializer (for char*) */
     int   str_len;      /* string length including \0 */
+    int   is_external;  /* 1 if extern declaration (no definition) */
 } globals[MAX_GLOBALS];
 
 static int global_count;
@@ -132,6 +133,14 @@ static int global_lookup(const char *name)
         if (strcmp(globals[i].name, name) == 0)
             return globals[i].offset;
     return -1;
+}
+
+static int global_is_external(const char *name)
+{
+    for (int i = 0; i < global_count; i++)
+        if (strcmp(globals[i].name, name) == 0)
+            return globals[i].is_external;
+    return 0;
 }
 
 static Type global_lookup_type(const char *name)
@@ -275,6 +284,7 @@ static void collect_globals(ASTNode *prog)
             globals[global_count].init_val = 0;
             globals[global_count].init_str = NULL;
             globals[global_count].str_len = 0;
+            globals[global_count].is_external = 0;
 
             fprintf(stderr, "Global '%s': base=%d ptr=%d struct_id=%d\n",
                     n->name, n->var_type.base_type, n->var_type.ptr_level, n->var_type.struct_id);
@@ -322,6 +332,17 @@ static void collect_globals(ASTNode *prog)
             }
             global_count++;
         }
+        else if (n->type == AST_EXTERN_DECL) {
+            /* Register extern variable - no address allocated */
+            globals[global_count].name = strdup(n->name);
+            globals[global_count].type = n->var_type;
+            globals[global_count].offset = -1;  /* no .data allocation */
+            globals[global_count].init_val = 0;
+            globals[global_count].init_str = NULL;
+            globals[global_count].str_len = 0;
+            globals[global_count].is_external = 1;
+            global_count++;
+        }
     }
 }
 
@@ -334,6 +355,9 @@ static void emit_data_segment(void)
 
     /* Output global variables */
     for (int i = 0; i < global_count; i++) {
+        /* Skip extern declarations - they don't have definitions */
+        if (globals[i].is_external) continue;
+
         emit(".global_%s:\n", globals[i].name);
 
         if (globals[i].type.base_type == TYPE_STRUCT && globals[i].type.ptr_level == 0) {
@@ -474,6 +498,13 @@ static void gen_expr(ASTNode *n)
                 emit("    lw t0, 0(t0)\n");  /* load value */
             }
             /* For array or struct value type, t0 already holds address */
+        } else if (global_is_external(n->name)) {
+            /* Extern variable - reference by .global_ prefix (same as definition) */
+            emit("    la t0, .global_%s\n", n->name);
+            Type t = global_lookup_type(n->name);
+            if (!type_is_array(t) && t.base_type != TYPE_STRUCT) {
+                emit("    lw t0, 0(t0)\n");  /* load value */
+            }
         } else {
             /* Local variable */
             int off = sym_lookup(n->name);
