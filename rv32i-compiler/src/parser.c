@@ -42,6 +42,7 @@ static ASTNode *parse_while_stmt(void);
 static ASTNode *parse_for_stmt(void);
 static ASTNode *parse_member_access(ASTNode *target);
 static ASTNode *parse_extern_decl(void);
+static Type parse_type(void);  /* NEW: type parsing helper */
 
 static void parse_error(int line, int col, const char *msg)
 {
@@ -227,6 +228,60 @@ static ASTNode *parse_return(void)
     n->body = parse_expr();
     expect(TOK_SEMI);
     return n;
+}
+
+/* parse_type = parse type qualifiers (volatile/const) + base type + pointer level
+ * Returns Type with is_const/is_volatile set */
+static Type parse_type(void)
+{
+    Type t = type_make_int();
+    int is_const = 0;
+    int is_volatile = 0;
+
+    /* Parse type qualifiers (volatile/const can appear multiple times) */
+    while (cur->type == TOK_VOLATILE || cur->type == TOK_CONST) {
+        if (cur->type == TOK_VOLATILE) {
+            is_volatile = 1;
+            cur = cur->next;
+        } else if (cur->type == TOK_CONST) {
+            is_const = 1;
+            cur = cur->next;
+        }
+    }
+
+    /* Parse base type */
+    if (cur->type == TOK_INT) {
+        t = type_make_int();
+        cur = cur->next;
+    } else if (cur->type == TOK_CHAR) {
+        t = type_make_char();
+        cur = cur->next;
+    } else if (cur->type == TOK_STRUCT) {
+        cur = cur->next; /* skip "struct" */
+        if (cur->type != TOK_ID) {
+            parse_error(cur->line, cur->col, "expected struct name");
+            return t;
+        }
+        int struct_id = lookup_struct(cur->text);
+        if (struct_id < 0) {
+            parse_error(cur->line, cur->col, "undefined struct");
+            return t;
+        }
+        t = type_make_struct_val(struct_id);
+        cur = cur->next;
+    }
+
+    /* Set type qualifiers */
+    t.is_const = is_const;
+    t.is_volatile = is_volatile;
+
+    /* Parse pointer level */
+    while (cur->type == TOK_STAR) {
+        t.ptr_level++;
+        cur = cur->next;
+    }
+
+    return t;
 }
 
 /* var-decl = ("int" | "char") ["*"] identifier ["[" number "]"] ["=" expr] ";"
