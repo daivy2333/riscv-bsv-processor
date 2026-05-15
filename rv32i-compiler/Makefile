@@ -23,7 +23,8 @@ OBJS = $(BUILDDIR)/main.o $(BUILDDIR)/lexer.o $(BUILDDIR)/parser.o \
         test-phase7 test-phase7-global-int test-phase7-global-write \
         test-phase7-global-expr test-phase7-string-arg test-phase7-string-assign \
         test-phase8 test-phase8-member-access test-phase8-linked-list \
-        test-phase9 test-phase9-multifile test-phase9-full
+        test-phase9 test-phase9-multifile test-phase9-full \
+        test-phase10 test-phase10-volatile test-phase10-const test-phase10-volatile-const
 
 all: $(BUILDDIR)/microcc
 
@@ -232,6 +233,26 @@ test-phase9-full: build/phase9_full.hex
 
 test-phase9: test-phase9-multifile test-phase9-full
 	@echo "=== All Phase 9 tests done ==="
+
+# ----- Phase 10 test hex targets -----
+HEX10 = build/phase10_volatile.hex build/phase10_const.hex build/phase10_volatile_const.hex
+
+$(HEX10): build/phase10_%.hex: tests/phase10/%.c $(BUILDDIR)/microcc $(RTDIR)/crt0.s $(RTDIR)/lib.S
+	@mkdir -p $(BUILDDIR)
+	./$(BUILDDIR)/microcc $< $@ $(RTDIR)/crt0.s $(BUILDDIR)/_phase10_$*.s $(RTDIR)/lib.S
+
+# ----- Phase 10 test execution targets -----
+test-phase10-volatile: build/phase10_volatile.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x0000002a" && echo "✓ PASSED (tohost=42)" || echo "✗ FAILED (expected tohost=42)"
+
+test-phase10-const: build/phase10_const.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x0000000f" && echo "✓ PASSED (tohost=15)" || echo "✗ FAILED (expected tohost=15)"
+
+test-phase10-volatile-const: build/phase10_volatile_const.hex
+	@cp $< ../build/test.hex && cd .. && python3 tools/hex_to_bsv.py build/test.hex > src/soc/TestProgram.bsv && $(MAKE) -s compile verilator 2>/dev/null && result=$$(timeout 30 ./obj_dir/VmkTestBench 2>&1 | grep "tohost=") && echo "$$result" && echo "$$result" | grep -q "tohost=0x00000005" && echo "✓ PASSED (tohost=5)" || echo "✗ FAILED (expected tohost=5)"
+
+test-phase10: test-phase10-volatile test-phase10-const test-phase10-volatile-const
+	@echo "=== All Phase 10 volatile/const tests done ==="
 
 clean:
 	rm -rf $(BUILDDIR)

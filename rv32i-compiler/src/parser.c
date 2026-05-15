@@ -284,32 +284,12 @@ static Type parse_type(void)
     return t;
 }
 
-/* var-decl = ("int" | "char") ["*"] identifier ["[" number "]"] ["=" expr] ";"
- *           | struct Name ["*"] identifier ";"  (handled by parse_struct_decl) */
+/* var-decl = type-qualifiers ("int" | "char" | "struct Name") ["*"] identifier ["[" number "]"] ["=" expr] ";"
+ *           Uses parse_type for type parsing */
 static ASTNode *parse_var_decl(void)
 {
-    /* 支持 int, char 类型；struct 类型由 parse_struct_decl 处理 */
-    Type var_type;
-
-    if (cur->type == TOK_INT) {
-        var_type = type_make_int();
-        cur = cur->next;
-    } else if (cur->type == TOK_CHAR) {
-        var_type = type_make_char();
-        cur = cur->next;
-    } else {
-        parse_error(cur->line, cur->col, "expected type (int/char)");
-        return NULL;
-    }
-
-    /* 指针声明检查 */
-    if (cur->type == TOK_STAR) {
-        if (var_type.base_type == TYPE_INT)
-            var_type = type_make_int_ptr();
-        else if (var_type.base_type == TYPE_CHAR)
-            var_type = type_make_char_ptr();
-        cur = cur->next;
-    }
+    /* Use parse_type to handle volatile/const + base type + pointer */
+    Type var_type = parse_type();
 
     if (cur->type != TOK_ID) {
         parse_error(cur->line, cur->col, "expected identifier");
@@ -816,7 +796,9 @@ static ASTNode *parse_stmt(void)
         return parse_for_stmt();
     if (cur->type == TOK_RETURN)
         return parse_return();
-    if (cur->type == TOK_INT || cur->type == TOK_CHAR)
+    /* Variable declaration: int/char/volatile/const + type */
+    if (cur->type == TOK_INT || cur->type == TOK_CHAR ||
+        cur->type == TOK_VOLATILE || cur->type == TOK_CONST)
         return parse_var_decl();
     if (cur->type == TOK_STRUCT)
         return parse_struct_decl(0);  /* is_global=0, 局部变量 */
@@ -1054,26 +1036,8 @@ static ASTNode *parse_func_decl(void)
 /* global-decl = ("int" | "char") ["*"] identifier ["[" num "]"] ["=" (expr | string-lit)] ";" */
 static ASTNode *parse_global_decl(void)
 {
-    Type var_type;
-    if (cur->type == TOK_INT) {
-        var_type = type_make_int();
-        cur = cur->next; /* skip "int" */
-    } else if (cur->type == TOK_CHAR) {
-        var_type = type_make_char();
-        cur = cur->next; /* skip "char" */
-    } else {
-        parse_error(cur->line, cur->col, "expected 'int' or 'char' for declaration");
-        return NULL;
-    }
-
-    /* Pointer declaration */
-    if (cur->type == TOK_STAR) {
-        if (var_type.base_type == TYPE_INT)
-            var_type = type_make_int_ptr();
-        else
-            var_type = type_make_char_ptr();
-        cur = cur->next; /* skip '*' */
-    }
+    /* Use parse_type to handle volatile/const + base type + pointer */
+    Type var_type = parse_type();
 
     if (cur->type != TOK_ID) {
         parse_error(cur->line, cur->col, "expected identifier");
