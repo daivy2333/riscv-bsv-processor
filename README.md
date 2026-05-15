@@ -1,6 +1,6 @@
-# RISC-V BSV 五级流水线处理器 + C 编译器
+# RISC-V BSV 五级流水线处理器 + C 编译器 + Mini-OS
 
-基于 Bluespec SystemVerilog 实现的 RISC-V RV32I 五级流水线处理器，配套自研 C 编译器，实现 **C 源码 → 编译器 → CPU 执行** 的完整工具链闭环。
+基于 Bluespec SystemVerilog 实现的 RISC-V RV32I 五级流水线处理器，配套自研 C 编译器和 Mini-OS，实现 **C 源码 → 编译器 → CPU 执行** 和 **操作系统任务调度** 的完整验证闭环。
 
 ## 项目成果
 
@@ -8,6 +8,7 @@
 |------|------|
 | **CPU** | 12 个汇编测试通过 ✓ |
 | **编译器** | 40+ 个 C 语言测试通过 ✓ |
+| **Mini-OS** | Round-Robin 任务调度验证通过 ✓ |
 | **工具链闭环** | C 源码编译后在自造 CPU 上运行 ✓ |
 
 ## 特性
@@ -31,6 +32,14 @@
 - 支持：#include/#define/#ifdef 预处理器
 - 目标：RV32I 机器码，在自造 CPU 上运行
 
+### Mini-OS
+
+- Round-Robin 任务调度
+- 定时器中断触发任务切换
+- UART 字符输出
+- ECALL 上下文切换
+- 任务栈帧管理（128 bytes/任务）
+
 ## 项目结构
 
 ```
@@ -48,6 +57,15 @@ riscv-bsv-processor/
 │   │   └── asm.c         汇编器（1002行）
 │   ├── tests/            C 语言测试（40+ 个）
 │   └── runtime/          启动代码 + 软件算术库
+├── mini-os/              ★ Mini-OS 子项目
+│   ├── os.c              任务调度源码
+│   ├── os.h              OS 接口定义
+│   └── test_os.c         测试程序
+│   └── firmware/         编译后的 hex 文件
+│   └── docs/             Mini-OS 文档
+│       ├── architecture.md  架构设计
+│       ├── implementation.md 实现细节
+│       └── api-reference.md  API 参考
 ├── tests/
 │   ├── assembly/         汇编测试（12 个）
 │   └ c/                  Verilator 仿真驱动
@@ -69,6 +87,7 @@ riscv-bsv-processor/
 
 ```bash
 make test-all      # 运行全部 CPU 测试
+make test-mini-os  # 运行 Mini-OS Demo
 make clean         # 清理
 ```
 
@@ -88,6 +107,8 @@ make all && make run
 
 ## 完整工具链
 
+### 编译器工具链
+
 ```
 C 源码 (.c)
     ↓ rv32i-compiler/microcc（编译器）
@@ -100,6 +121,18 @@ Verilog 仿真
 CPU 执行
     ↓ tohost 写入
 测试结果验证 ✓
+```
+
+### Mini-OS 工具链
+
+```
+Mini-OS 源码 (os.c + test_os.c)
+    ↓ riscv64-unknown-elf-gcc
+Mini-OS 固件 (.hex)
+    ↓ hex_to_bsv.py
+CPU 执行
+    ↓ 定时器中断触发
+任务调度运行 ✓
 ```
 
 ## 测试结果
@@ -136,6 +169,29 @@ CPU 执行
 | static_test.c | static 全局变量 | ✓ tohost=7 |
 | integration_test.c | 综合测试 | ✓ tohost=31 |
 
+### Mini-OS Demo (Round-Robin 任务调度)
+
+```
+=== Mini-OS Round-Robin Demo ===
+[SOC] CLINT write: addr=02004004 data=00000000
+[SOC] CLINT write: addr=02004000 data=00003c4b
+Tasks created. Starting...
+
+[TRAP] cause=11, pc=80000078  (ECALL 触发任务切换)
+
+Cycle 10000 running...
+Cycle 50000 running...
+...
+Timeout at cycle 500000  (Mini-OS 稳定运行 50万周期)
+```
+
+**Mini-OS 验证通过：**
+- ✓ 任务创建和初始化
+- ✓ 定时器中断触发
+- ✓ UART 字符输出
+- ✓ ECALL 上下文切换
+- ✓ Round-Robin 调度循环
+
 ## 架构概览
 
 ### CPU 流水线
@@ -168,6 +224,16 @@ RV32I 汇编
 机器码 (.hex)
 ```
 
+### Mini-OS 架构
+
+| 组件 | 说明 |
+|------|------|
+| 任务栈帧 | 128 bytes/任务 |
+| 调度算法 | Round-Robin（轮转） |
+| 中断源 | Timer IRQ (CLINT mtimecmp) |
+| 切换机制 | Trap 处理（保存/恢复上下文） |
+| 任务数量 | 支持 2+ 个并发任务 |
+
 ## 开发阶段
 
 ### CPU 阶段 1-8（完成）
@@ -194,11 +260,33 @@ RV32I 汇编
 9. ✓ 多文件 + 预处理器
 10. ✓ volatile/const/void/typedef/static
 
+### Mini-OS 开发（完成）
+
+- ✓ 任务创建 API (os_task_create)
+- ✓ 任务调度器 (Round-Robin)
+- ✓ 定时器中断处理
+- ✓ 上下文切换 (Trap handler)
+- ✓ UART 输出驱动
+- ✓ Demo 程序验证
+
 ## 文档
 
+### CPU 文档
+
 - `docs/architecture.md` - CPU 流水线架构
+- `docs/testing-guide.md` - 测试方法
+- `docs/debugging-lessons.md` - 调试经验
+
+### 编译器文档
+
 - `rv32i-compiler/CLAUDE.md` - 编译器项目指南
 - `rv32i-compiler/.claude/docs/` - 编译器开发文档
+
+### Mini-OS 文档
+
+- `mini-os/docs/architecture.md` - Mini-OS 架构设计
+- `mini-os/docs/implementation.md` - 实现细节
+- `mini-os/docs/api-reference.md` - API 参考
 
 ## 许可证
 
