@@ -13,6 +13,8 @@ typedef struct {
     int ptr_level;       /* Pointer level: 0 = scalar, 1 = pointer */
     int array_size;      /* Array size: 0 = not array, >0 = array elements count */
     int struct_id;       /* struct_table 索引 (仅 TYPE_STRUCT 有效) */
+    int is_const;        /* NEW: const 标记位 */
+    int is_volatile;     /* NEW: volatile 标记位 */
 } Type;
 
 /* 结构体成员信息 */
