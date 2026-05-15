@@ -18,3 +18,4 @@ mini-os/build/
 # 其他
 .trae/
 a.out
+rv32i-compiler/build/
