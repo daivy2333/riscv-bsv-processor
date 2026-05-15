@@ -45,6 +45,8 @@ const char *tok_name(TokenType t)
     case TOK_LBRACKET: return "[";
     case TOK_RBRACKET: return "]";
     case TOK_EXTERN: return "extern";    /* NEW */
+    case TOK_VOLATILE: return "volatile";
+    case TOK_CONST:   return "const";
     case TOK_EOF:    return "EOF";
     default:         return "?";
     }
@@ -100,6 +102,10 @@ static Token *lex_keyword_or_id(const char *s, int len, int line, int col)
         return new_token(TOK_STRUCT, s, len, line, col);
     if (len == 6 && strncmp(s, "extern", 6) == 0)
         return new_token(TOK_EXTERN, s, len, line, col);
+    if (len == 8 && strncmp(s, "volatile", 8) == 0)
+        return new_token(TOK_VOLATILE, s, len, line, col);
+    if (len == 5 && strncmp(s, "const", 5) == 0)
+        return new_token(TOK_CONST, s, len, line, col);
     return new_token(TOK_ID, s, len, line, col);
 }
 
