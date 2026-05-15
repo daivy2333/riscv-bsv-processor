@@ -350,4 +350,5 @@ Codegen:
 - [x] 函数原型声明 (AST_FUNC_DECL)
 - [x] 多文件链接 (linker_link_multi)
 - [x] 头文件支持（#include "header.h")
-- [x] 2 个 Phase 9 CPU 测试通过 (simple + full)
+- [x] 2 个 Phase 9 CPU 测试通过 (multifile + full)
+- [x] 单文件模式汇编路径参数修复 (argv[4])

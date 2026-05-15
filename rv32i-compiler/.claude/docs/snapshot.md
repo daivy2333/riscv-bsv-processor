@@ -1,12 +1,12 @@
 # 项目快照
 
-> 最后更新：2026-05-14
+> 最后更新：2026-05-15
 
 ## 当前状态
 
-- **阶段**: 阶段 1-9 ✅ 完成（多文件编译与预处理器）
-- **状态**: 多文件编译、#include/#define/#ifdef、extern 关键字验证通过
-- **下一步**: 修复 extern 变量引用问题，准备阶段 10：自举
+- **阶段**: 阶段 1-9 ✅ 全部完成（多文件编译与预处理器）
+- **状态**: 所有测试通过，extern 变量引用已修复
+- **下一步**: 阶段 10：自举准备（typedef/enum/volatile）
 
 ## 项目结构
 
@@ -71,7 +71,8 @@ rv32i-compiler/
 
 - **当前分支**: main
 - **父项目**: ../ (riscv-bsv-processor)
-- **状态**: 阶段1-9完成，28+个测试全部通过
+- **状态**: 阶段1-9完成，30+个测试全部通过
+- **最近提交**: fix(phase9): extern variable reference + single-file mode assembly path
 
 ## 编译器流水线
 
@@ -168,12 +169,12 @@ Flat binary (小端)
 | member_access | `struct Node g_n; g_n.value = 42; p->value` | 42 | ✅ |
 | linked_list | `sum_list(&g_n1)` 链表遍历求和 (10+20+30) | 60 | ✅ |
 
-### 阶段9测试（多文件编译）
+### 阶段9测试（多文件编译）✅
 | 测试 | 代码 | tohost | 状态 |
 |------|------|--------|------|
-| full_test | `get_value() + g_external + 25` | 65 (预期55, extern引用待修复) | ⚠️ |
+| multifile | `helper_func() + 5` 跨文件调用 | 15 | ✅ |
+| full_test | `get_value() + g_external + 25` extern引用 | 55 | ✅ |
 
 ## 下一步
 
-- 修复 extern 变量引用问题（可能加载地址而非值）
 - 阶段 10: 自举准备（typedef/enum/volatile）

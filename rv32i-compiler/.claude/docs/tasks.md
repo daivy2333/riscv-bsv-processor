@@ -1,10 +1,10 @@
 # 任务清单
 
-> 最后更新：2026-05-14
+> 最后更新：2026-05-15
 
 ## 进行中
 
-- 修复 extern 变量引用问题（阶段9遗留）
+- （无）
 
 ## 已完成
 
@@ -20,8 +20,9 @@
 - [x] 添加 extern 关键字（Lexer TOK_EXTERN + Parser parse_extern_decl）
 - [x] 添加函数原型解析（int foo();）
 - [x] 添加多文件编译（linker_link_multi）
-- [x] 验证: 多文件编译成功，生成 hex 文件
-- ⚠️ extern 变量引用值偏差（待修复）
+- [x] 修复 extern 变量引用问题（la + lw，跳过 .data 生成）
+- [x] 修复单文件模式汇编路径参数（argv[4]）
+- [x] 验证: multifile + full_test 全部通过
 
 ## 待办
 
@@ -38,4 +39,4 @@
 
 ## 下一步
 
-- 调查 extern 变量引用 codegen 问题
+- 开始阶段 10 规划
