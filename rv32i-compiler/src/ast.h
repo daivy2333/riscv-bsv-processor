@@ -24,7 +24,8 @@ typedef enum {
     AST_DEREF,        /* dereference operator (*p) */
     AST_ARRAY_ACCESS, /* array subscript arr[i] */
     AST_STRUCT_DEF,   /* struct definition statement */
-    AST_MEMBER_ACCESS /* member access expression p->member or n.member */
+    AST_MEMBER_ACCESS, /* member access expression p->member or n.member */
+    AST_TYPEDEF_DEF    /* NEW: typedef definition statement */
 } ASTNodeType;
 
 /* Generic AST node */
@@ -48,6 +49,7 @@ typedef struct ASTNode {
     struct ASTNode *expr;  /* for ASSIGN: right-hand side expression */
     /* NEW: global declaration fields */
     int   is_global;       /* for GLOBAL_DECL: marker (1) */
+    int   is_static;       /* NEW: for GLOBAL_DECL/FUNC_DEF: static marker (internal linkage) */
     /* NEW: string literal fields */
     char *str_val;         /* for STRING_LIT: string content / GLOBAL_DECL: string initializer */
     int   str_label;       /* for STRING_LIT: assigned label index */

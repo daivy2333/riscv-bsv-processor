@@ -5,7 +5,8 @@
 typedef enum {
     TYPE_INT = 0,
     TYPE_CHAR = 1,
-    TYPE_STRUCT = 2  /* 结构体类型 */
+    TYPE_STRUCT = 2,  /* 结构体类型 */
+    TYPE_VOID = 3     /* NEW: void type */
 } BaseType;
 
 typedef struct {
@@ -48,5 +49,7 @@ void type_check_single_ptr(Type t); /* Error if ptr_level > 1 */
 Type type_make_struct_ptr(int struct_id);  /* 创建 struct Name* 类型 */
 Type type_make_struct_val(int struct_id);  /* 创建 struct Name 类型 */
 int  type_is_struct(Type t);                /* 检查是否为结构体类型 */
+Type type_make_void(void);                  /* NEW: 创建 void 类型 */
+int  type_is_void(Type t);                  /* NEW: 检查是否为 void 类型 */
 
 #endif /* TYPES_H */

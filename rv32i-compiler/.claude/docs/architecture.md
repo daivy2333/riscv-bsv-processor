@@ -202,6 +202,41 @@
 - **影响**: `make test-phase2-a` 等测试现在正确输出汇编文件到 build/_phase2_a.s
 - **替代方案**: 不接受路径参数，始终使用默认路径（无法追踪特定测试的汇编输出）
 
+### 2026-05-15 - 统一类型解析 parse_type（阶段10）
+
+- **决策**: 新增 parse_type() 函数统一处理 volatile/const + base type + pointers
+- **原因**: volatile/const 可出现在类型前任意位置（volatile int、int volatile），统一解析避免分散处理
+- **影响**: parse_func_def、parse_var_decl、parse_global_decl、parse_func_decl 都调用 parse_type
+- **替代方案**: 每个解析点单独处理 volatile/const（重复代码，容易遗漏）
+
+### 2026-05-15 - void 返回与隐式返回（阶段10）
+
+- **决策**: void 函数在 gen_func_def 结尾自动生成返回代码，parse_return 支持空 return
+- **原因**: void 函数不需要显式 return，编译器应自动生成 jalr 返回指令
+- **影响**: void 函数无 return 语句时，隐式返回代码确保正确 jalr x0, x1, 0
+- **替代方案**: 要求 void 函数必须有 return（限制用户代码风格）
+
+### 2026-05-15 - typedef 别名表设计（阶段10）
+
+- **决策**: 在 Parser 维护 typedef_aliases 数组（MAX_TYPEDEF_ALIASES=32），存储 alias→struct_id
+- **原因**: typedef 仅支持结构体别名，不需要完整的类型别名系统
+- **影响**: parse_type 检查 TOK_ID 是否为 typedef 别名，lookup_typedef_alias 返回 struct_id
+- **替代方案**: 扩展 Type 结构存储 typedef 信息（过度设计，增加类型系统复杂度）
+
+### 2026-05-15 - static 内部链接标签（阶段10）
+
+- **决策**: static 全局变量/函数使用 `.Lstatic_` 标签前缀，extern 使用 `.global_`
+- **原因**: 区分内部链接（static）和外部链接（extern/普通全局），避免符号冲突
+- **影响**: codegen 根据 is_static 生成不同标签，global_is_static_var 查询静态状态
+- **替代方案**: 所有全局变量使用同一标签前缀（无法区分链接属性）
+
+### 2026-05-15 - volatile/const 标记位（阶段10）
+
+- **决策**: Type 结构添加 is_const、is_volatile 位，仅作标记无 codegen 影响
+- **原因**: volatile/const 是类型限定符，用于语义分析，不影响 RV32I 代码生成
+- **影响**: parse_type 设置标记位，codegen 不检查（硬件无 volatile 概念）
+- **替代方案**: volatile 生成特殊内存访问（过度设计，RV32I 无特殊指令）
+
 ## 模块划分
 
 ### 编译器核心模块
@@ -294,18 +329,18 @@ tohost 写入返回值
 
 > 每阶段新增一个原子特性，验证标准独立自洽，依赖单向。
 
-| 阶段 | 目标 | 新特性 | 验证标准 | 依赖 |
-|------|------|--------|----------|------|
-| 1 | 最小可运行 | 函数定义 + return | `return 42;` → tohost = 42 ✅ | — |
-| 2 | 算术与变量 | 变量声明 + 四则运算 | 7 个算术测试 ✅ | 阶段 1 |
-| 3 | 控制流 | if/while/for + 比较操作符 | for 循环计数 ✅ | 阶段 2 |
-| 4 | 函数调用 | 多参数函数 + 递归 | fib(10) = 55 ✅ | 阶段 3 |
-| 5 | 指针基础 | `int *p` + `&x` + `*p` | `swap(&a, &b)` 指针传参 ✅ | 阶段 4 |
-| 6 | 数组 | `int arr[n]` + `arr[i]` + 地址计算 | `arr_sum(arr, 5)` 数组求和 ✅ | 阶段 5 |
-| 7 | 全局变量与字符串 | 全局变量 + 字符串字面量 + char 类型 | 5 个全局/字符串测试 ✅ | 阶段 4 |
-| 8 | 结构体 | `struct` + 成员访问 + `p->field` | 链表节点创建遍历 | 阶段 5 + 6 |
-| 9 | 多文件与预处理器 | 多文件链接 + `#include/#define` | 跨文件调用 + 头文件 | 阶段 7 + 8 |
-| 10 | 自举准备 | `typedef` + `enum` + `volatile` | 编译器编译自身 | 阶段 9 |
+| 阶段 | 目标 | 新特性 | 验证标准 | 依赖 | 状态 |
+|------|------|--------|----------|------|------|
+| 1 | 最小可运行 | 函数定义 + return | `return 42;` → tohost = 42 | — | ✅ |
+| 2 | 算术与变量 | 变量声明 + 四则运算 | 7 个算术测试 | 阶段 1 | ✅ |
+| 3 | 控制流 | if/while/for + 比较操作符 | for 循环计数 | 阶段 2 | ✅ |
+| 4 | 函数调用 | 多参数函数 + 递归 | fib(10) = 55 | 阶段 3 | ✅ |
+| 5 | 指针基础 | `int *p` + `&x` + `*p` | `swap(&a, &b)` 指针传参 | 阶段 4 | ✅ |
+| 6 | 数组 | `int arr[n]` + `arr[i]` + 地址计算 | `arr_sum(arr, 5)` 数组求和 | 阶段 5 | ✅ |
+| 7 | 全局变量与字符串 | 全局变量 + 字符串字面量 + char 类型 | 5 个全局/字符串测试 | 阶段 4 | ✅ |
+| 8 | 结构体 | `struct` + 成员访问 + `p->field` | 链表节点创建遍历 | 阶段 5 + 6 | ✅ |
+| 9 | 多文件与预处理器 | 多文件链接 + `#include/#define` | 跨文件调用 + 头文件 | 阶段 7 + 8 | ✅ |
+| 10 | 自举准备 | `volatile/const/void/typedef/static` | 9个特性测试 + 综合测试 | 阶段 9 | ✅ |
 
 **依赖链**: 1 → 2 → 3 → 4 → 5 → 6 → 8 → 9 → 10（阶段 7 可与 5/6 并行）
 

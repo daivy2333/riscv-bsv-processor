@@ -9,9 +9,19 @@ static Token *cur;
 static int has_errors;
 
 #define MAX_STRUCTS 32
+#define MAX_TYPEDEF_ALIASES 32
 
 static StructInfo parser_struct_table[MAX_STRUCTS];
 static int parser_struct_count;
+
+/* typedef 别名表：Alias -> struct_id */
+typedef struct {
+    char *alias_name;   /* 别名名称 */
+    int struct_id;      /* 对应的 struct 索引 */
+} TypedefAlias;
+
+static TypedefAlias typedef_aliases[MAX_TYPEDEF_ALIASES];
+static int typedef_alias_count;
 
 /* 在 Parser 中查找结构体定义 */
 static int lookup_struct(const char *name)
@@ -30,6 +40,75 @@ static int register_struct_parser(const char *name, int member_count)
     parser_struct_table[parser_struct_count].total_size = 0;  /* Codegen 计算实际大小 */
     parser_struct_table[parser_struct_count].members = NULL;  /* Codegen 从 AST 获取 */
     return parser_struct_count++;
+}
+
+/* 查找 typedef 别名 */
+static int lookup_typedef_alias(const char *alias)
+{
+    for (int i = 0; i < typedef_alias_count; i++)
+        if (strcmp(typedef_aliases[i].alias_name, alias) == 0)
+            return typedef_aliases[i].struct_id;
+    return -1;
+}
+
+/* 注册 typedef 别名 */
+static void register_typedef_alias(const char *alias, int struct_id)
+{
+    typedef_aliases[typedef_alias_count].alias_name = strdup(alias);
+    typedef_aliases[typedef_alias_count].struct_id = struct_id;
+    typedef_alias_count++;
+}
+
+/* Forward declarations for parse_typedef */
+static void parse_error(int line, int col, const char *msg);
+static int expect(TokenType t);
+
+/* typedef 解析：typedef struct Name Alias; */
+static ASTNode *parse_typedef(void)
+{
+    cur = cur->next;  /* skip "typedef" */
+
+    /* Expect "struct" */
+    if (cur->type != TOK_STRUCT) {
+        parse_error(cur->line, cur->col, "expected 'struct' after 'typedef'");
+        return NULL;
+    }
+    cur = cur->next;  /* skip "struct" */
+
+    /* Expect struct name */
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected struct name");
+        return NULL;
+    }
+    char *struct_name = strdup(cur->text);
+    int struct_id = lookup_struct(struct_name);
+    if (struct_id < 0) {
+        parse_error(cur->line, cur->col, "undefined struct type");
+        free(struct_name);
+        return NULL;
+    }
+    cur = cur->next;  /* skip struct name */
+
+    /* Expect alias name */
+    if (cur->type != TOK_ID) {
+        parse_error(cur->line, cur->col, "expected alias name");
+        free(struct_name);
+        return NULL;
+    }
+    char *alias_name = strdup(cur->text);
+    cur = cur->next;  /* skip alias name */
+
+    /* Register the alias */
+    register_typedef_alias(alias_name, struct_id);
+
+    /* Expect ';' */
+    expect(TOK_SEMI);
+
+    /* Return a typedef node (for AST tracking, though no codegen needed) */
+    ASTNode *n = ast_new(AST_TYPEDEF_DEF);
+    n->struct_name = struct_name;
+    n->name = alias_name;
+    return n;
 }
 
 static ASTNode *parse_term(void);
@@ -225,7 +304,11 @@ static ASTNode *parse_return(void)
 {
     cur = cur->next; /* skip "return" */
     ASTNode *n = ast_new(AST_RETURN);
-    n->body = parse_expr();
+    if (cur->type != TOK_SEMI) {
+        n->body = parse_expr();
+    } else {
+        n->body = NULL;  /* empty return for void functions */
+    }
     expect(TOK_SEMI);
     return n;
 }
@@ -256,6 +339,9 @@ static Type parse_type(void)
     } else if (cur->type == TOK_CHAR) {
         t = type_make_char();
         cur = cur->next;
+    } else if (cur->type == TOK_VOID) {
+        t = type_make_void();
+        cur = cur->next;
     } else if (cur->type == TOK_STRUCT) {
         cur = cur->next; /* skip "struct" */
         if (cur->type != TOK_ID) {
@@ -269,6 +355,16 @@ static Type parse_type(void)
         }
         t = type_make_struct_val(struct_id);
         cur = cur->next;
+    } else if (cur->type == TOK_ID) {
+        /* Check if it's a typedef alias */
+        int struct_id = lookup_typedef_alias(cur->text);
+        if (struct_id >= 0) {
+            t = type_make_struct_val(struct_id);
+            cur = cur->next;
+        } else {
+            parse_error(cur->line, cur->col, "unknown type name");
+            return t;
+        }
     }
 
     /* Set type qualifiers */
@@ -802,6 +898,9 @@ static ASTNode *parse_stmt(void)
         return parse_var_decl();
     if (cur->type == TOK_STRUCT)
         return parse_struct_decl(0);  /* is_global=0, 局部变量 */
+    /* typedef alias variable declaration: Alias *p; */
+    if (cur->type == TOK_ID && lookup_typedef_alias(cur->text) >= 0)
+        return parse_var_decl();  /* parse_var_decl uses parse_type which handles typedef */
     /* Dereference assignment: *p = expr */
     if (cur->type == TOK_STAR)
         return parse_assign();
@@ -876,69 +975,28 @@ static ASTNode *parse_compound(void)
 /* func-def = "int" identifier "(" [param-list] ")" compound-stmt */
 static ASTNode *parse_func_def(void)
 {
-    /* Support int and char return types */
-    Type ret_type;
-    if (cur->type == TOK_INT) {
-        ret_type = type_make_int();
-        cur = cur->next; /* skip "int" */
-    } else if (cur->type == TOK_CHAR) {
-        ret_type = type_make_char();
-        cur = cur->next; /* skip "char" */
-    } else {
-        parse_error(cur->line, cur->col, "expected 'int' or 'char' for function return type");
-        return NULL;
-    }
+    /* Use parse_type for return type (handles volatile/const + int/char/void/struct + pointers) */
+    Type ret_type = parse_type();
 
     ASTNode *n = ast_new(AST_FUNC_DEF);
+    n->var_type = ret_type;  /* store return type */
     n->func_name = strdup(cur->text);
     cur = cur->next; /* skip identifier */
     expect(TOK_LPAREN);
-    /* Parse parameter list: (int name, int name, ...) OR (char *name, ...) OR (struct Name *name) */
-    ASTNode *params = NULL, *tail = NULL;
-    if (cur->type != TOK_RPAREN) {
+
+    /* Handle void parameter declaration: func(void) */
+    if (cur->type == TOK_VOID && cur->next->type == TOK_RPAREN) {
+        cur = cur->next; /* skip void */
+        n->right = NULL; /* no parameters */
+    } else if (cur->type != TOK_RPAREN) {
+        /* Parse parameter list: (int name, int name, ...) OR (char *name, ...) OR (struct Name *name) */
+        ASTNode *params = NULL, *tail = NULL;
         do {
             if (cur->type == TOK_COMMA)
                 cur = cur->next;
 
-            /* Support int, char, and struct pointer parameter types */
-            Type param_type;
-            if (cur->type == TOK_INT) {
-                param_type = type_make_int();
-                cur = cur->next; /* skip "int" */
-            } else if (cur->type == TOK_CHAR) {
-                param_type = type_make_char();
-                cur = cur->next; /* skip "char" */
-            } else if (cur->type == TOK_STRUCT) {
-                cur = cur->next; /* skip "struct" */
-                if (cur->type != TOK_ID) {
-                    parse_error(cur->line, cur->col, "expected struct name");
-                    break;
-                }
-                /* Look up struct by name */
-                int struct_id = lookup_struct(cur->text);
-                if (struct_id < 0) {
-                    parse_error(cur->line, cur->col, "undefined struct");
-                    break;
-                }
-                param_type = type_make_struct_ptr(struct_id);
-                cur = cur->next; /* skip struct name */
-                /* struct pointer parameter must have '*' */
-                if (cur->type == TOK_STAR) {
-                    cur = cur->next; /* skip '*' (already a pointer from type_make_struct_ptr) */
-                }
-            } else {
-                parse_error(cur->line, cur->col, "expected 'int', 'char', or 'struct Name' for parameter type");
-                break;
-            }
-
-            /* Check for pointer parameter: int *p or char *s (struct already handled above) */
-            if (cur->type == TOK_STAR && (param_type.base_type == TYPE_INT || param_type.base_type == TYPE_CHAR)) {
-                if (param_type.base_type == TYPE_INT)
-                    param_type = type_make_int_ptr();
-                else if (param_type.base_type == TYPE_CHAR)
-                    param_type = type_make_char_ptr();
-                cur = cur->next; /* skip '*' */
-            }
+            /* Use parse_type for parameter type */
+            Type param_type = parse_type();
 
             if (cur->type != TOK_ID) {
                 parse_error(cur->line, cur->col, "expected parameter name");
@@ -951,9 +1009,9 @@ static ASTNode *parse_func_def(void)
             if (!params) params = tail = p;
             else { tail->next = p; tail = p; }
         } while (cur->type == TOK_COMMA);
+        n->right = params; /* params chain stored in .right */
     }
     expect(TOK_RPAREN);
-    n->right = params; /* params chain stored in .right */
     expect(TOK_LBRACE);
     n->body = parse_compound();
     expect(TOK_RBRACE);
@@ -963,51 +1021,27 @@ static ASTNode *parse_func_def(void)
 /* func-decl = "int" identifier "(" [param-list] ")" ";"  (function prototype) */
 static ASTNode *parse_func_decl(void)
 {
-    /* Support int and char return types */
-    Type ret_type;
-    if (cur->type == TOK_INT) {
-        ret_type = type_make_int();
-        cur = cur->next; /* skip "int" */
-    } else if (cur->type == TOK_CHAR) {
-        ret_type = type_make_char();
-        cur = cur->next; /* skip "char" */
-    } else {
-        parse_error(cur->line, cur->col, "expected 'int' or 'char' for function return type");
-        return NULL;
-    }
+    /* Use parse_type for return type (handles volatile/const + int/char/void/struct + pointers) */
+    Type ret_type = parse_type();
 
     ASTNode *n = ast_new(AST_FUNC_DECL);
     n->func_name = strdup(cur->text);
     n->var_type = ret_type;  /* store return type */
     cur = cur->next; /* skip identifier */
     expect(TOK_LPAREN);
-    /* Parse parameter list: (int name, int name, ...) OR (char *name, ...) */
-    ASTNode *params = NULL, *tail = NULL;
-    if (cur->type != TOK_RPAREN) {
+
+    /* Handle void parameter declaration: func(void) */
+    if (cur->type == TOK_VOID && cur->next->type == TOK_RPAREN) {
+        cur = cur->next; /* skip void */
+        n->right = NULL; /* no parameters */
+    } else if (cur->type != TOK_RPAREN) {
+        /* Parse parameter list using parse_type */
+        ASTNode *params = NULL, *tail = NULL;
         do {
             if (cur->type == TOK_COMMA)
                 cur = cur->next;
 
-            Type param_type;
-            if (cur->type == TOK_INT) {
-                param_type = type_make_int();
-                cur = cur->next; /* skip "int" */
-            } else if (cur->type == TOK_CHAR) {
-                param_type = type_make_char();
-                cur = cur->next; /* skip "char" */
-            } else {
-                parse_error(cur->line, cur->col, "expected 'int' or 'char' for parameter type");
-                break;
-            }
-
-            /* Check for pointer parameter */
-            if (cur->type == TOK_STAR) {
-                if (param_type.base_type == TYPE_INT)
-                    param_type = type_make_int_ptr();
-                else
-                    param_type = type_make_char_ptr();
-                cur = cur->next; /* skip '*' */
-            }
+            Type param_type = parse_type();
 
             /* Parameter name (optional in prototypes, but we require it for simplicity) */
             if (cur->type == TOK_ID) {
@@ -1026,9 +1060,9 @@ static ASTNode *parse_func_decl(void)
                 else { tail->next = p; tail = p; }
             }
         } while (cur->type == TOK_COMMA);
+        n->right = params; /* params chain stored in .right */
     }
     expect(TOK_RPAREN);
-    n->right = params; /* params chain stored in .right */
     expect(TOK_SEMI);
     return n;
 }
@@ -1189,12 +1223,96 @@ static ASTNode *parse_program(void)
         else if (cur->type == TOK_STRUCT) {
             node = parse_struct_decl(1);  /* is_global=1 */
         }
-        /* 函数定义或 int/char 全局声明 */
-        else if (cur->type == TOK_INT || cur->type == TOK_CHAR) {
+        /* static 声明 */
+        else if (cur->type == TOK_STATIC) {
+            cur = cur->next;  /* skip "static" */
+            /* Now parse the declaration as usual */
+            if (cur->type == TOK_INT || cur->type == TOK_CHAR || cur->type == TOK_VOID ||
+                cur->type == TOK_VOLATILE || cur->type == TOK_CONST ||
+                (cur->type == TOK_ID && lookup_typedef_alias(cur->text) >= 0)) {
+                /* Look ahead to distinguish global decl from func def */
+                Token *next = cur->next;
+                int is_func = 0;
+                int is_proto = 0;
+                int is_static = 1;  /* mark as static */
+
+                /* Skip type qualifiers (volatile/const) */
+                while (next && (next->type == TOK_VOLATILE || next->type == TOK_CONST)) {
+                    next = next->next;
+                }
+
+                /* Skip base type */
+                if (next && (next->type == TOK_INT || next->type == TOK_CHAR || next->type == TOK_VOID)) {
+                    next = next->next;
+                } else if (next && next->type == TOK_STRUCT) {
+                    next = next->next;
+                    if (next && next->type == TOK_ID) {
+                        next = next->next;
+                    }
+                } else if (next && next->type == TOK_ID && lookup_typedef_alias(next->text) >= 0) {
+                    next = next->next;
+                }
+
+                /* Skip pointer marker */
+                if (next && next->type == TOK_STAR)
+                    next = next->next;
+
+                /* Check if function */
+                if (next && next->type == TOK_ID && next->next && next->next->type == TOK_LPAREN) {
+                    is_func = 1;
+                    Token *scan = next->next->next;
+                    while (scan && scan->type != TOK_RPAREN) {
+                        scan = scan->next;
+                    }
+                    if (scan) {
+                        scan = scan->next;
+                        if (scan && scan->type == TOK_SEMI) {
+                            is_proto = 1;
+                        }
+                    }
+                }
+
+                if (is_func) {
+                    if (is_proto) {
+                        node = parse_func_decl();
+                    } else {
+                        node = parse_func_def();
+                        if (node) node->is_static = is_static;
+                    }
+                } else {
+                    node = parse_global_decl();
+                    if (node) node->is_static = is_static;
+                }
+            }
+        }
+        /* 函数定义或 int/char/void/volatile/const/typedef-alias 全局声明 */
+        else if (cur->type == TOK_INT || cur->type == TOK_CHAR || cur->type == TOK_VOID ||
+                 cur->type == TOK_VOLATILE || cur->type == TOK_CONST ||
+                 (cur->type == TOK_ID && lookup_typedef_alias(cur->text) >= 0)) {
             /* Look ahead to distinguish global decl from func def/decl */
+            Token *start = cur;  /* remember start position */
             Token *next = cur->next;
             int is_func = 0;
             int is_proto = 0;
+
+            /* Skip type qualifiers (volatile/const) */
+            while (next && (next->type == TOK_VOLATILE || next->type == TOK_CONST)) {
+                next = next->next;
+            }
+
+            /* Skip base type (int/char/void/struct/typedef-alias) */
+            if (next && (next->type == TOK_INT || next->type == TOK_CHAR || next->type == TOK_VOID)) {
+                next = next->next;
+            } else if (next && next->type == TOK_STRUCT) {
+                /* Skip struct Name */
+                next = next->next;  /* skip "struct" */
+                if (next && next->type == TOK_ID) {
+                    next = next->next;  /* skip struct name */
+                }
+            } else if (next && next->type == TOK_ID && lookup_typedef_alias(next->text) >= 0) {
+                /* typedef alias: skip the alias name */
+                next = next->next;
+            }
 
             /* Skip pointer marker if present */
             if (next && next->type == TOK_STAR)
@@ -1227,6 +1345,10 @@ static ASTNode *parse_program(void)
                 node = parse_global_decl();
             }
         }
+        /* typedef declaration */
+        else if (cur->type == TOK_TYPEDEF) {
+            node = parse_typedef();
+        }
         /* extern declaration */
         else if (cur->type == TOK_EXTERN) {
             node = parse_extern_decl();
@@ -1247,6 +1369,7 @@ ASTNode *parse(Token *tokens)
     cur = tokens;
     has_errors = 0;
     parser_struct_count = 0;
+    typedef_alias_count = 0;
     ASTNode *prog = parse_program();
     if (has_errors) {
         ast_free_all(prog);

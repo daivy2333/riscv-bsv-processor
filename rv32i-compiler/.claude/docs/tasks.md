@@ -8,35 +8,43 @@
 
 ## 已完成
 
-### 阶段 1-8 ✅（见 snapshot.md）
+### 阶段 1-9 ✅（见 snapshot.md）
 
-### 阶段 9：多文件与预处理器 ✅
+### 阶段 10：自举准备（volatile/const/void/typedef/static）✅
 
-- [x] 添加预处理器框架（pp_process 入口）
-- [x] 添加 #include "file" 文件包含（递归、循环检测）
-- [x] 添加 #define NAME VAL 常量宏替换
-- [x] 添加 #ifdef/#ifndef/#endif 条件编译栈
-- [x] 添加 #else/#elif 分支支持
-- [x] 添加 extern 关键字（Lexer TOK_EXTERN + Parser parse_extern_decl）
-- [x] 添加函数原型解析（int foo();）
-- [x] 添加多文件编译（linker_link_multi）
-- [x] 修复 extern 变量引用问题（la + lw，跳过 .data 生成）
-- [x] 修复单文件模式汇编路径参数（argv[4]）
-- [x] 验证: multifile + full_test 全部通过
+- [x] 添加 volatile 支持（Lexer TOK_VOLATILE + Type.is_volatile）
+- [x] 添加 const 支持（Lexer TOK_CONST + Type.is_const）
+- [x] 添加 void 支持（Lexer TOK_VOID + BaseType.TYPE_VOID + parse_type）
+- [x] 添加 void(void) 参数语法
+- [x] 添加空 return 语句支持（parse_return + codegen）
+- [x] 添加隐式返回（函数结尾自动 jalr）
+- [x] 添加 typedef 支持（Lexer TOK_TYPEDEF + typedef别名表）
+- [x] 添加 static 支持（Lexer TOK_STATIC + AST.is_static + .Lstatic_标签）
+- [x] 验证: volatile_test、const_test、void_test、typedef_test、static_test 全部通过
+- [x] 验证: integration_test 综合测试通过
 
 ## 待办
 
-### 阶段 10：自举准备
+### 预处理器增强
 
-- [ ] 添加 typedef 支持
-- [ ] 添加 enum 支持
-- [ ] 添加 volatile 支持
-- [ ] 验证: 编译器编译自身
+- [ ] 支持 `#include <file>` 系统头文件（需要头文件搜索路径）
+- [ ] 实现完整自举（编译器编译自身）
+
+### 运行时库
+
+- [ ] 添加 printf 最小实现
+- [ ] 添加 malloc/free 最小实现（用于编译器自举）
+
+### 优化方向
+
+- [ ] 添加更多错误处理和诊断信息
+- [ ] 支持多级指针（当前仅一级）
+- [ ] 添加 switch/case 支持
 
 ## 阻塞项
 
-- （无）
+- 预处理器不支持 `#include <stdio.h>`，阻止完整自举
 
 ## 下一步
 
-- 开始阶段 10 规划
+- 规划预处理器系统头文件支持方案

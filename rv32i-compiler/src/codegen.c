@@ -113,6 +113,7 @@ static struct {
     char *init_str;     /* string initializer (for char*) */
     int   str_len;      /* string length including \0 */
     int   is_external;  /* 1 if extern declaration (no definition) */
+    int   is_static;    /* NEW: 1 if static global (internal linkage) */
 } globals[MAX_GLOBALS];
 
 static int global_count;
@@ -140,6 +141,14 @@ static int global_is_external(const char *name)
     for (int i = 0; i < global_count; i++)
         if (strcmp(globals[i].name, name) == 0)
             return globals[i].is_external;
+    return 0;
+}
+
+static int global_is_static_var(const char *name)
+{
+    for (int i = 0; i < global_count; i++)
+        if (strcmp(globals[i].name, name) == 0)
+            return globals[i].is_static;
     return 0;
 }
 
@@ -285,6 +294,7 @@ static void collect_globals(ASTNode *prog)
             globals[global_count].init_str = NULL;
             globals[global_count].str_len = 0;
             globals[global_count].is_external = 0;
+            globals[global_count].is_static = n->is_static;  /* NEW: static global */
 
             fprintf(stderr, "Global '%s': base=%d ptr=%d struct_id=%d\n",
                     n->name, n->var_type.base_type, n->var_type.ptr_level, n->var_type.struct_id);
@@ -358,7 +368,12 @@ static void emit_data_segment(void)
         /* Skip extern declarations - they don't have definitions */
         if (globals[i].is_external) continue;
 
-        emit(".global_%s:\n", globals[i].name);
+        /* Static globals use .Lstatic_ prefix, regular globals use .global_ */
+        if (globals[i].is_static) {
+            emit(".Lstatic_%s:\n", globals[i].name);
+        } else {
+            emit(".global_%s:\n", globals[i].name);
+        }
 
         if (globals[i].type.base_type == TYPE_STRUCT && globals[i].type.ptr_level == 0) {
             /* struct 值类型全局变量 - 输出 total_size 字节的 0 */
@@ -491,7 +506,7 @@ static void gen_expr(ASTNode *n)
         int global_off = global_lookup(n->name);
         if (global_off >= 0) {
             /* Global variable - use la instruction */
-            emit("    la t0, .global_%s\n", n->name);
+            emit("    la t0, %s_%s\n", global_is_static_var(n->name) ? ".Lstatic" : ".global", n->name);
             Type t = global_lookup_type(n->name);
             if (!type_is_array(t) && t.base_type != TYPE_STRUCT) {
                 /* For non-array/non-struct (int, int*, char*, etc.), load the value */
@@ -500,7 +515,7 @@ static void gen_expr(ASTNode *n)
             /* For array or struct value type, t0 already holds address */
         } else if (global_is_external(n->name)) {
             /* Extern variable - reference by .global_ prefix (same as definition) */
-            emit("    la t0, .global_%s\n", n->name);
+            emit("    la t0, %s_%s\n", global_is_static_var(n->name) ? ".Lstatic" : ".global", n->name);
             Type t = global_lookup_type(n->name);
             if (!type_is_array(t) && t.base_type != TYPE_STRUCT) {
                 emit("    lw t0, 0(t0)\n");  /* load value */
@@ -544,7 +559,7 @@ static void gen_expr(ASTNode *n)
 
         /* Get array base address */
         if (is_global) {
-            emit("    la t1, .global_%s\n", n->name);  /* t1 = &arr[0] */
+            emit("    la t1, %s_%s\n", global_is_static_var(n->name) ? ".Lstatic" : ".global", n->name);  /* t1 = &arr[0] */
         } else if (type_is_array(arr_type)) {
             /* Local array: base address is stack offset */
             emit("    addi t1, sp, %d\n", base);  /* t1 = &arr[0] */
@@ -671,7 +686,7 @@ static void gen_expr(ASTNode *n)
         int global_off = global_lookup(n->left->name);
         if (global_off >= 0) {
             /* Global variable - address is label */
-            emit("    la t0, .global_%s\n", n->left->name);
+            emit("    la t0, %s_%s\n", global_is_static_var(n->left->name) ? ".Lstatic" : ".global", n->left->name);
         } else {
             int off = sym_lookup(n->left->name);
             if (off < 0) {
@@ -804,7 +819,7 @@ static void gen_stmt(ASTNode *n)
 
             /* Get array base address */
             if (is_global) {
-                emit("    la t1, .global_%s\n", n->array_name);
+                emit("    la t1, %s_%s\n", global_is_static_var(n->array_name) ? ".Lstatic" : ".global", n->array_name);
             } else if (type_is_array(arr_type)) {
                 emit("    addi t1, sp, %d\n", base);  /* t1 = &arr[0] */
             } else {
@@ -828,7 +843,7 @@ static void gen_stmt(ASTNode *n)
             int global_off = global_lookup(n->name);
             if (global_off >= 0) {
                 /* Global assignment */
-                emit("    la t1, .global_%s\n", n->name);
+                emit("    la t1, %s_%s\n", global_is_static_var(n->name) ? ".Lstatic" : ".global", n->name);
                 emit("    sw t0, 0(t1)\n");
             } else {
                 /* Local variable assignment */
@@ -843,8 +858,10 @@ static void gen_stmt(ASTNode *n)
         break;
 
     case AST_RETURN:
-        gen_expr(n->body);
-        emit("    mv a0, t0\n");
+        if (n->body) {
+            gen_expr(n->body);
+            emit("    mv a0, t0\n");
+        }
         emit("    lw ra, %d(sp)\n", frame_used - 4);
         emit("    addi sp, sp, %d\n", frame_used);
         emit("    jalr x0, x1, 0\n");
@@ -902,7 +919,12 @@ static void gen_func_def(ASTNode *fn)
     int frame = count_frame(fn);
     frame_used = frame;
 
-    emit("%s:\n", fn->func_name);
+    /* Emit function label (static functions use .Lstatic_ prefix) */
+    if (fn->is_static) {
+        emit(".Lstatic_%s:\n", fn->func_name);
+    } else {
+        emit("%s:\n", fn->func_name);
+    }
 
     emit("    addi sp, sp, -%d\n", frame);
     emit("    sw ra, %d(sp)\n", frame - 4);
@@ -917,6 +939,11 @@ static void gen_func_def(ASTNode *fn)
 
     for (ASTNode *s = fn->body; s; s = s->next)
         gen_stmt(s);
+
+    /* Implicit return for functions without explicit return */
+    emit("    lw ra, %d(sp)\n", frame - 4);
+    emit("    addi sp, sp, %d\n", frame);
+    emit("    jalr x0, x1, 0\n");
 }
 
 /* ================================================================

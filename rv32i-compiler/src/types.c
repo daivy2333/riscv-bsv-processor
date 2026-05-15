@@ -71,7 +71,18 @@ Type type_make_struct_val(int struct_id)
     return t;
 }
 
+Type type_make_void(void)
+{
+    Type t = { .base_type = TYPE_VOID, .ptr_level = 0, .array_size = 0, .struct_id = -1, .is_const = 0, .is_volatile = 0 };
+    return t;
+}
+
 int type_is_struct(Type t)
 {
     return t.base_type == TYPE_STRUCT;
+}
+
+int type_is_void(Type t)
+{
+    return t.base_type == TYPE_VOID;
 }

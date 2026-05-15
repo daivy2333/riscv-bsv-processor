@@ -21,6 +21,9 @@ typedef enum {
     TOK_EXTERN,     /* "extern" keyword */
     TOK_VOLATILE,   /* NEW: volatile keyword */
     TOK_CONST,      /* NEW: const keyword */
+    TOK_VOID,       /* NEW: void keyword */
+    TOK_TYPEDEF,    /* NEW: typedef keyword */
+    TOK_STATIC,     /* NEW: static keyword */
     TOK_EOF
 } TokenType;
 

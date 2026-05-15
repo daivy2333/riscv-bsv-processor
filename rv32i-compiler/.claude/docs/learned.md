@@ -1,6 +1,6 @@
 # 学习记忆
 
-> 最后更新：2026-05-14
+> 最后更新：2026-05-15
 > 记录探索发现、API 路径、技巧、踩坑经验
 
 ---
@@ -352,3 +352,132 @@ Codegen:
 - [x] 头文件支持（#include "header.h")
 - [x] 2 个 Phase 9 CPU 测试通过 (multifile + full)
 - [x] 单文件模式汇编路径参数修复 (argv[4])
+
+---
+
+## 阶段10踩坑记录
+
+| 问题 | 原因 | 解决方案 | 发现时间 |
+|------|------|----------|----------|
+| void 测试返回 5 而不是 42 | TestProgram.bsv 未更新，使用旧的 hex 内容 | python3 hex_to_bsv.py 重定向到 TestProgram.bsv | 2026-05-15 |
+| typedef 别名全局变量解析失败 | parse_program 未处理 typedef 别名作为全局类型 | 添加 lookup_typedef_alias 检查 | 2026-05-15 |
+| void 函数缺少返回代码 | gen_func_def 结尾未生成隐式返回 | 添加 lw ra + jalr x0, x1, 0 | 2026-05-15 |
+| parse_typedef 使用 parse_error 未定义 | parse_typedef 在前向声明之前调用 parse_error | 添加 parse_error 和 expect 前向声明 | 2026-05-15 |
+
+### Phase 10 架构模式
+
+#### parse_type 统一类型解析
+```c
+static Type parse_type(void) {
+    Type t = type_make_int();
+    int is_const = 0, is_volatile = 0;
+    
+    // 1. 解析类型限定符（可多次出现）
+    while (cur->type == TOK_VOLATILE || cur->type == TOK_CONST) {
+        if (cur->type == TOK_VOLATILE) { is_volatile = 1; cur = cur->next; }
+        else if (cur->type == TOK_CONST) { is_const = 1; cur = cur->next; }
+    }
+    
+    // 2. 解析基础类型（int/char/void/struct/typedef别名）
+    if (cur->type == TOK_INT) { t = type_make_int(); cur = cur->next; }
+    else if (cur->type == TOK_CHAR) { t = type_make_char(); cur = cur->next; }
+    else if (cur->type == TOK_VOID) { t = type_make_void(); cur = cur->next; }
+    else if (cur->type == TOK_STRUCT) { /* ... */ }
+    else if (cur->type == TOK_ID && lookup_typedef_alias(cur->text) >= 0) { /* typedef */ }
+    
+    // 3. 设置限定符标记
+    t.is_const = is_const;
+    t.is_volatile = is_volatile;
+    
+    // 4. 解析指针层级
+    while (cur->type == TOK_STAR) { t.ptr_level++; cur = cur->next; }
+    return t;
+}
+```
+
+#### static 标签生成
+```c
+// codegen.c
+if (fn->is_static) {
+    emit(".Lstatic_%s:\n", fn->func_name);
+} else {
+    emit("%s:\n", fn->func_name);
+}
+
+// emit_data_segment
+if (globals[i].is_static) {
+    emit(".Lstatic_%s:\n", globals[i].name);
+} else {
+    emit(".global_%s:\n", globals[i].name);
+}
+```
+
+#### typedef 别名表
+```c
+// parser.c
+typedef struct {
+    char *alias_name;
+    int struct_id;
+} TypedefAlias;
+
+static TypedefAlias typedef_aliases[MAX_TYPEDEF_ALIASES];
+static int typedef_alias_count;
+
+static int lookup_typedef_alias(const char *alias) {
+    for (int i = 0; i < typedef_alias_count; i++)
+        if (strcmp(typedef_aliases[i].alias_name, alias) == 0)
+            return typedef_aliases[i].struct_id;
+    return -1;
+}
+```
+
+## 阶段10已完成
+
+- [x] volatile 支持（Lexer TOK_VOLATILE + Type.is_volatile）
+- [x] const 支持（Lexer TOK_CONST + Type.is_const）
+- [x] void 返回类型（Lexer TOK_VOID + TYPE_VOID + parse_type）
+- [x] void(void) 参数语法
+- [x] 空 return 语句（parse_return + codegen）
+- [x] 隐式返回（gen_func_def 结尾自动 jalr）
+- [x] typedef 结构体别名（typedef_aliases 表）
+- [x] static 内部链接（Lexer TOK_STATIC + AST.is_static + .Lstatic_ 标签）
+- [x] 9 个 Phase 10 CPU 测试全部通过
+- [x] 综合测试（volatile+const+void+typedef/static 组合）
+
+---
+
+## 关键 API 参考
+
+### hex_to_bsv.py 使用
+
+```bash
+# 正确用法：重定向输出到 TestProgram.bsv
+python3 tools/hex_to_bsv.py rv32i-compiler/build/test.hex > src/soc/TestProgram.bsv
+
+# 错误用法：直接运行（输出到 stdout）
+python3 tools/hex_to_bsv.py rv32i-compiler/build/test.hex  # 输出显示在终端
+```
+
+### 编译器命令行参数
+
+```bash
+# 单文件模式
+./build/microcc src.c output.hex [crt0.s] [asm_output.s] [lib.S]
+
+# 多文件模式
+./build/microcc output.hex src1.c src2.c src3.c ...
+```
+
+### 测试运行完整流程
+
+```bash
+cd /home/daivy/projects/riscv-bsv-processor/rv32i-compiler
+./build/microcc tests/phase10/test.c build/test.hex
+
+cd /home/daivy/projects/riscv-bsv-processor
+python3 tools/hex_to_bsv.py rv32i-compiler/build/test.hex > src/soc/TestProgram.bsv
+rm -rf build obj_dir && mkdir -p build
+bsc -verilog ... # 构建 Verilator
+verilator ...    # 构建 C++ 仿真
+./obj_dir/VmkTestBench  # 运行测试
+```
